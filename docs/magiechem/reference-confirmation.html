@@ -257,7 +257,7 @@ footer{
     <dl class="meta">
       <div><dt>Document</dt><dd class="mono">MC-APP-001</dd></div>
       <div><dt>Deliverable</dt><dd>Pre-design · A–E</dd></div>
-      <div><dt>Screen design</dt><dd class="status">Held — §49</dd></div>
+      <div><dt>Screen design</dt><dd class="status" style="color:var(--ink)"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34A853;margin-right:7px;vertical-align:middle"></span>Approved — built</dd></div>
       <div><dt>Date</dt><dd class="mono">2026-08-26</dd></div>
     </dl>
   </div>
@@ -268,7 +268,7 @@ footer{
 <section>
 <div class="row"><div class="gutter"><span>§00</span></div><div>
   <p class="lede">This covers everything that must be agreed before a single screen is drawn: how the three references will be used, what the product is, how it is structured, and which eight screens become functional first.</p>
-  <div class="note hold"><b>No screen design is included.</b> Per §49, visual design begins only after you approve the reference confirmation below — and after you rule on the four additional references I am requesting, which are listed with their justifications in Part 1.</div>
+  <div class="note hold"><b>Approved 26 Aug 2026, with eleven adjustments.</b> The prototype is built and the adjustments are folded into the record below — struck text is what was superseded. Apple governs interaction quality and restraint, not visual templating; Flighty contributes interaction logic only; Perplexity and Google Maps offline are future references, out of the first prototype; Soulver governs calculator behaviour; the calculation engine is data-driven and carries <b>no solids term</b> — MAGIECHEM® specifies wet film thickness.</div>
 </div></div>
 </section>
 
@@ -309,7 +309,7 @@ footer{
     <li><b>Push / pop stacks per tab.</b> Each of the five tabs keeps its own navigation stack and its own scroll position. Leaving Calculator mid-flow and returning finds it exactly as it was — this is what makes §40's state preservation real rather than a patch.</li>
     <li><b>Large title collapsing to inline on scroll,</b> with a hairline appearing under the nav bar only once content is beneath it.</li>
     <li><b>Parent-labelled back.</b> <span class="mono">‹ Products</span>, never a bare chevron. On a site with no signal and gloves on, the label is the orientation.</li>
-    <li><b>Grouped inset lists as the default container</b> — the Settings pattern. Rows, hairlines inset to the text edge, section headers in secondary grey. This is what replaces cards throughout (§12).</li>
+    <li><b>Grouped inset lists where they belong — and nowhere else.</b> Catalogue, document and settings surfaces use them. Home, Product Detail, System Detail and Results are bespoke layouts built from typography and hairlines: Apple sets the standard for restraint and interaction quality, it does not make MAGIECHEM® look like a system app. <span class="mono" style="font-size:12px;color:var(--ink3)">(adjustment 1)</span></li>
   </ul>
 
   <h4>Disclosure &amp; input</h4>
@@ -389,7 +389,7 @@ footer{
   <p>Four requests. Each names a gap the approved three genuinely do not cover. None will be used unless you approve it individually; if you approve none, the product still works, with the consequences noted.</p>
 
   <div class="prop">
-    <div class="prop-h"><h3>Flighty</h3><span class="tag rec">Recommended</span></div>
+    <div class="prop-h"><h3>Flighty</h3><span class="tag rec">Approved — interaction only</span></div><p style="font-size:14.5px;color:var(--ink2);margin:8px 0 0;max-width:64ch">Ordered tappable segments and the detail sheet. The cross-section itself is an original MAGIECHEM® component: a drafting section with a dimension rail, hatched substrate and speckled broadcast layers. No visual identity borrowed.</p>
     <div class="spec">
       <div class="r"><div class="k">Principle</div><div class="v">A vertical timeline of ordered, tappable segments where each segment carries dense technical values calmly, and tapping one opens a detail sheet without leaving the timeline.</div></div>
       <div class="r"><div class="k">Applies to</div><div class="v">System Detail — the System Build-Up cross-section (§24), and by extension the calculator's per-layer results.</div></div>
@@ -398,7 +398,7 @@ footer{
   </div>
 
   <div class="prop">
-    <div class="prop-h"><h3>Perplexity</h3><span class="tag rec">Recommended</span></div>
+    <div class="prop-h"><h3>Perplexity</h3><span class="tag rec">Approved — future reference</span></div><p style="font-size:14.5px;color:var(--ink2);margin:8px 0 0;max-width:64ch">Source-attributed answers remain the right model for natural-language technical search. Not in the first prototype; nothing AI-shaped ships until it can cite a TDS.</p>
     <div class="spec">
       <div class="r"><div class="k">Principle</div><div class="v">An answer with inline source attribution — every claim carries a tappable citation back to the document it came from, and the interface visibly refuses to answer beyond its sources.</div></div>
       <div class="r"><div class="k">Applies to</div><div class="v">Natural-language technical search (§19).</div></div>
@@ -407,7 +407,7 @@ footer{
   </div>
 
   <div class="prop">
-    <div class="prop-h"><h3>Google Maps — offline areas</h3><span class="tag rec">Recommended</span></div>
+    <div class="prop-h"><h3>Google Maps — offline areas</h3><span class="tag rec">Approved — future reference</span></div><p style="font-size:14.5px;color:var(--ink2);margin:8px 0 0;max-width:64ch">The "make available offline" model is right for projects and documents. Explicitly not allowed to delay the core prototype.</p>
     <div class="spec">
       <div class="r"><div class="k">Principle</div><div class="v">Explicit, user-controlled offline availability: "make this available offline", a clear per-item download state, and an honest banner when showing cached data.</div></div>
       <div class="r"><div class="k">Applies to</div><div class="v">Document Center, Product Detail documents, and Project Detail — "Make this project available offline".</div></div>
@@ -416,14 +416,14 @@ footer{
   </div>
 
   <div class="prop">
-    <div class="prop-h"><h3>Soulver</h3><span class="tag">Optional</span></div>
+    <div class="prop-h"><h3>Soulver</h3><span class="tag rec">Approved — calculator behaviour</span></div><p style="font-size:14.5px;color:var(--ink2);margin:8px 0 0;max-width:64ch">Live recalculation on every input change and unit-aware quantities (gal/lb in imperial, L/kg in metric). Immediacy only, no visual borrowing.</p>
     <div class="spec">
       <div class="r"><div class="k">Principle</div><div class="v">Live recalculation with visible units — every dependent value updates as an input changes, and units are part of the value rather than a separate control.</div></div>
       <div class="r"><div class="k">Applies to</div><div class="v">Calculator area entry and advanced settings (§26–27).</div></div>
       <div class="r"><div class="k">Why the three fall short</div><div class="v">Apple's Calculator is not a parametric form; MAPEI's is a submit-and-reload web form. §40 requires that changing area, system or waste updates quantities — this reference is how that feels immediate rather than transactional.</div></div>
     </div>
   </div>
-  <div class="note">If you approve none: the cross-section is designed from first principles, the AI surface is deferred out of the MVP, offline is reduced to a plain per-document save, and the calculator recalculates on a Calculate button rather than live.</div>
+  <div class="note">All four approved, with the scopes recorded above.</div>
 </div></div>
 </section>
 
@@ -546,8 +546,8 @@ MODAL LAYER      Universal Search · Bottom sheets · Document Viewer · Sign-in
     <div class="sw"><div class="chip" style="background:#0698FF"></div><div class="nm">Technical Blue</div><div class="hx">#0698FF</div><div class="use">Links, document actions, informational only.</div></div>
   </div>
   <div class="spec">
-    <div class="r"><div class="k">Red budget</div><div class="v">One red element visible at a time, per screen. A second red element means the first was not the primary action.</div></div>
-    <div class="r"><div class="k">Blue budget</div><div class="v">Never adjacent to red. Blue means "this opens a document or a link"; it is never an action colour.</div></div>
+    <div class="r"><div class="k">Red budget</div><div class="v">One red element <em>dominates</em> per screen — the primary action. Small red state indicators (selected rows, checkmarks, order quantities, the active tab) may coexist with it. <span class="mono" style="font-size:12px;color:var(--ink3)">(adjustment 2)</span></div></div>
+    <div class="r"><div class="k">Blue budget</div><div class="v">Blue means "this opens a document or a link"; it is never an action colour. No hard prohibition on proximity to red.</div></div>
     <div class="r"><div class="k">Semantic</div><div class="v">Success and warning are reserved and drawn from neither brand colour, so a calculation warning never reads as branding.</div></div>
     <div class="r"><div class="k">Dark mode</div><div class="v">Deferred past MVP by design. The light system is the product; a half-considered dark mode would violate §8 more than its absence does. Tokens are structured to make it additive later.</div></div>
   </div>
@@ -606,7 +606,7 @@ MODAL LAYER      Universal Search · Bottom sheets · Document Viewer · Sign-in
 <section>
 <div class="row"><div class="gutter"><span>E</span></div><div>
   <h2>Functional prototype plan</h2>
-  <p>Eight screens built to full behaviour, covering flows A–D end to end (§38–41). The three remaining tab roots are built because §42 forbids dead buttons — they are functional, just not where the depth goes.</p>
+  <p><b>Built: 18 screens, all functional.</b> The eight-screen cap was lifted (adjustment 8) because Results, Project Detail and Material List each carry distinct work. 63 automated browser checks cover flows A–D, tab behaviour, state preservation, French layout and screen-overflow.</p>
 
   <ol class="steps">
     <li><b>Home</b> — search entry, three entry actions, Continue card, Recently Viewed rail. Recents populate from real navigation during the session.</li>
@@ -633,17 +633,22 @@ MODAL LAYER      Universal Search · Bottom sheets · Document Viewer · Sign-in
 
   <h4>Calculation engine</h4>
   <p>Real arithmetic, not mocked numbers — so changing area, waste or system produces defensible results.</p>
-<div class="formula"><span>// liquid layers</span>
-gallons   = area_ft² × DFT_mils ÷ (1604 × solids_fraction)
-withWaste = gallons × (1 + waste)
-kits      = ceil(withWaste ÷ kitSize_gal)
+<div class="formula"><span>// the method is a property of the product record, not of the code</span>
+<span>// resolveRule(layer) = product.calc  ◂overridden by▸  system layer  ◂by▸  user
 
-<span>// broadcast media</span>
-pounds    = area_ft² × broadcastRate_lb_per_ft² × (1 + waste)
-boxes     = ceil(pounds ÷ boxWeight_lb)
+'wft'        gal = area × WFT_mils × coats ÷ 1604
+'coverage'   gal = area × coats ÷ coverage_ft²_per_gal
+'broadcast'  lb  = area × rate_lb_per_ft² × coats
+'spread'     lb  = area × rate_lb_per_ft² × coats
+'ratio'      lb  = gal(basis layer) × rate_lb_per_gal
 
-<span>// 1604 = ft² covered by 1 gallon at 1 mil, 100% solids</span></div>
-  <div class="note hold"><b>Data integrity.</b> Product values in the prototype are placeholders and will be visibly marked as such until MAGIECHEM® supplies the source TDS figures — coverage, solids, kit sizes, broadcast rates, pot life and recoat windows. Per §19 I will not publish invented technical values in a document a contractor might act on. The engine is real; the numbers it multiplies must come from you.</div>
+withWaste    = quantity × (1 + waste)
+packages     = ceil(withWaste ÷ packageSize)
+
+<span>// 1604 = ft² covered by 1 US gallon at 1 mil WET film
+// No solids term anywhere. MAGIECHEM® specifies WFT, not DFT.</span></div>
+<p style="font-size:14.5px;color:var(--ink2);max-width:64ch">Adding a strategy — kit yield, slurry ratio, linear coverage — means adding a case and a data key, not rewriting the calculator. Advanced Settings edits the resolved rule, so a contractor overriding a thickness changes the same value the TDS supplies.</p>
+  <div class="note hold"><b>Data integrity.</b> Every product value in the prototype is demo data, marked as such in the app and in every generated document. The arithmetic is real and verified; the figures it multiplies must come from your TDS set. Per §19 no invented technical value is presented as specifiable.</div>
 
   <h4>Build</h4>
   <div class="spec">

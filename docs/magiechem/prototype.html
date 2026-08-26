@@ -1,0 +1,2076 @@
+<title>MAGIECHEM Field Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --white:#FFFFFF; --grouped:#F7F7F8; --grouped2:#F5F5F7;
+  --ink:#111111; --ink2:#6E6E73; --ink3:#8E8E93; --ink4:#AEAEB2;
+  --rule:#E5E5EA; --rule2:#EFEFF1;
+  --red:#EF3333; --red-soft:#FDECEC;
+  --blue:#0698FF;
+  --page:#E6E6E9; --page-ink:#4A4A4F;
+  --tap:rgba(0,0,0,.045);
+  --r-btn:12px; --r-srf:14px; --r-sheet:18px;
+  --font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){ --page:#0A0A0B; --page-ink:#8A8A90; }
+}
+:root[data-theme="dark"]{ --page:#0A0A0B; --page-ink:#8A8A90; }
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;background:var(--page);font-family:var(--font);
+  -webkit-font-smoothing:antialiased;color:var(--page-ink);
+  display:flex;flex-direction:column;align-items:center;min-height:100vh;
+}
+button{font-family:inherit;border:0;background:none;padding:0;color:inherit;cursor:pointer}
+input{font-family:inherit}
+
+/* ============ stage ============ */
+.stage{display:flex;flex-direction:column;align-items:center;gap:14px;padding:26px 16px 34px;width:100%}
+.stage-head{text-align:center;max-width:420px}
+.stage-head h1{font-size:15px;font-weight:600;color:var(--page-ink);margin:0 0 4px;letter-spacing:-.01em}
+.stage-head p{font-size:13px;margin:0;opacity:.7;line-height:1.5}
+
+.device{
+  position:relative;width:393px;height:852px;background:var(--white);
+  border-radius:46px;overflow:hidden;flex:0 0 auto;
+  box-shadow:0 0 0 10px #1b1b1e, 0 0 0 11px #2e2e33, 0 30px 70px rgba(0,0,0,.35);
+  color:var(--ink);font-size:17px;line-height:1.4;
+}
+@media (max-width:460px){
+  .stage{padding:0}
+  .stage-head{display:none}
+  .device{width:100vw;height:100dvh;border-radius:0;box-shadow:none}
+}
+
+/* ============ chrome ============ */
+.statusbar{
+  position:absolute;top:0;left:0;right:0;height:54px;z-index:60;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 30px 6px;font-size:14.5px;font-weight:600;letter-spacing:-.01em;
+  pointer-events:none;color:var(--ink);
+}
+.statusbar .sig{display:flex;gap:5px;align-items:center;opacity:.9}
+.statusbar .sig i{display:block;width:16px;height:11px;border:1.3px solid currentColor;border-radius:3px;position:relative;opacity:.85}
+.statusbar .sig i::after{content:"";position:absolute;inset:1.6px;background:currentColor;border-radius:1px;right:4px}
+.statusbar .bars{display:flex;align-items:flex-end;gap:1.6px;height:10px}
+.statusbar .bars b{width:3px;background:currentColor;border-radius:1px}
+
+.navbar{
+  position:absolute;top:0;left:0;right:0;z-index:50;height:98px;
+  padding-top:54px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0);backdrop-filter:none;
+  transition:background .22s ease, backdrop-filter .22s ease, box-shadow .22s ease;
+}
+.navbar.solid{background:rgba(255,255,255,.86);backdrop-filter:saturate(180%) blur(20px);box-shadow:0 .5px 0 var(--rule)}
+.navbar .nb-title{
+  font-size:16.5px;font-weight:600;letter-spacing:-.015em;opacity:0;transform:translateY(4px);
+  transition:opacity .2s ease,transform .2s ease;max-width:200px;text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.navbar.solid .nb-title{opacity:1;transform:none}
+.nb-side{position:absolute;top:54px;bottom:0;display:flex;align-items:center;gap:2px;padding:0 8px}
+.nb-side.l{left:6px}.nb-side.r{right:6px}
+.nb-btn{
+  display:flex;align-items:center;gap:1px;height:44px;padding:0 6px;color:var(--red);
+  font-size:17px;letter-spacing:-.012em;border-radius:8px;
+}
+.nb-btn:active{opacity:.45}
+.nb-btn span{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.scroll{
+  position:absolute;left:0;right:0;top:0;bottom:0;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;padding-top:98px;padding-bottom:104px;
+  scroll-behavior:auto;
+}
+.scroll.nonav{padding-top:54px}
+.scroll::-webkit-scrollbar{width:0}
+
+.tabbar{
+  position:absolute;left:0;right:0;bottom:0;height:83px;z-index:55;
+  background:rgba(255,255,255,.9);backdrop-filter:saturate(180%) blur(20px);
+  box-shadow:0 -.5px 0 var(--rule);
+  display:grid;grid-template-columns:repeat(5,1fr);padding-top:7px;
+}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink3);padding-top:2px}
+.tab.on{color:var(--red)}
+.tab svg{width:25px;height:25px}
+.tab span{font-size:10.5px;font-weight:500;letter-spacing:-.005em;line-height:1.15;text-align:center;max-width:76px}
+.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:var(--ink);opacity:.85;z-index:70;pointer-events:none}
+
+/* ============ primitives ============ */
+.pad{padding:0 16px}
+.lt{font-size:34px;font-weight:700;letter-spacing:-.032em;line-height:1.09;margin:6px 0 0}
+.lt-sub{font-size:16px;color:var(--ink2);letter-spacing:-.012em;margin:5px 0 0;line-height:1.35}
+.sec-label{
+  font-size:12.5px;font-weight:600;letter-spacing:.065em;text-transform:uppercase;
+  color:var(--ink2);margin:0 0 8px;
+}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 8px}
+.sec-head .more{font-size:15px;color:var(--red);letter-spacing:-.01em;flex:0 0 auto}
+.body{font-size:15.5px;line-height:1.5;color:var(--ink2);letter-spacing:-.008em}
+.hr{height:1px;background:var(--rule);margin:0}
+.hr-in{height:1px;background:var(--rule);margin-left:16px}
+.sp8{height:8px}.sp12{height:12px}.sp16{height:16px}.sp24{height:24px}.sp32{height:32px}.sp44{height:44px}
+
+/* rows (grouped-list contexts only) */
+.group{background:var(--white);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.group.inset{margin:0 16px;border:1px solid var(--rule);border-radius:var(--r-srf);overflow:hidden}
+.row{
+  display:flex;align-items:center;gap:12px;min-height:52px;padding:9px 16px;
+  width:100%;text-align:left;position:relative;background:var(--white);
+}
+.row:active{background:var(--tap)}
+.row+.row::before{content:"";position:absolute;top:0;left:16px;right:0;height:1px;background:var(--rule2)}
+.row.hasicon+.row.hasicon::before{left:56px}
+.row .ic{width:28px;flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--ink2)}
+.row .txt{flex:1;min-width:0}
+.row .t{display:block;font-size:16.5px;letter-spacing:-.014em;line-height:1.28}
+.row .s{display:block;font-size:13.5px;color:var(--ink2);letter-spacing:-.006em;margin-top:2px;line-height:1.32}
+.row .tail{font-size:15.5px;color:var(--ink3);letter-spacing:-.01em;flex:0 0 auto}
+.row .chev{color:var(--ink4);flex:0 0 auto;display:flex}
+.row.on .t{font-weight:550}
+.row .check{color:var(--red);flex:0 0 auto;display:flex}
+
+/* buttons */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;
+  background:var(--red);color:#fff;font-size:17px;font-weight:600;letter-spacing:-.014em;
+  border-radius:var(--r-btn);padding:0 18px;transition:opacity .14s,transform .14s;
+}
+.btn:active{opacity:.82;transform:scale(.988)}
+.btn[disabled]{background:var(--rule);color:var(--ink4);pointer-events:none}
+.btn.ghost{background:var(--grouped);color:var(--ink);font-weight:550}
+.btn.plain{background:none;color:var(--red);min-height:44px;font-weight:500}
+.btn.small{min-height:40px;font-size:15.5px;border-radius:10px}
+.linkbtn{color:var(--red);font-size:16px;letter-spacing:-.012em;padding:12px 0;display:block;width:100%;text-align:center}
+
+.dock{
+  position:absolute;left:0;right:0;bottom:83px;z-index:45;padding:10px 16px 14px;
+  background:rgba(255,255,255,.9);backdrop-filter:saturate(180%) blur(20px);
+  box-shadow:0 -.5px 0 var(--rule), 0 -8px 24px rgba(0,0,0,.03);
+}
+.dock .hint{font-size:12.5px;color:var(--ink2);text-align:center;margin-top:8px;letter-spacing:-.004em}
+.scroll.docked{padding-bottom:186px}
+
+/* fields */
+.field{
+  display:flex;align-items:center;background:var(--grouped);border-radius:var(--r-btn);
+  min-height:50px;padding:0 14px;gap:10px;border:1px solid transparent;transition:border-color .15s;
+  min-width:0;   /* without this the input's intrinsic 20ch width pushes the row past the screen */
+}
+.field:focus-within{border-color:var(--red)}
+.field input{
+  border:0;background:none;outline:none;flex:1;width:100%;min-width:0;font-size:17px;
+  color:var(--ink);letter-spacing:-.014em;
+}
+.field input::placeholder{color:var(--ink3)}
+.searchfield{
+  display:flex;align-items:center;gap:8px;background:var(--grouped);border-radius:11px;
+  height:44px;padding:0 12px;color:var(--ink3);min-width:0;
+}
+.searchfield input{border:0;background:none;outline:none;flex:1;width:100%;min-width:0;font-size:16.5px;color:var(--ink);letter-spacing:-.012em}
+
+.seg{display:flex;background:var(--grouped2);border-radius:10px;padding:2px;gap:2px}
+.seg button{
+  flex:1;min-height:36px;border-radius:8px;font-size:14.5px;font-weight:500;letter-spacing:-.008em;
+  color:var(--ink);transition:background .16s,box-shadow .16s;padding:0 10px;
+}
+.seg button.on{background:var(--white);box-shadow:0 1px 3px rgba(0,0,0,.09);font-weight:600}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  border:1px solid var(--rule);border-radius:10px;padding:9px 13px;font-size:14.5px;
+  letter-spacing:-.008em;color:var(--ink);background:var(--white);transition:all .15s;
+  min-height:42px;display:flex;align-items:center;
+}
+.chip.on{border-color:var(--red);color:var(--red);background:var(--red-soft);font-weight:550}
+
+.pill{
+  display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;letter-spacing:.03em;
+  text-transform:uppercase;padding:3px 7px;border-radius:5px;background:var(--grouped);color:var(--ink2);
+}
+.pill.red{background:var(--red-soft);color:var(--red)}
+.pill.blue{background:rgba(6,152,255,.1);color:var(--blue)}
+.pill.demo{background:var(--grouped);color:var(--ink3);font-weight:500;text-transform:none;letter-spacing:0;font-size:11.5px}
+
+/* spec pairs — product detail top block (NOT a settings list) */
+.specgrid{display:grid;grid-template-columns:1fr 1fr;column-gap:16px}
+.specgrid .cell{padding:14px 0;border-top:1px solid var(--rule2);min-width:0}
+.specgrid .cell:nth-child(1),.specgrid .cell:nth-child(2){border-top:1px solid var(--rule)}
+.specgrid .cell.wide{grid-column:1/-1}
+.spk{font-size:12.5px;font-weight:600;letter-spacing:.055em;text-transform:uppercase;color:var(--ink2);margin-bottom:3px}
+.spv{font-size:25px;font-weight:600;letter-spacing:-.022em;font-variant-numeric:tabular-nums;line-height:1.16}
+.spv small{font-size:15px;font-weight:500;color:var(--ink2);letter-spacing:-.01em}
+.spv.sm{font-size:19px;letter-spacing:-.016em}
+
+/* rails */
+.rail{display:flex;gap:10px;overflow-x:auto;padding:2px 16px 4px;scroll-snap-type:x proximity}
+.rail::-webkit-scrollbar{height:0}
+.rail>*{scroll-snap-align:start;flex:0 0 auto}
+.rcard{
+  width:170px;border:1px solid var(--rule);border-radius:var(--r-srf);padding:13px 13px 12px;
+  background:var(--white);text-align:left;display:flex;flex-direction:column;gap:3px;min-height:96px;
+}
+.rcard:active{background:var(--grouped)}
+.rcard .n{font-size:16px;font-weight:650;letter-spacing:-.02em;line-height:1.22}
+.rcard .d{font-size:12.5px;color:var(--ink2);line-height:1.32;letter-spacing:-.004em}
+.rcard .k{font-size:11.5px;color:var(--ink3);margin-top:auto;padding-top:6px}
+
+/* ============ SIGNATURE: coating cross-section ============ */
+.xsec{display:grid;grid-template-columns:56px 1fr;gap:0;margin:0 16px}
+.xdim{position:relative;border-right:1px solid var(--rule)}
+.xstack{display:flex;flex-direction:column}
+.xlayer{
+  position:relative;display:flex;align-items:center;gap:12px;padding:0 12px 0 16px;
+  text-align:left;width:100%;border-bottom:1px solid var(--rule);transition:background .16s;
+  background:var(--grouped);
+}
+.xlayer:first-child{border-top-left-radius:6px;border-top-right-radius:6px}
+.xlayer:active{background:#EDEDEF}
+.xlayer .tick{
+  position:absolute;left:-57px;top:50%;transform:translateY(-50%);width:56px;
+  font-size:11.5px;color:var(--ink3);text-align:right;padding-right:10px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.004em;
+}
+.xlayer::after{content:"";position:absolute;left:-4px;top:-1px;width:8px;height:1px;background:var(--rule)}
+.xstack{position:relative}
+.xstack::after{content:"";position:absolute;left:-4px;bottom:44px;width:8px;height:1px;background:var(--rule)}
+.xlayer .lnum{font-size:16.5px;font-weight:650;letter-spacing:-.018em;flex:0 0 auto}
+.xlayer .lrole{font-size:13.5px;color:var(--ink2);letter-spacing:-.006em;flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xlayer .lchev{color:var(--ink4);flex:0 0 auto;display:flex;opacity:.9}
+.xlayer.media{
+  background:
+    radial-gradient(circle at 20% 30%, var(--ink4) .9px, transparent 1px),
+    radial-gradient(circle at 62% 68%, var(--ink4) .9px, transparent 1px),
+    radial-gradient(circle at 85% 22%, var(--ink4) .9px, transparent 1px),
+    var(--grouped2);
+  background-size:19px 15px,23px 18px,17px 21px,auto;
+}
+.xlayer.clear{background:repeating-linear-gradient(90deg,var(--grouped) 0 11px,#FBFBFC 11px 22px)}
+.xsub{
+  height:44px;display:flex;align-items:center;padding-left:16px;border-radius:0 0 6px 6px;
+  font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);
+  background:repeating-linear-gradient(45deg,#DCDCE0 0 2px,#F0F0F2 2px 7px);
+}
+.xnote{font-size:12.5px;color:var(--ink3);letter-spacing:-.004em;padding:10px 16px 0 72px;line-height:1.4}
+
+/* ============ results ============ */
+.resblock{padding:18px 16px;border-top:1px solid var(--rule)}
+.resblock:first-of-type{border-top:1px solid var(--ink)}
+.res-h{display:flex;align-items:baseline;gap:9px;margin-bottom:2px}
+.res-h .num{font-size:19px;font-weight:650;letter-spacing:-.02em}
+.res-h .role{font-size:13.5px;color:var(--ink2);letter-spacing:-.006em}
+.res-g{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-top:11px}
+.res-g .lab{font-size:12.5px;font-weight:600;letter-spacing:.055em;text-transform:uppercase;color:var(--ink2);margin-bottom:2px}
+.res-g .big{font-size:27px;font-weight:650;letter-spacing:-.024em;font-variant-numeric:tabular-nums;line-height:1.1}
+.res-g .big small{font-size:15px;font-weight:500;color:var(--ink2)}
+.res-g .order .big{color:var(--red)}
+.res-g .order{text-align:right}
+.res-meta{font-size:12.5px;color:var(--ink3);margin-top:9px;letter-spacing:-.004em;line-height:1.45}
+.res-sum{padding:16px;background:var(--grouped);border-radius:var(--r-srf);margin:0 16px}
+.res-sum .r{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;padding:4px 0;letter-spacing:-.008em}
+.res-sum .r .k{color:var(--ink2)}
+.res-sum .r .v{font-variant-numeric:tabular-nums;font-weight:550}
+
+/* ============ sheets & modals ============ */
+.layer{position:absolute;inset:0;z-index:80;display:none}
+.layer.open{display:block}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.32);opacity:0;transition:opacity .28s ease}
+.layer.in .scrim{opacity:1}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;background:var(--white);
+  border-radius:var(--r-sheet) var(--r-sheet) 0 0;max-height:88%;overflow-y:auto;
+  transform:translateY(100%);transition:transform .34s cubic-bezier(.32,.72,0,1);
+  padding-bottom:22px;
+}
+.layer.in .sheet{transform:translateY(0)}
+.grabber{width:36px;height:5px;border-radius:3px;background:#D2D2D7;margin:8px auto 4px}
+.sheet-head{padding:8px 16px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.sheet-x{
+  width:30px;height:30px;border-radius:50%;background:var(--grouped2);color:var(--ink2);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.toast{
+  position:absolute;left:50%;bottom:120px;transform:translate(-50%,14px);z-index:95;
+  background:rgba(24,24,26,.94);color:#fff;font-size:14.5px;font-weight:500;letter-spacing:-.008em;
+  padding:11px 18px;border-radius:12px;opacity:0;transition:opacity .24s,transform .24s;
+  pointer-events:none;display:flex;align-items:center;gap:8px;max-width:300px;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ============ search overlay ============ */
+.searchlayer{position:absolute;inset:0;z-index:58;background:var(--white);display:none;flex-direction:column}
+.searchlayer.open{display:flex}
+.searchlayer .sl-top{padding:60px 16px 10px;display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.searchlayer .sl-body{flex:1;overflow-y:auto;padding-bottom:24px}
+.searchlayer .sl-body::-webkit-scrollbar{width:0}
+.sl-cancel{color:var(--red);font-size:16.5px;letter-spacing:-.012em;padding:6px 2px;flex:0 0 auto}
+.sl-sec{font-size:12.5px;font-weight:600;letter-spacing:.065em;text-transform:uppercase;color:var(--ink2);padding:20px 16px 7px}
+mark{background:rgba(239,51,51,.16);color:inherit;border-radius:2px;padding:0 1px}
+
+/* ============ doc viewer ============ */
+.doc{padding:0 20px}
+.doc h1{font-size:23px;font-weight:700;letter-spacing:-.024em;margin:0 0 3px;line-height:1.18}
+.doc .dsub{font-size:14.5px;color:var(--ink2);margin:0 0 4px}
+.doc h2{font-size:12.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2);margin:26px 0 8px}
+.doc p{font-size:14.5px;line-height:1.55;margin:0 0 10px;letter-spacing:-.004em;color:var(--ink)}
+.doc .dr{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid var(--rule2);font-size:14.5px}
+.doc .dr .k{color:var(--ink2);letter-spacing:-.004em}
+.doc .dr .v{font-weight:550;text-align:right;font-variant-numeric:tabular-nums}
+.docbanner{
+  margin:0 20px 6px;padding:9px 12px;border:1px solid var(--rule);border-radius:10px;
+  font-size:12.5px;color:var(--ink2);line-height:1.4;letter-spacing:-.004em;
+}
+
+/* ============ steps / selector ============ */
+.progress{display:flex;gap:5px;padding:0 16px}
+.progress i{flex:1;height:3px;border-radius:2px;background:var(--rule)}
+.progress i.on{background:var(--red)}
+.steplabel{font-size:13.5px;color:var(--ink2);letter-spacing:-.006em;padding:12px 16px 0}
+.q{font-size:26px;font-weight:650;letter-spacing:-.026em;line-height:1.18;padding:6px 16px 0;text-wrap:balance}
+
+.matchbar{display:flex;align-items:center;gap:10px;margin-top:12px}
+.matchbar .track{flex:1;height:4px;border-radius:2px;background:var(--rule);overflow:hidden}
+.matchbar .track i{display:block;height:100%;background:var(--red);border-radius:2px;transition:width .5s cubic-bezier(.3,.8,.3,1)}
+.matchbar .pct{font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums;letter-spacing:-.004em}
+
+.empty{padding:52px 32px;text-align:center;color:var(--ink2)}
+.empty .et{font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-.016em;margin-bottom:5px}
+.empty .ed{font-size:14.5px;line-height:1.45;letter-spacing:-.006em}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+}
+.fadein{animation:fi .26s ease both}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.pushin{animation:pi .3s cubic-bezier(.32,.72,0,1) both}
+@keyframes pi{from{opacity:.4;transform:translateX(26px)}to{opacity:1;transform:none}}
+</style>
+
+<div class="stage">
+  <div class="stage-head">
+    <h1>MAGIECHEM® Field Assistant — functional prototype</h1>
+    <p>Flows A–D are live. Search, browse, tap a system layer, calculate, save a project. Product values are demo data pending your TDS source file.</p>
+  </div>
+  <div class="device" id="device">
+    <div class="statusbar">
+      <span>9:41</span>
+      <span class="sig">
+        <span class="bars"><b style="height:4px"></b><b style="height:6px"></b><b style="height:8px"></b><b style="height:10px"></b></span>
+        <i></i>
+      </span>
+    </div>
+    <div class="navbar" id="navbar">
+      <div class="nb-side l" id="nbleft"></div>
+      <div class="nb-title" id="nbtitle"></div>
+      <div class="nb-side r" id="nbright"></div>
+    </div>
+    <div class="scroll" id="scroll"></div>
+    <div class="dock" id="dock" style="display:none"></div>
+    <div class="tabbar" id="tabbar"></div>
+    <div class="layer" id="sheetlayer"><div class="scrim" onclick="closeSheet()"></div><div class="sheet" id="sheet"></div></div>
+    <div class="searchlayer" id="searchlayer">
+      <div class="sl-top">
+        <div class="searchfield" style="flex:1">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="sinput" placeholder="Search" autocomplete="off" spellcheck="false">
+        </div>
+        <button class="sl-cancel" onclick="closeSearch()" id="scancel">Cancel</button>
+      </div>
+      <div class="sl-body" id="sbody"></div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div class="homebar"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   MAGIECHEM® Field Assistant — prototype
+   DATA MODEL
+   Every technical value below is DEMO data. Replacing it with real TDS
+   figures requires no UI change: the UI reads only these keys, and the
+   calculation engine dispatches on `method`, which is a property of the
+   product/layer record — not of the code.
+   ========================================================================= */
+
+const FAMILIES = [
+  {key:'epoxy',        name:'Epoxy'},
+  {key:'polyaspartic', name:'Polyaspartic'},
+  {key:'polyurethane', name:'Polyurethane'},
+  {key:'cpu',          name:'Cementitious Polyurethane'},
+  {key:'primer',       name:'Primers'},
+  {key:'membrane',     name:'Membranes'},
+  {key:'media',        name:'Aggregates & Media'},
+  {key:'repair',       name:'Repair Materials'},
+  {key:'sealant',      name:'Sealants'}
+];
+
+/* method:
+   'wft'       gal = area × wft(mils) × coats / 1604      (wet film thickness — no solids term)
+   'coverage'  gal = area × coats / coverage(ft²/gal)     (published theoretical coverage)
+   'broadcast' lb  = area × rate(lb/ft²) × coats          (flake / quartz / silica broadcast)
+   'spread'    lb  = area × rate(lb/ft²) × coats          (cementitious / slurry placement)
+   'ratio'     lb  = gal(of `basis` layer) × rate(lb/gal) (aggregate blended into a resin)
+*/
+const PRODUCTS = [
+  { id:'5076', number:'5076', name:'Epoxy Primer / Sealer', family:'primer', tag:'Epoxy · Primer',
+    blurb:'Low-viscosity two-component epoxy primer for penetration and adhesion on prepared concrete. Standard primer across most MAGIECHEM® build-ups.',
+    uses:['Concrete primer under epoxy and polyaspartic build-ups','Sealing porous or profiled substrates','Dust-proofing in secondary spaces'],
+    spec:{ mixRatio:'2A : 1B', wft:'5 mils', coverage:'320 ft² / gal', workingTime:'25 min', recoat:'6 – 24 h', packaging:'3 gal kit', voc:'< 50 g/L' },
+    calc:{ method:'coverage', coverage:320, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
+
+  { id:'9461', number:'9461', name:'High-Performance 100% Solids Epoxy', family:'epoxy', tag:'Epoxy · Flooring',
+    blurb:'Trowel- and squeegee-applied 100% solids epoxy used as a body coat, broadcast base coat and grout coat throughout the MAGIECHEM® decorative and industrial systems.',
+    uses:['Broadcast base coat in flake and quartz systems','Grout coat over broadcast media','Self-priming body coat in industrial areas'],
+    spec:{ mixRatio:'2A : 1B', wft:'15 mils', coverage:'107 ft² / gal', workingTime:'20 min', recoat:'8 – 24 h', packaging:'3 gal kit', voc:'0 g/L' },
+    calc:{ method:'wft', wft:15, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
+
+  { id:'9401', number:'9401', name:'Clear Epoxy Grout Coat', family:'epoxy', tag:'Epoxy · Clear',
+    blurb:'Clear 100% solids epoxy for locking broadcast media prior to topcoat. Low viscosity for full wet-out of flake and quartz.',
+    uses:['Grout coat over flake broadcast','Intermediate build over quartz'],
+    spec:{ mixRatio:'2A : 1B', wft:'10 mils', coverage:'160 ft² / gal', workingTime:'22 min', recoat:'8 – 24 h', packaging:'3 gal kit', voc:'0 g/L' },
+    calc:{ method:'wft', wft:10, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
+
+  { id:'955', number:'955', name:'Polyaspartic Topcoat', family:'polyaspartic', tag:'Polyaspartic · Topcoat',
+    blurb:'Fast-return UV-stable polyaspartic topcoat. Available in clear and pigmented, matte through gloss.',
+    uses:['Final wear coat on decorative systems','UV-exposed interior and covered exterior areas','Fast-return retail and commercial work'],
+    spec:{ mixRatio:'1A : 1B', wft:'11 mils', coverage:'145 ft² / gal', workingTime:'20 min', recoat:'2 – 6 h', packaging:'4 gal kit', voc:'< 100 g/L' },
+    calc:{ method:'coverage', coverage:145, coats:1, pack:{size:4, unit:'gal', label:'kit'} } },
+
+  { id:'9500', number:'9500', name:'Novolac Chemical-Resistant Epoxy', family:'epoxy', tag:'Epoxy · Novolac',
+    blurb:'Novolac-modified epoxy for acid and solvent exposure in containment, process and battery areas.',
+    uses:['Secondary containment','Process and chemical handling areas','Battery charging rooms'],
+    spec:{ mixRatio:'2A : 1B', wft:'20 mils', coverage:'80 ft² / gal', workingTime:'18 min', recoat:'10 – 24 h', packaging:'3 gal kit', voc:'0 g/L' },
+    calc:{ method:'wft', wft:20, coats:2, pack:{size:3, unit:'gal', label:'kit'} } },
+
+  { id:'8800', number:'8800', name:'ESD Conductive Topcoat', family:'epoxy', tag:'Epoxy · ESD',
+    blurb:'Static-dissipative topcoat used over a conductive primer grid. Resistance tested per ANSI/ESD S20.20.',
+    uses:['Electronics assembly and cleanrooms','Battery and munitions handling','Pharmaceutical process areas'],
+    spec:{ mixRatio:'3A : 1B', wft:'8 mils', coverage:'200 ft² / gal', workingTime:'20 min', recoat:'8 – 16 h', packaging:'3 gal kit', voc:'< 50 g/L' },
+    calc:{ method:'coverage', coverage:200, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
+
+  { id:'6100', number:'6100', name:'Polyurethane Traffic Membrane', family:'membrane', tag:'Polyurethane · Membrane',
+    blurb:'Elastomeric polyurethane waterproofing membrane for vehicular and pedestrian traffic decks.',
+    uses:['Parking structures','Plaza and pedestrian decks','Ramps and turning lanes'],
+    spec:{ mixRatio:'Single component', wft:'25 mils', coverage:'64 ft² / gal', workingTime:'40 min', recoat:'8 – 24 h', packaging:'5 gal pail', voc:'< 100 g/L' },
+    calc:{ method:'wft', wft:25, coats:1, pack:{size:5, unit:'gal', label:'pail'} } },
+
+  { id:'4020', number:'4020', name:'Moisture Vapour Barrier', family:'primer', tag:'Epoxy · MVB',
+    blurb:'100% solids epoxy moisture mitigation coating for slabs up to 100% RH.',
+    uses:['Moisture mitigation under resinous systems','Slabs on grade without a vapour retarder'],
+    spec:{ mixRatio:'2A : 1B', wft:'10 mils', coverage:'160 ft² / gal', workingTime:'30 min', recoat:'6 – 24 h', packaging:'3 gal kit', voc:'0 g/L' },
+    calc:{ method:'wft', wft:10, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
+
+  { id:'7200', number:'7200', name:'Cementitious Urethane Self-Levelling', family:'cpu', tag:'Cementitious PU · Body',
+    blurb:'Three-component cementitious urethane placed at 1/4 in. for thermal shock and aggressive chemical exposure.',
+    uses:['Food and beverage processing','Wet process areas and washdown','Freezers, coolers and steam cleaning'],
+    spec:{ mixRatio:'A + B + Aggregate', wft:'250 mils (1/4 in.)', coverage:'2.9 lb / ft²', workingTime:'15 min', recoat:'8 – 12 h', packaging:'48 lb unit', voc:'0 g/L' },
+    calc:{ method:'spread', rate:2.9, coats:1, pack:{size:48, unit:'lb', label:'unit'} } },
+
+  { id:'7250', number:'7250', name:'Cementitious Urethane Seal Coat', family:'cpu', tag:'Cementitious PU · Seal',
+    blurb:'Pigmented seal coat for cementitious urethane bodies. Adjusts texture and closes the surface.',
+    uses:['Seal coat over 7200','Colour and sheen control in process areas'],
+    spec:{ mixRatio:'A + B', wft:'12 mils', coverage:'250 ft² / gal', workingTime:'18 min', recoat:'6 – 12 h', packaging:'2 gal kit', voc:'0 g/L' },
+    calc:{ method:'coverage', coverage:250, coats:1, pack:{size:2, unit:'gal', label:'kit'} } },
+
+  { id:'MFLK', number:'MAGIEFLAKE™', name:'Decorative Vinyl Flake', family:'media', tag:'Broadcast Media',
+    blurb:'Vinyl chip broadcast media, 1/4 in. and 1/8 in., supplied in blended colourways.',
+    uses:['Single and double broadcast decorative systems'],
+    spec:{ mixRatio:'—', wft:'—', coverage:'0.045 lb / ft² (single)', workingTime:'—', recoat:'—', packaging:'55 lb box', voc:'—' },
+    calc:{ method:'broadcast', rate:0.045, coats:1, pack:{size:55, unit:'lb', label:'box'} } },
+
+  { id:'MQTZ', number:'MAGIEQUARTZ™', name:'Coloured Quartz Aggregate', family:'media', tag:'Broadcast Media',
+    blurb:'Kiln-fired coloured quartz for double broadcast systems. Rounded and angular grades.',
+    uses:['Double broadcast quartz systems','Slip-resistant industrial finishes'],
+    spec:{ mixRatio:'—', wft:'—', coverage:'0.55 lb / ft² per broadcast', workingTime:'—', recoat:'—', packaging:'50 lb bag', voc:'—' },
+    calc:{ method:'broadcast', rate:0.55, coats:1, pack:{size:50, unit:'lb', label:'bag'} } },
+
+  { id:'MGRP', number:'MAGIEGRIP™', name:'Graded Silica Aggregate', family:'media', tag:'Broadcast Media',
+    blurb:'Kiln-dried graded silica for slip resistance in traffic and deck coatings.',
+    uses:['Traffic deck broadcast','Ramp and turning-lane texture'],
+    spec:{ mixRatio:'—', wft:'—', coverage:'0.05 lb / ft²', workingTime:'—', recoat:'—', packaging:'50 lb bag', voc:'—' },
+    calc:{ method:'broadcast', rate:0.05, coats:1, pack:{size:50, unit:'lb', label:'bag'} } },
+
+  { id:'3300', number:'3300', name:'Epoxy Repair Mortar', family:'repair', tag:'Repair · Mortar',
+    blurb:'Trowel-grade epoxy mortar for spall repair, joint nosing and slab reprofiling prior to coating.',
+    uses:['Spall and pop-out repair','Joint edge reconstruction','Feather-edging and reprofiling'],
+    spec:{ mixRatio:'2A : 1B + Aggregate', wft:'Variable', coverage:'12 ft² / unit at 1/4 in.', workingTime:'25 min', recoat:'8 – 24 h', packaging:'1.5 gal unit', voc:'0 g/L' },
+    calc:{ method:'coverage', coverage:8, coats:1, pack:{size:1.5, unit:'gal', label:'unit'} } },
+
+  { id:'2100', number:'2100', name:'Polyurethane Joint Sealant', family:'sealant', tag:'Sealant · Joint',
+    blurb:'Self-levelling polyurethane sealant for control and construction joints in coated floors.',
+    uses:['Control joint fill','Construction joint sealing','Perimeter detailing'],
+    spec:{ mixRatio:'Single component', wft:'—', coverage:'Linear — see joint schedule', workingTime:'45 min', recoat:'—', packaging:'20 oz sausage', voc:'< 60 g/L' },
+    calc:null }
+];
+
+const SYSTEMS = [
+  { id:'flake-sb', name:'MAGIEFLAKE™', variant:'Single Broadcast', family:'Decorative',
+    blurb:'Decorative high-performance flake flooring with a polyaspartic wear surface. Fast return to service with a durable, seamless, easily cleaned finish.',
+    thickness:'40 – 45 mils', tags:{env:['commercial','industrial','mechanical'],perf:['slip','impact','traffic'],finish:['flake']},
+    layers:[
+      {pid:'955',  role:'Polyaspartic Topcoat', depth:11, over:{method:'coverage', coverage:145}},
+      {pid:'9401', role:'Clear Grout Coat',     depth:10, over:{method:'wft', wft:10}},
+      {pid:'MFLK', role:'Flake Broadcast',      depth:8,  media:true, over:{method:'broadcast', rate:0.045}},
+      {pid:'9461', role:'Base Coat',            depth:15, over:{method:'wft', wft:15}},
+      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+    ]},
+
+  { id:'quartz-db', name:'MAGIEQUARTZ™ DB', variant:'Double Broadcast', family:'Decorative',
+    blurb:'Double broadcast coloured quartz system at a nominal 1/4 in. Heavy-duty slip resistance and impact tolerance for wet and aggressive service areas.',
+    thickness:'1/4 in. nominal', tags:{env:['industrial','food','pharma','commercial'],perf:['slip','impact','chemical','traffic'],finish:['quartz']},
+    layers:[
+      {pid:'955',  role:'Polyaspartic Topcoat', depth:11, over:{method:'coverage', coverage:145}},
+      {pid:'MQTZ', role:'Second Broadcast',     depth:10, media:true, over:{method:'broadcast', rate:0.45}},
+      {pid:'9461', role:'Grout Coat',           depth:12, over:{method:'wft', wft:12}},
+      {pid:'MQTZ', role:'First Broadcast',      depth:14, media:true, over:{method:'broadcast', rate:0.70}},
+      {pid:'9461', role:'Base Coat',            depth:15, over:{method:'wft', wft:15}},
+      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+    ]},
+
+  { id:'floor-mr1', name:'MAGIEFLOOR™ MR I', variant:'Mechanical Room', family:'Industrial',
+    blurb:'Economical high-build epoxy floor with a chemical-resistant polyaspartic wear coat. Specified for mechanical, electrical and service rooms.',
+    thickness:'30 – 34 mils', tags:{env:['mechanical','commercial','industrial'],perf:['chemical','traffic'],finish:['smooth','monochrome']},
+    layers:[
+      {pid:'955',  role:'Polyaspartic Topcoat', depth:11, over:{method:'coverage', coverage:145}},
+      {pid:'9461', role:'Body Coat',            depth:15, over:{method:'wft', wft:15}},
+      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+    ]},
+
+  { id:'cpu-sl', name:'MAGIETHANE™ SL', variant:'Self-Levelling 1/4 in.', family:'Food & Beverage',
+    blurb:'Cementitious urethane placed at 1/4 in. for thermal shock, steam cleaning and aggressive organic acids. Installs over green concrete and tolerates moisture.',
+    thickness:'1/4 in.', tags:{env:['food','industrial','pharma'],perf:['chemical','thermal','slip','impact'],finish:['cementitious']},
+    layers:[
+      {pid:'7250', role:'Seal Coat',            depth:12, over:{method:'coverage', coverage:250}},
+      {pid:'7200', role:'Cementitious Body',    depth:250, over:{method:'spread', rate:2.9}}
+    ]},
+
+  { id:'deck-tc', name:'MAGIEDECK™ TC', variant:'Traffic Coating', family:'Traffic & Waterproofing',
+    blurb:'Elastomeric polyurethane traffic membrane with broadcast silica for vehicular decks, ramps and turning lanes.',
+    thickness:'45 – 50 mils', tags:{env:['parking','commercial'],perf:['waterproofing','uv','traffic','slip'],finish:['smooth','monochrome']},
+    layers:[
+      {pid:'6100', role:'Wear Coat',            depth:15, over:{method:'wft', wft:15}},
+      {pid:'MGRP', role:'Silica Broadcast',     depth:6,  media:true, over:{method:'broadcast', rate:0.05}},
+      {pid:'6100', role:'Base Membrane',        depth:25, over:{method:'wft', wft:25}},
+      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+    ]},
+
+  { id:'esd-1', name:'MAGIESTATIC™ ESD', variant:'Static Dissipative', family:'Industrial',
+    blurb:'Static-dissipative floor over a conductive grid, tested to ANSI/ESD S20.20 for electronics, pharmaceutical and energetic materials handling.',
+    thickness:'24 – 28 mils', tags:{env:['industrial','pharma','commercial'],perf:['esd','chemical','traffic'],finish:['smooth']},
+    layers:[
+      {pid:'8800', role:'ESD Topcoat',          depth:8,  over:{method:'coverage', coverage:200}},
+      {pid:'9461', role:'Conductive Base',      depth:12, over:{method:'wft', wft:12}},
+      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+    ]},
+
+  { id:'nov-cr', name:'MAGIEURE™ CR', variant:'Novolac Chemical Resistant', family:'Chemical Resistant',
+    blurb:'Two-coat novolac epoxy for concentrated acid and solvent exposure. Specified for containment, process trenches and battery rooms.',
+    thickness:'45 mils', tags:{env:['industrial','food','pharma'],perf:['chemical','impact'],finish:['smooth']},
+    layers:[
+      {pid:'9500', role:'Novolac Coats (×2)',   depth:40, over:{method:'wft', wft:20, coats:2}},
+      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+    ]}
+];
+
+const ENVIRONMENTS = [
+  {key:'commercial', name:'Commercial'}, {key:'industrial', name:'Industrial'},
+  {key:'food', name:'Food Processing'},  {key:'mechanical', name:'Mechanical Room'},
+  {key:'parking', name:'Parking'},       {key:'pharma', name:'Pharmaceutical'}
+];
+const PERFORMANCE = [
+  {key:'chemical', name:'Chemical Resistance'}, {key:'impact', name:'Impact Resistance'},
+  {key:'slip', name:'Slip Resistance'},         {key:'waterproofing', name:'Waterproofing'},
+  {key:'uv', name:'UV Exposure'},               {key:'esd', name:'ESD'},
+  {key:'traffic', name:'Heavy Traffic'},        {key:'thermal', name:'Thermal Shock'}
+];
+const FINISHES = [
+  {key:'smooth', name:'Smooth'}, {key:'flake', name:'Flake'}, {key:'quartz', name:'Quartz'},
+  {key:'monochrome', name:'Monochrome'}, {key:'cementitious', name:'Cementitious'}
+];
+const APPLICATIONS = [
+  {key:'flake', name:'Decorative Flake'}, {key:'quartz', name:'Quartz'},
+  {key:'chemical', name:'Chemical Resistant'}, {key:'mechanical', name:'Mechanical Rooms'},
+  {key:'esd', name:'ESD'}, {key:'parking', name:'Parking & Traffic'},
+  {key:'waterproofing', name:'Waterproofing'}, {key:'food', name:'Food & Beverage'},
+  {key:'pharma', name:'Pharmaceutical'}, {key:'industrial', name:'Heavy Industrial'}
+];
+
+/* ---------- derived indexes ---------- */
+const P = {}; PRODUCTS.forEach(p => P[p.id] = p);
+const S = {}; SYSTEMS.forEach(s => S[s.id] = s);
+function systemsUsing(pid){ return SYSTEMS.filter(s => s.layers.some(l => l.pid === pid)); }
+function familyCount(k){ return PRODUCTS.filter(p => p.family === k).length; }
+function familyName(k){ return (FAMILIES.find(f => f.key === k) || {}).name || k; }
+function sysTitle(s){ return s.name + (s.variant ? ' ' + s.variant : ''); }
+
+const DOCUMENTS = [];
+PRODUCTS.forEach(p => {
+  DOCUMENTS.push({id:'tds-'+p.id, kind:'TDS', cat:'tds', title:p.number+' Technical Data Sheet', pid:p.id});
+  DOCUMENTS.push({id:'sds-'+p.id, kind:'SDS', cat:'sds', title:p.number+' Safety Data Sheet', pid:p.id});
+});
+SYSTEMS.forEach(s => DOCUMENTS.push({id:'gd-'+s.id, kind:'GUIDE', cat:'guide', title:sysTitle(s)+' System Guide', sid:s.id}));
+const D = {}; DOCUMENTS.forEach(d => D[d.id] = d);
+</script>
+
+<script>
+/* =========================================================================
+   CALCULATION ENGINE
+   Strategy is data, not code. Each layer resolves its rule from the product
+   record, optionally overridden by the system layer, then by user overrides.
+   No solids term anywhere — MAGIECHEM® specifies wet film thickness.
+   ========================================================================= */
+const FT2_PER_GAL_MIL = 1604;   // ft² covered by 1 US gallon at 1 mil WFT
+const M2_PER_FT2 = 0.09290304, L_PER_GAL = 3.785411784, KG_PER_LB = 0.45359237;
+
+function resolveRule(layer, idx, overrides){
+  const base = (P[layer.pid] && P[layer.pid].calc) || {};
+  return Object.assign({}, base, layer.over || {}, (overrides && overrides[idx]) || {});
+}
+
+function computeLine(rule, areaFt2, waste, basisGal){
+  const coats = rule.coats || 1;
+  let theoretical = 0, unit = 'gal', how = '';
+  switch(rule.method){
+    case 'wft':
+      theoretical = areaFt2 * rule.wft * coats / FT2_PER_GAL_MIL;
+      how = rule.wft + ' mils WFT' + (coats > 1 ? ' × ' + coats + ' coats' : '');
+      break;
+    case 'coverage':
+      theoretical = areaFt2 * coats / rule.coverage;
+      how = rule.coverage + ' ft²/gal' + (coats > 1 ? ' × ' + coats + ' coats' : '');
+      break;
+    case 'broadcast':
+      theoretical = areaFt2 * rule.rate * coats; unit = 'lb';
+      how = rule.rate + ' lb/ft² broadcast';
+      break;
+    case 'spread':
+      theoretical = areaFt2 * rule.rate * coats; unit = 'lb';
+      how = rule.rate + ' lb/ft² placed';
+      break;
+    case 'ratio':
+      theoretical = (basisGal || 0) * rule.rate; unit = 'lb';
+      how = rule.rate + ' lb per gal of resin';
+      break;
+    default:
+      return null;
+  }
+  const withWaste = theoretical * (1 + waste);
+  const pack = rule.pack || {size:1, unit:unit, label:'unit'};
+  const packs = Math.ceil((withWaste / pack.size) - 1e-9);
+  return {theoretical, withWaste, unit, how, packs, pack, method:rule.method};
+}
+
+function calculateSystem(sys, areaFt2, waste, overrides){
+  const lines = []; let lastGal = 0;
+  sys.layers.forEach((layer, i) => {
+    const rule = resolveRule(layer, i, overrides);
+    const r = computeLine(rule, areaFt2, waste, lastGal);
+    if(!r) return;
+    if(r.unit === 'gal') lastGal = r.theoretical;
+    lines.push(Object.assign({pid:layer.pid, role:layer.role, index:i}, r));
+  });
+  return lines;
+}
+
+function calculateProduct(prod, areaFt2, waste, overrides){
+  const rule = Object.assign({}, prod.calc || {}, (overrides && overrides[0]) || {});
+  const r = computeLine(rule, areaFt2, waste, 0);
+  return r ? [Object.assign({pid:prod.id, role:prod.tag, index:0}, r)] : [];
+}
+
+function areaFt2(){
+  const a = parseFloat(state.calc.area);
+  if(!isFinite(a) || a <= 0) return 0;
+  return state.calc.unit === 'm2' ? a / M2_PER_FT2 : a;
+}
+function currentLines(){
+  const a = areaFt2(); if(!a) return [];
+  const t = state.calc.target; if(!t || !t.id) return [];
+  const w = state.calc.waste / 100;
+  return t.kind === 'system'
+    ? calculateSystem(S[t.id], a, w, state.calc.overrides)
+    : calculateProduct(P[t.id], a, w, state.calc.overrides);
+}
+
+/* volume/weight display respects the entered unit system (Soulver-style unit awareness) */
+function qty(v, unit){
+  const metric = state.calc.unit === 'm2';
+  if(unit === 'gal') return metric ? {n:v * L_PER_GAL, u:'L'} : {n:v, u:'gal'};
+  return metric ? {n:v * KG_PER_LB, u:'kg'} : {n:v, u:'lb'};
+}
+function fmt(n, dp){
+  dp = dp === undefined ? 1 : dp;
+  return n.toLocaleString(state.lang === 'fr' ? 'fr-CA' : 'en-CA',
+    {minimumFractionDigits:dp, maximumFractionDigits:dp});
+}
+function fmtArea(a, u){ return fmt(a, 0) + ' ' + (u === 'm2' ? 'm²' : 'ft²'); }
+
+/* =========================================================================
+   LANGUAGE — §33. French strings are 20–40% longer; every layout below is
+   built to absorb that, and this toggle is how we prove it.
+   ========================================================================= */
+const STR = {
+ en:{
+  'tab.home':'Home','tab.systems':'Systems','tab.calculator':'Calculator','tab.products':'Products','tab.projects':'Projects',
+  'home.q':'What do you need?','home.ph':'Search products, systems or technical data',
+  'home.a1t':'Find the right system','home.a1s':'Project conditions → recommended solution',
+  'home.a2t':'Calculate a project','home.a2s':'Area → system → material quantities',
+  'home.a3t':'Browse products','home.a3s':'Technical data, TDS and SDS',
+  'home.continue':'Continue','home.recent':'Recently viewed','home.docs':'Document Center',
+  'search.cancel':'Cancel','search.recent':'Recent searches','search.none':'No results',
+  'search.noneSub':'Try a product number, a system name or an application.',
+  'sec.product':'Product','sec.products':'Products','sec.systems':'Systems','sec.documents':'Documents',
+  'sec.using':'Systems using this product','sec.suggested':'Try','sec.applications':'Applications',
+  'prod.families':'Product families','prod.overview':'Overview','prod.uses':'Applications',
+  'prod.technical':'Technical data','prod.compatible':'Compatible systems','prod.documents':'Documents',
+  'prod.calc':'Calculate quantity','prod.addProj':'Add to project','prod.viewSys':'View systems using this product',
+  'spec.mix':'Mix ratio','spec.wft':'Wet film','spec.cov':'Coverage','spec.work':'Working time',
+  'spec.recoat':'Recoat window','spec.pack':'Packaging','spec.voc':'VOC',
+  'doc.tds':'Technical Data Sheet','doc.sds':'Safety Data Sheet','doc.guide':'System Guide',
+  'doc.share':'Share','doc.save':'Save','doc.searchIn':'Search in document','doc.center':'Document Center',
+  'doc.demo':'Demo document generated from prototype data. Not for specification.',
+  'sys.buildup':'System build-up','sys.thickness':'System thickness','sys.substrate':'Concrete substrate',
+  'sys.calc':'Calculate this system','sys.addProj':'Add to project','sys.viewProd':'View product',
+  'sys.byApp':'By application','sys.byPerf':'By performance','sys.all':'All systems',
+  'sys.find':'Find the right system','sys.findSub':'Three questions. One recommendation.',
+  'sys.layerNote':'Tap any layer for its product data. Depths shown are wet film thickness.',
+  'sel.step':'Step','sel.of':'of','sel.q1':'What type of environment is this?',
+  'sel.q2':'What performance is required?','sel.q3':'What finish?',
+  'sel.multi':'Select all that apply','sel.one':'Select one',
+  'sel.continue':'Continue','sel.rec':'Recommended','sel.why':'Why this system',
+  'sel.view':'View system','sel.calc':'Calculate materials','sel.alt':'Also considered','sel.again':'Start over',
+  'sel.match':'match','sel.none':'No system matches every requirement.',
+  'sel.noneSub':'Relax one requirement, or contact MAGIECHEM® technical services.',
+  'calc.area':'Project area','calc.dims':'Or enter dimensions','calc.length':'Length','calc.width':'Width',
+  'calc.what':'What are you calculating?','calc.product':'Product','calc.system':'Complete system',
+  'calc.pickSystem':'Select a system','calc.pickProduct':'Select a product','calc.change':'Change',
+  'calc.settings':'Project settings','calc.waste':'Waste allowance','calc.advanced':'Advanced settings',
+  'calc.advSub':'Coverage, thickness and coats per layer','calc.run':'Calculate materials',
+  'calc.recent':'Recent','calc.search':'Search systems','calc.reset':'Reset to MAGIECHEM® values',
+  'calc.enterArea':'Enter a project area to begin','calc.live':'Updates as you change any input',
+  'calc.coats':'Coats','calc.rate':'Broadcast rate','calc.cov':'Coverage','calc.wft':'Wet film thickness',
+  'res.title':'Materials required','res.req':'Required','res.order':'Order',
+  'res.theo':'Theoretical','res.waste':'With waste','res.method':'Method',
+  'res.save':'Save to project','res.share':'Share material list','res.summary':'Summary',
+  'res.layers':'Layers','res.totalArea':'Area',
+  'proj.new':'New project','proj.recent':'Recent','proj.none':'No projects yet',
+  'proj.noneSub':'Calculate a system and save it here to keep the area, waste factor and material list together.',
+  'proj.system':'System','proj.materials':'Materials','proj.docs':'Documents','proj.calc':'Calculation',
+  'proj.notes':'Notes','proj.matList':'Material list','proj.items':'items','proj.files':'files',
+  'proj.name':'Project name','proj.client':'Client','proj.loc':'Location','proj.save':'Save project',
+  'proj.saved':'Saved to projects','proj.latest':'Latest','proj.today':'Today','proj.recalc':'Open calculation',
+  'auth.title':'Save your project','auth.body':'Create an account to keep your projects and calculations available across devices.',
+  'auth.apple':'Continue with Apple','auth.google':'Continue with Google','auth.email':'Continue with Email','auth.not':'Not now',
+  'set.title':'Profile','set.lang':'Language','set.units':'Default units','set.about':'About',
+  'set.data':'Prototype data','set.dataSub':'Demo values pending MAGIECHEM® TDS source',
+  'set.signin':'Sign in','set.anon':'Browsing without an account','set.acct':'Account',
+  'common.done':'Done','common.close':'Close','common.back':'Back','common.cancel':'Cancel','common.demo':'Demo data'
+ },
+ fr:{
+  'tab.home':'Accueil','tab.systems':'Systèmes','tab.calculator':'Calculateur','tab.products':'Produits','tab.projects':'Projets',
+  'home.q':'De quoi avez-vous besoin ?','home.ph':'Rechercher un produit, un système ou une donnée technique',
+  'home.a1t':'Trouver le bon système','home.a1s':'Conditions du projet → solution recommandée',
+  'home.a2t':'Calculer un projet','home.a2s':'Superficie → système → quantités de matériaux',
+  'home.a3t':'Parcourir les produits','home.a3s':'Données techniques, FT et FDS',
+  'home.continue':'Reprendre','home.recent':'Consultés récemment','home.docs':'Centre de documentation',
+  'search.cancel':'Annuler','search.recent':'Recherches récentes','search.none':'Aucun résultat',
+  'search.noneSub':'Essayez un numéro de produit, un nom de système ou une application.',
+  'sec.product':'Produit','sec.products':'Produits','sec.systems':'Systèmes','sec.documents':'Documents',
+  'sec.using':'Systèmes utilisant ce produit','sec.suggested':'Suggestions','sec.applications':'Applications',
+  'prod.families':'Familles de produits','prod.overview':'Aperçu','prod.uses':'Applications',
+  'prod.technical':'Données techniques','prod.compatible':'Systèmes compatibles','prod.documents':'Documents',
+  'prod.calc':'Calculer la quantité','prod.addProj':'Ajouter au projet','prod.viewSys':'Voir les systèmes utilisant ce produit',
+  'spec.mix':'Rapport de mélange','spec.wft':'Film humide','spec.cov':'Rendement','spec.work':'Durée de vie en pot',
+  'spec.recoat':'Délai de recouvrement','spec.pack':'Conditionnement','spec.voc':'COV',
+  'doc.tds':'Fiche technique','doc.sds':'Fiche de données de sécurité','doc.guide':'Guide de système',
+  'doc.share':'Partager','doc.save':'Enregistrer','doc.searchIn':'Rechercher dans le document','doc.center':'Centre de documentation',
+  'doc.demo':'Document de démonstration généré à partir des données du prototype. Ne pas utiliser en devis.',
+  'sys.buildup':'Composition du système','sys.thickness':'Épaisseur du système','sys.substrate':'Support de béton',
+  'sys.calc':'Calculer ce système','sys.addProj':'Ajouter au projet','sys.viewProd':'Voir le produit',
+  'sys.byApp':'Par application','sys.byPerf':'Par performance','sys.all':'Tous les systèmes',
+  'sys.find':'Trouver le bon système','sys.findSub':'Trois questions. Une recommandation.',
+  'sys.layerNote':'Touchez une couche pour ses données produit. Les épaisseurs indiquées sont en film humide.',
+  'sel.step':'Étape','sel.of':'sur','sel.q1':'De quel type d’environnement s’agit-il ?',
+  'sel.q2':'Quelles performances sont requises ?','sel.q3':'Quel fini ?',
+  'sel.multi':'Sélectionnez tout ce qui s’applique','sel.one':'Sélectionnez une option',
+  'sel.continue':'Continuer','sel.rec':'Recommandé','sel.why':'Pourquoi ce système',
+  'sel.view':'Voir le système','sel.calc':'Calculer les matériaux','sel.alt':'Également considérés','sel.again':'Recommencer',
+  'sel.match':'correspondance','sel.none':'Aucun système ne satisfait toutes les exigences.',
+  'sel.noneSub':'Assouplissez une exigence ou communiquez avec le service technique MAGIECHEM®.',
+  'calc.area':'Superficie du projet','calc.dims':'Ou entrez les dimensions','calc.length':'Longueur','calc.width':'Largeur',
+  'calc.what':'Que calculez-vous ?','calc.product':'Produit','calc.system':'Système complet',
+  'calc.pickSystem':'Sélectionner un système','calc.pickProduct':'Sélectionner un produit','calc.change':'Modifier',
+  'calc.settings':'Paramètres du projet','calc.waste':'Facteur de perte','calc.advanced':'Paramètres avancés',
+  'calc.advSub':'Rendement, épaisseur et nombre de couches','calc.run':'Calculer les matériaux',
+  'calc.recent':'Récents','calc.search':'Rechercher un système','calc.reset':'Rétablir les valeurs MAGIECHEM®',
+  'calc.enterArea':'Entrez une superficie pour commencer','calc.live':'Se met à jour à chaque modification',
+  'calc.coats':'Couches','calc.rate':'Taux de saupoudrage','calc.cov':'Rendement','calc.wft':'Épaisseur du film humide',
+  'res.title':'Matériaux requis','res.req':'Requis','res.order':'À commander',
+  'res.theo':'Théorique','res.waste':'Avec perte','res.method':'Méthode',
+  'res.save':'Enregistrer au projet','res.share':'Partager la liste','res.summary':'Sommaire',
+  'res.layers':'Couches','res.totalArea':'Superficie',
+  'proj.new':'Nouveau projet','proj.recent':'Récents','proj.none':'Aucun projet',
+  'proj.noneSub':'Calculez un système et enregistrez-le ici pour conserver la superficie, le facteur de perte et la liste de matériaux.',
+  'proj.system':'Système','proj.materials':'Matériaux','proj.docs':'Documents','proj.calc':'Calcul',
+  'proj.notes':'Notes','proj.matList':'Liste de matériaux','proj.items':'articles','proj.files':'fichiers',
+  'proj.name':'Nom du projet','proj.client':'Client','proj.loc':'Emplacement','proj.save':'Enregistrer le projet',
+  'proj.saved':'Enregistré dans les projets','proj.latest':'Dernier','proj.today':'Aujourd’hui','proj.recalc':'Ouvrir le calcul',
+  'auth.title':'Enregistrer votre projet','auth.body':'Créez un compte pour conserver vos projets et vos calculs sur tous vos appareils.',
+  'auth.apple':'Continuer avec Apple','auth.google':'Continuer avec Google','auth.email':'Continuer avec courriel','auth.not':'Plus tard',
+  'set.title':'Profil','set.lang':'Langue','set.units':'Unités par défaut','set.about':'À propos',
+  'set.data':'Données du prototype','set.dataSub':'Valeurs de démonstration en attente des fiches techniques MAGIECHEM®',
+  'set.signin':'Se connecter','set.anon':'Navigation sans compte','set.acct':'Compte',
+  'common.done':'Terminé','common.close':'Fermer','common.back':'Retour','common.cancel':'Annuler','common.demo':'Données de démonstration'
+ }
+};
+function t(k){ return (STR[state.lang] && STR[state.lang][k]) || STR.en[k] || k; }
+
+/* Layer roles are content, not chrome — MAGIECHEM® will supply them in both
+   languages. Until then this table stands in, and roleName() is the single
+   read point, so real bilingual data drops in without touching a screen. */
+const ROLE_FR = {
+  'Polyaspartic Topcoat':'Couche de finition polyaspartique',
+  'Clear Grout Coat':'Couche de scellement transparente',
+  'Flake Broadcast':'Saupoudrage de flocons',
+  'Base Coat':'Couche de base',
+  'Primer':'Apprêt',
+  'Second Broadcast':'Deuxième saupoudrage',
+  'First Broadcast':'Premier saupoudrage',
+  'Grout Coat':'Couche de scellement',
+  'Body Coat':'Couche de corps',
+  'Seal Coat':'Couche de scellement',
+  'Cementitious Body':'Corps cimentaire',
+  'Wear Coat':'Couche d’usure',
+  'Silica Broadcast':'Saupoudrage de silice',
+  'Base Membrane':'Membrane de base',
+  'ESD Topcoat':'Couche de finition ESD',
+  'Conductive Base':'Couche conductrice',
+  'Novolac Coats (×2)':'Couches novolaque (×2)'
+};
+function roleName(r){ return (state.lang === 'fr' && ROLE_FR[r]) || r; }
+
+/* Packaging nouns pluralise properly and translate — "boxs" is not a word,
+   and a French material list handed to a distributor must read in French. */
+const PACK_WORDS = {
+  kit:{en:['kit','kits'], fr:['trousse','trousses']},
+  box:{en:['box','boxes'], fr:['boîte','boîtes']},
+  bag:{en:['bag','bags'], fr:['sac','sacs']},
+  pail:{en:['pail','pails'], fr:['seau','seaux']},
+  unit:{en:['unit','units'], fr:['unité','unités']}
+};
+function packWord(label, n){
+  const w = PACK_WORDS[label];
+  if(!w) return label + (n === 1 ? '' : 's');
+  return (w[state.lang] || w.en)[n === 1 ? 0 : 1];
+}
+</script>
+
+<script>
+/* =========================================================================
+   STATE — one store above the navigation stacks, so nothing is lost on back.
+   Results are DERIVED, never stored: changing area, system, waste, thickness
+   or coats recomputes on read.
+   ========================================================================= */
+const TABS = ['home','systems','calculator','products','projects'];
+const state = {
+  lang:'en',
+  tab:'home',
+  stacks:{home:[{n:'home'}], systems:[{n:'systems'}], calculator:[{n:'calc'}], products:[{n:'products'}], projects:[{n:'projects'}]},
+  scroll:{},
+  calc:{ area:'', unit:'ft2', target:null, waste:10, overrides:{}, advOpen:false, l:'', w:'' },
+  selector:{ step:0, env:null, perf:[], finish:null },
+  projects:[],
+  recent:{ products:[], systems:[], searches:[] },
+  auth:'anonymous',
+  seq:1
+};
+
+/* seed one project so Continue and Projects are real on first run */
+(function seed(){
+  const sys = S['floor-mr1'], a = 8450, w = .10;
+  state.projects.push({
+    id:'p'+(state.seq++), name:'Costco Laval', client:'Costco Wholesale Canada',
+    location:'Laval, QC', space:'Mechanical Room', area:a, unit:'ft2',
+    systemId:sys.id, waste:10, overrides:{}, lines:calculateSystem(sys, a, w, {}),
+    notes:'Existing coating to be mechanically removed. Two floor drains to be detailed.',
+    created:'Today'
+  });
+  state.recent.products = ['9461','5076'];
+  state.recent.systems = ['flake-sb'];
+})();
+
+/* ---------- navigation ---------- */
+function stack(){ return state.stacks[state.tab]; }
+function route(){ const s = stack(); return s[s.length - 1]; }
+function push(r){ saveScroll(); stack().push(r); render('push'); }
+function pop(){ if(stack().length > 1){ stack().pop(); render('pop'); } }
+function setTab(tab){
+  if(tab === state.tab){ if(stack().length > 1){ state.stacks[tab] = [stack()[0]]; render('pop'); } return; }
+  saveScroll(); state.tab = tab; render('tab');
+}
+function resetTo(tab, r){ saveScroll(); state.tab = tab; state.stacks[tab] = [r]; render('tab'); }
+function scrollKey(){ return state.tab + '|' + stack().map(r => r.n + (r.id||'') + (r.key||'')).join('/'); }
+function saveScroll(){ state.scroll[scrollKey()] = document.getElementById('scroll').scrollTop; }
+
+/* ---------- icons (SF-Symbols-like line set, 1.6pt) ---------- */
+const IC = {
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>',
+  chevR:'<path d="M9 5l7 7-7 7"/>',
+  chevL:'<path d="M15 5l-7 7 7 7"/>',
+  chevD:'<path d="M5 9l7 7 7-7"/>',
+  home:'<path d="M3.5 10.5L12 3.5l8.5 7"/><path d="M5.5 9.6V20h13V9.6"/>',
+  layers:'<path d="M12 3.5L3 8l9 4.5L21 8z"/><path d="M3 12.5l9 4.5 9-4.5"/><path d="M3 16.8l9 4.5 9-4.5"/>',
+  calc:'<rect x="4.5" y="2.8" width="15" height="18.4" rx="2.6"/><path d="M8 7.5h8"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/>',
+  grid:'<rect x="3.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.8"/>',
+  folder:'<path d="M3.5 7.2a2 2 0 012-2h3.4l2 2.4h7.6a2 2 0 012 2v8.2a2 2 0 01-2 2h-13a2 2 0 01-2-2z"/>',
+  doc:'<path d="M6.5 2.8h7l4.5 4.6v13.8h-11.5z"/><path d="M13.3 2.9v4.7h4.6"/>',
+  person:'<circle cx="12" cy="8" r="3.6"/><path d="M4.8 20.5c1-3.7 3.9-5.6 7.2-5.6s6.2 1.9 7.2 5.6"/>',
+  clock:'<circle cx="12" cy="12" r="8.6"/><path d="M12 7v5.3l3.4 2"/>',
+  check:'<path d="M4.5 12.5l5 5 10-11"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  share:'<path d="M12 15.5V3.6"/><path d="M8 7.4l4-3.8 4 3.8"/><path d="M5 13.5v5.4a1.9 1.9 0 001.9 1.9h10.2a1.9 1.9 0 001.9-1.9v-5.4"/>',
+  star:'<path d="M12 3.6l2.6 5.6 6 .8-4.4 4.2 1.1 6.1L12 17.4 6.7 20.3l1.1-6.1L3.4 10l6-.8z"/>',
+  book:'<path d="M4 4.6h6a3 3 0 013 3v12a2.4 2.4 0 00-2.4-2.4H4z"/><path d="M20 4.6h-6a3 3 0 00-3 3v12a2.4 2.4 0 012.4-2.4H20z"/>',
+  wand:'<path d="M4.5 19.5l11-11"/><path d="M14 5.2l1.2 2.6 2.6 1.2-2.6 1.2L14 12.8l-1.2-2.6L10.2 9l2.6-1.2z"/><path d="M19 14l.7 1.5 1.5.7-1.5.7-.7 1.5-.7-1.5-1.5-.7 1.5-.7z"/>',
+  ruler:'<rect x="2.6" y="8.2" width="18.8" height="7.6" rx="1.6"/><path d="M7 8.4v3M11 8.4v4.2M15 8.4v3M19 8.4v4.2"/>'
+};
+function icon(n, size, sw){
+  return '<svg width="'+(size||22)+'" height="'+(size||22)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+         'stroke-width="'+(sw||1.7)+'" stroke-linecap="round" stroke-linejoin="round">'+IC[n]+'</svg>';
+}
+const chev = '<span class="chev">'+icon('chevR',17,2)+'</span>';
+
+/* ---------- html helpers ---------- */
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function row(o){
+  const tag = o.act ? 'button' : 'div';   /* no action -> not a control */
+  return '<'+tag+' class="row'+(o.icon?' hasicon':'')+(o.on?' on':'')+'" '+(o.act?'data-act="'+esc(o.act)+'"':'')+'>'+
+    (o.icon ? '<span class="ic">'+icon(o.icon,21)+'</span>' : '')+
+    '<span class="txt"><span class="t">'+o.t+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'')+'</span>'+
+    (o.tail ? '<span class="tail">'+o.tail+'</span>' : '')+
+    (o.check ? '<span class="check">'+icon('check',20,2.4)+'</span>' : (o.chev === false ? '' : chev))+
+  '</'+tag+'>';
+}
+/* Splits "320 ft² / gal" into value + unit, but leaves "2A : 1B" and
+   "A + B + Aggregate" whole. Real TDS strings drop straight in. */
+function specValue(v){
+  v = String(v);
+  const m = v.includes(':') ? null
+    : v.match(/^([<>~]?\s*\d[\d.,]*(?:\s*[\u2013\u2014-]\s*[\d.,]+)?)\s+(.+)$/);
+  const big = m ? m[1].trim() : v, unit = m ? m[2].trim() : '';
+  return '<div class="spv'+(big.length > 8 ? ' sm' : '')+'">'+esc(big)+
+         (unit ? ' <small>'+esc(unit)+'</small>' : '')+'</div>';
+}
+function specCell(label, v){ return '<div class="cell"><div class="spk">'+label+'</div>'+specValue(v)+'</div>'; }
+function sectionLabel(s){ return '<div class="pad"><div class="sec-label">'+s+'</div></div>'; }
+function sectionLabelValue(s, v){
+  return '<div class="pad"><div class="sec-head"><div class="sec-label" style="margin:0">'+s+'</div>'+
+         '<div style="font-size:14px;font-weight:600;letter-spacing:-.01em;color:var(--ink)">'+esc(v)+'</div></div></div>';
+}
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.innerHTML = '<span style="display:flex">'+icon('check',17,2.6)+'</span>'+esc(msg);
+  const dk = document.getElementById('dock');
+  el.style.bottom = (dk && dk.style.display !== 'none' ? 210 : 120) + 'px';
+  el.classList.add('on'); clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('on'), 1900);
+}
+
+/* ---------- sheets ---------- */
+function openSheet(html){
+  const L = document.getElementById('sheetlayer');
+  document.getElementById('sheet').innerHTML = '<div class="grabber"></div>'+html;
+  L.classList.add('open'); requestAnimationFrame(() => L.classList.add('in'));
+  bindActions(document.getElementById('sheet'));
+}
+function closeSheet(){
+  const L = document.getElementById('sheetlayer');
+  L.classList.remove('in'); setTimeout(() => L.classList.remove('open'), 300);
+}
+
+/* ---------- recents ---------- */
+function touchProduct(id){ state.recent.products = [id].concat(state.recent.products.filter(x => x !== id)).slice(0,8); }
+function touchSystem(id){ state.recent.systems = [id].concat(state.recent.systems.filter(x => x !== id)).slice(0,8); }
+</script>
+
+<script>
+/* =========================================================================
+   VIEWS — each returns {title, html, dock, back}
+   Grouped inset lists appear ONLY in catalogue, document and settings
+   contexts. Home, Product Detail, System Detail and Results are bespoke.
+   ========================================================================= */
+const VIEWS = {};
+
+/* ---------------------------------------------------------------- HOME -- */
+VIEWS.home = function(){
+  const proj = state.projects[0];
+  const recents = state.recent.products.map(id => P[id]).filter(Boolean)
+    .concat(state.recent.systems.map(id => S[id]).filter(Boolean));
+
+  const action = (t_, s_, act) =>
+    '<button class="row" data-act="'+act+'" style="min-height:72px">'+
+      '<span class="txt"><span class="t" style="font-size:18px;font-weight:600;letter-spacing:-.02em">'+t_+'</span>'+
+      '<span class="s" style="margin-top:3px;font-size:14px">'+s_+'</span></span>'+chev+'</button>';
+
+  let h = '';
+  h += '<div class="pad" style="display:flex;align-items:center;justify-content:space-between;padding-top:2px">'+
+        '<div style="font-size:21px;font-weight:700;letter-spacing:-.024em">MAGIECHEM<span style="font-size:11px;vertical-align:super;font-weight:500">®</span></div>'+
+        '<button class="row" data-act="go:settings" style="width:auto;min-height:40px;padding:0;background:none;color:var(--ink2)">'+icon('person',25,1.6)+'</button>'+
+       '</div>';
+  h += '<div class="sp24"></div>';
+  h += '<div class="pad"><div style="font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.13;text-wrap:balance">'+t('home.q')+'</div></div>';
+  h += '<div class="sp12"></div>';
+  h += '<div class="pad"><button class="searchfield" data-act="search" style="width:100%;height:48px">'+
+        icon('search',18,2.1)+'<span style="flex:1;text-align:left;font-size:16px;color:var(--ink3);letter-spacing:-.012em;'+
+        'overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t('home.ph')+'</span></button></div>';
+  h += '<div class="sp24"></div>';
+
+  h += '<div class="group" style="border-top:1px solid var(--rule)">'+
+        action(t('home.a1t'), t('home.a1s'), 'go:selector')+
+        action(t('home.a2t'), t('home.a2s'), 'go:calc')+
+        action(t('home.a3t'), t('home.a3s'), 'go:products')+
+       '</div>';
+
+  if(proj){
+    h += '<div class="sp32"></div>';
+    h += sectionLabel(t('home.continue'));
+    h += '<div class="pad"><button data-act="project:'+proj.id+'" style="width:100%;text-align:left;display:flex;'+
+         'align-items:center;gap:12px;padding:2px 0 14px;border-bottom:1px solid var(--rule)">'+
+         '<span style="flex:1;min-width:0">'+
+           '<span style="display:block;font-size:20px;font-weight:600;letter-spacing:-.022em">'+esc(proj.name)+'</span>'+
+           '<span style="display:block;font-size:14px;color:var(--ink2);margin-top:3px;letter-spacing:-.006em">'+
+             esc(proj.space)+' · '+fmtArea(proj.area, proj.unit)+' · '+esc(S[proj.systemId].name)+'</span>'+
+         '</span>'+chev+'</button></div>';
+  }
+
+  if(recents.length){
+    h += '<div class="sp32"></div>';
+    h += '<div class="pad"><div class="sec-head"><div class="sec-label" style="margin:0">'+t('home.recent')+'</div></div></div>';
+    h += '<div class="rail">'+recents.map(x => {
+      const isSys = !!x.layers;
+      return '<button class="rcard" data-act="'+(isSys?'system:':'product:')+x.id+'">'+
+        '<span class="n">'+esc(isSys ? x.name : x.number)+'</span>'+
+        '<span class="d">'+esc(isSys ? x.variant : x.name)+'</span>'+
+        '<span class="k">'+esc(isSys ? x.thickness : (x.spec.mixRatio !== '—' ? x.spec.mixRatio : familyName(x.family)))+'</span>'+
+      '</button>';
+    }).join('')+'</div>';
+  }
+
+  h += '<div class="sp32"></div>';
+  h += '<div class="group">'+row({icon:'book', t:t('home.docs'), s:PRODUCTS.length*2+SYSTEMS.length+' '+t('proj.files'), act:'go:docs'})+'</div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, hideNav:true, title:'MAGIECHEM®'};
+};
+
+/* ------------------------------------------------------------ PRODUCTS -- */
+VIEWS.products = function(){
+  let h = '<div class="pad"><h1 class="lt">'+t('tab.products')+'</h1></div>';
+  h += '<div class="sp16"></div>';
+  h += '<div class="pad"><button class="searchfield" data-act="search" style="width:100%">'+
+       icon('search',17,2.1)+'<span style="flex:1;text-align:left;font-size:16.5px;color:var(--ink3);letter-spacing:-.012em">'+
+       t('tab.products')+'</span></button></div>';
+  h += '<div class="sp24"></div>'+sectionLabel(t('prod.families'));
+  h += '<div class="group">'+FAMILIES.filter(f => familyCount(f.key))
+        .map(f => row({t:esc(f.name), tail:familyCount(f.key), act:'family:'+f.key})).join('')+'</div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('tab.products')};
+};
+
+VIEWS.family = function(r){
+  const list = PRODUCTS.filter(p => p.family === r.key);
+  let h = '<div class="pad"><h1 class="lt">'+esc(familyName(r.key))+'</h1>'+
+          '<p class="lt-sub">'+list.length+' '+t('sec.products').toLowerCase()+'</p></div>';
+  h += '<div class="sp16"></div><div class="group">'+
+       list.map(p => row({t:esc(p.number), s:esc(p.name), act:'product:'+p.id})).join('')+'</div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:familyName(r.key)};
+};
+
+/* -------------------------------------------------------- PRODUCT DETAIL */
+VIEWS.product = function(r){
+  const p = P[r.id];
+  const cells = [
+    ['spec.mix', p.spec.mixRatio], ['spec.wft', p.spec.wft],
+    ['spec.cov', p.spec.coverage], ['spec.work', p.spec.workingTime],
+    ['spec.recoat', p.spec.recoat], ['spec.pack', p.spec.packaging]
+  ].filter(c => c[1] && c[1] !== '—');
+
+  let h = '<div class="pad">';
+  h += '<div style="font-size:12.5px;font-weight:600;letter-spacing:.055em;text-transform:uppercase;color:var(--ink2)">'+esc(p.tag)+'</div>';
+  h += '<h1 class="lt" style="margin-top:6px">'+esc(p.number)+'</h1>';
+  h += '<p class="lt-sub" style="font-size:17px;color:var(--ink);margin-top:6px;letter-spacing:-.016em">'+esc(p.name)+'</p>';
+  h += '</div><div class="sp24"></div>';
+
+  h += '<div class="pad"><div class="specgrid">'+
+       cells.map(c => specCell(t(c[0]), c[1])).join('')+'</div></div>';
+
+  h += '<div class="sp32"></div><div class="pad"><div class="sec-label">'+t('prod.overview')+'</div>'+
+       '<p class="body" style="margin:0">'+esc(p.blurb)+'</p></div>';
+
+  if(p.uses && p.uses.length){
+    h += '<div class="sp24"></div><div class="pad"><div class="sec-label">'+t('prod.uses')+'</div></div>';
+    h += '<div class="pad">'+p.uses.map(u =>
+      '<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule2);font-size:15.5px;letter-spacing:-.008em">'+
+      '<span style="color:var(--ink4);flex:0 0 auto">—</span><span>'+esc(u)+'</span></div>').join('')+'</div>';
+  }
+
+  const using = systemsUsing(p.id);
+  if(using.length){
+    h += '<div class="sp32"></div>'+sectionLabel(t('prod.compatible'));
+    h += '<div class="group">'+using.map(s => row({
+      t:esc(s.name), s:esc(s.variant)+' · '+esc(s.thickness), act:'system:'+s.id})).join('')+'</div>';
+  }
+
+  h += '<div class="sp32"></div>'+sectionLabel(t('prod.documents'));
+  h += '<div class="group">'+
+    row({t:t('doc.tds'), s:esc(p.number)+' · PDF', act:'doc:tds-'+p.id, icon:'doc'})+
+    row({t:t('doc.sds'), s:esc(p.number)+' · PDF', act:'doc:sds-'+p.id, icon:'doc'})+
+  '</div>';
+  h += '<div class="sp44"></div>';
+
+  const canCalc = !!p.calc;
+  let dock = '';
+  if(canCalc){
+    dock = '<button class="btn" data-act="calcproduct:'+p.id+'">'+t('prod.calc')+'</button>';
+    if(using.length) dock += '<button class="btn plain" data-act="usingsheet:'+p.id+'">'+t('prod.viewSys')+'</button>';
+  } else if(using.length){
+    dock = '<button class="btn ghost" data-act="usingsheet:'+p.id+'">'+t('prod.viewSys')+'</button>';
+  }
+  return {html:h, title:p.number, dock:dock};
+};
+
+/* --------------------------------------------------------- DOC VIEWER --- */
+VIEWS.doc = function(r){
+  const d = D[r.id];
+  const q = (r.q || '').trim();
+  const hl = s => {
+    s = esc(s);
+    if(!q) return s;
+    try{ return s.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'), '<mark>$1</mark>'); }
+    catch(e){ return s; }
+  };
+  let body = '';
+  if(d.pid){
+    const p = P[d.pid];
+    if(d.kind === 'TDS'){
+      body =
+        '<h1>'+hl(p.number)+'</h1><p class="dsub">'+hl(p.name)+'</p>'+
+        '<h2>'+hl('1. Description')+'</h2><p>'+hl(p.blurb)+'</p>'+
+        '<h2>'+hl('2. Recommended uses')+'</h2>'+p.uses.map(u => '<p>· '+hl(u)+'</p>').join('')+
+        '<h2>'+hl('3. Technical properties')+'</h2>'+
+        Object.keys(p.spec).map(k => {
+          const label = {mixRatio:'Mix ratio',wft:'Wet film thickness',coverage:'Theoretical coverage',
+            workingTime:'Working time at 21 °C',recoat:'Recoat window',packaging:'Packaging',voc:'VOC content'}[k] || k;
+          return '<div class="dr"><span class="k">'+hl(label)+'</span><span class="v">'+hl(p.spec[k])+'</span></div>';
+        }).join('')+
+        '<h2>'+hl('4. Surface preparation')+'</h2>'+
+        '<p>'+hl('Concrete shall be structurally sound, fully cured and free of laitance, curing compounds and previous coatings. Mechanically profile to CSP 3–4 in accordance with ICRI 310.2R. Test for moisture vapour emission per ASTM F1869 or relative humidity per ASTM F2170 prior to application.')+'</p>'+
+        '<h2>'+hl('5. Mixing and application')+'</h2>'+
+        '<p>'+hl('Pre-mix component A. Combine components at the stated ratio and mix for three minutes with a low-speed drill and helical blade. Scrape sides and bottom of the container. Do not aerate. Pour the mixed material onto the substrate immediately — material left in the pail will exotherm.')+'</p>'+
+        '<h2>'+hl('6. Limitations')+'</h2>'+
+        '<p>'+hl('Do not apply below 10 °C or above 30 °C substrate temperature. Substrate temperature must be a minimum of 3 °C above the measured dew point during application and cure. Epoxy resins amber under ultraviolet exposure; specify a UV-stable topcoat for daylight-exposed areas.')+'</p>';
+    } else {
+      body =
+        '<h1>'+hl(p.number)+'</h1><p class="dsub">'+hl('Safety Data Sheet — '+p.name)+'</p>'+
+        '<h2>'+hl('1. Identification')+'</h2>'+
+        '<div class="dr"><span class="k">'+hl('Product identifier')+'</span><span class="v">'+hl(p.number)+'</span></div>'+
+        '<div class="dr"><span class="k">'+hl('Recommended use')+'</span><span class="v">'+hl('Protective flooring')+'</span></div>'+
+        '<div class="dr"><span class="k">'+hl('Supplier')+'</span><span class="v">MAGIECHEM®</span></div>'+
+        '<h2>'+hl('2. Hazard identification')+'</h2>'+
+        '<p>'+hl('Causes skin irritation. May cause an allergic skin reaction. Causes serious eye irritation. Harmful to aquatic life with long lasting effects.')+'</p>'+
+        '<h2>'+hl('3. Composition')+'</h2>'+
+        '<p>'+hl('Component disclosure withheld in the prototype. Full CAS breakdown appears here in the production document.')+'</p>'+
+        '<h2>'+hl('4. First-aid measures')+'</h2>'+
+        '<p>'+hl('Skin: wash with soap and water. Remove contaminated clothing. Eyes: rinse cautiously with water for several minutes. Remove contact lenses if present and easy to do. Continue rinsing and seek medical attention.')+'</p>'+
+        '<h2>'+hl('8. Exposure controls and personal protection')+'</h2>'+
+        '<p>'+hl('Chemical-resistant nitrile gloves, safety glasses with side shields, and coveralls. Provide mechanical ventilation in confined areas such as mechanical rooms, pits and tank interiors.')+'</p>';
+    }
+  } else {
+    const s = S[d.sid];
+    body = '<h1>'+hl(s.name)+'</h1><p class="dsub">'+hl(s.variant)+'</p>'+
+      '<h2>'+hl('1. System description')+'</h2><p>'+hl(s.blurb)+'</p>'+
+      '<h2>'+hl('2. Build-up')+'</h2>'+
+      s.layers.map(l => '<div class="dr"><span class="k">'+hl(P[l.pid].number+' — '+roleName(l.role))+
+        '</span><span class="v">'+hl(l.depth >= 100 ? (l.depth/1000)+' in.' : l.depth+' mils')+'</span></div>').join('')+
+      '<div class="dr"><span class="k">'+hl('Nominal system thickness')+'</span><span class="v">'+hl(s.thickness)+'</span></div>'+
+      '<h2>'+hl('3. Substrate requirements')+'</h2>'+
+      '<p>'+hl('Minimum 25 MPa compressive strength. Profile to CSP 3–4. Moisture vapour emission rate not to exceed the limit stated in the primer technical data sheet.')+'</p>';
+  }
+
+  let h = '<div class="docbanner">'+t('doc.demo')+'</div>';
+  h += '<div class="pad" style="padding-bottom:10px"><div class="searchfield">'+icon('search',17,2.1)+
+       '<input id="docq" placeholder="'+t('doc.searchIn')+'" value="'+esc(q)+'" autocomplete="off"></div></div>';
+  h += '<div class="doc">'+body+'</div><div class="sp44"></div>';
+  return {html:h, title:d.title, rightBtn:{icon:'share', act:'share:doc'}};
+};
+</script>
+
+<script>
+/* ------------------------------------------------------------- SYSTEMS -- */
+VIEWS.systems = function(){
+  let h = '<div class="pad"><h1 class="lt">'+t('tab.systems')+'</h1></div><div class="sp16"></div>';
+  h += '<div class="pad"><button class="row hasicon" data-act="go:selector" style="border:1px solid var(--rule);'+
+       'border-radius:var(--r-srf);min-height:66px;padding:10px 14px">'+
+       '<span class="ic" style="color:var(--red)">'+icon('wand',22)+'</span>'+
+       '<span class="txt"><span class="t" style="font-size:17px;font-weight:600;letter-spacing:-.018em">'+t('sys.find')+'</span>'+
+       '<span class="s" style="margin-top:2px">'+t('sys.findSub')+'</span></span>'+chev+'</button></div>';
+
+  h += '<div class="sp32"></div>'+sectionLabel(t('sys.byApp'));
+  h += '<div class="group">'+APPLICATIONS.map(a => {
+    const n = SYSTEMS.filter(s => s.tags.env.includes(a.key) || s.tags.perf.includes(a.key) || s.tags.finish.includes(a.key)).length;
+    return n ? row({t:esc(a.name), tail:n, act:'syslist:app|'+a.key}) : '';
+  }).join('')+'</div>';
+
+  h += '<div class="sp32"></div>'+sectionLabel(t('sys.byPerf'));
+  h += '<div class="group">'+PERFORMANCE.map(pf => {
+    const n = SYSTEMS.filter(s => s.tags.perf.includes(pf.key)).length;
+    return n ? row({t:esc(pf.name), tail:n, act:'syslist:perf|'+pf.key}) : '';
+  }).join('')+'</div>';
+
+  h += '<div class="sp32"></div>'+sectionLabel(t('sys.all'));
+  h += '<div class="group">'+SYSTEMS.map(s => row({
+    t:esc(s.name), s:esc(s.variant)+' · '+esc(s.thickness), act:'system:'+s.id})).join('')+'</div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('tab.systems')};
+};
+
+VIEWS.syslist = function(r){
+  const [type, key] = r.key.split('|');
+  const label = type === 'app'
+    ? (APPLICATIONS.find(a => a.key === key) || {}).name
+    : (PERFORMANCE.find(p => p.key === key) || {}).name;
+  const list = SYSTEMS.filter(s => type === 'perf'
+    ? s.tags.perf.includes(key)
+    : (s.tags.env.includes(key) || s.tags.perf.includes(key) || s.tags.finish.includes(key)));
+  let h = '<div class="pad"><h1 class="lt">'+esc(label)+'</h1><p class="lt-sub">'+list.length+' '+t('tab.systems').toLowerCase()+'</p></div>';
+  h += '<div class="sp16"></div><div class="group">'+list.map(s => row({
+    t:esc(s.name), s:esc(s.variant)+' · '+esc(s.thickness), act:'system:'+s.id})).join('')+'</div><div class="sp44"></div>';
+  return {html:h, title:label};
+};
+
+/* ------------------------------------------- SYSTEM DETAIL — cross-section */
+function crossSection(s){
+  const maxD = Math.max.apply(null, s.layers.map(l => l.depth));
+  let bands = '';
+  s.layers.forEach((l, i) => {
+    const p = P[l.pid];
+    const hgt = Math.round(34 + 44 * Math.sqrt(l.depth / maxD));
+    const tick = l.depth >= 100 ? (l.depth/1000).toFixed(2).replace(/0$/,'')+' in' : l.depth+' mils';
+    const cls = l.media ? ' media' : (/clear|grout/i.test(l.role) ? ' clear' : '');
+    bands += '<button class="xlayer'+cls+'" style="height:'+hgt+'px" data-act="layer:'+s.id+'|'+i+'">'+
+      '<span class="tick">'+tick+'</span>'+
+      '<span class="lnum">'+esc(p.number)+'</span>'+
+      '<span class="lrole">'+esc(roleName(l.role))+'</span>'+
+      '<span class="lchev">'+icon('chevR',15,2)+'</span>'+
+    '</button>';
+  });
+  return '<div class="xsec"><div class="xdim"></div>'+
+         '<div class="xstack">'+bands+'<div class="xsub">'+t('sys.substrate')+'</div></div></div>'+
+         '<div class="xnote">'+t('sys.layerNote')+'</div>';
+}
+
+VIEWS.system = function(r){
+  const s = S[r.id];
+  const tagNames = s.tags.perf.map(k => (PERFORMANCE.find(x => x.key === k)||{}).name).filter(Boolean);
+  let h = '<div class="pad">';
+  h += '<div style="font-size:12.5px;font-weight:600;letter-spacing:.055em;text-transform:uppercase;color:var(--ink2)">'+esc(s.family)+'</div>';
+  h += '<h1 class="lt" style="margin-top:6px">'+esc(s.name)+'</h1>';
+  h += '<p class="lt-sub" style="font-size:17px;color:var(--ink);margin-top:5px;letter-spacing:-.016em">'+esc(s.variant)+'</p>';
+  h += '<p class="body" style="margin-top:12px">'+esc(s.blurb)+'</p></div>';
+
+  h += '<div class="sp24"></div>'+sectionLabelValue(t('sys.buildup'), s.thickness);
+  h += crossSection(s);
+
+  h += '<div class="sp32"></div><div class="pad"><div class="sec-label">'+t('sec.applications')+'</div>'+
+       '<div class="chips">'+tagNames.map(n => '<span class="chip" style="pointer-events:none">'+esc(n)+'</span>').join('')+'</div></div>';
+
+  h += '<div class="sp32"></div>'+sectionLabel(t('prod.documents'));
+  h += '<div class="group">'+row({t:t('doc.guide'), s:esc(sysTitle(s))+' · PDF', act:'doc:gd-'+s.id, icon:'doc'})+
+    s.layers.filter((l,i,a) => a.findIndex(x => x.pid === l.pid) === i)
+      .map(l => row({t:t('doc.tds'), s:esc(P[l.pid].number)+' · PDF', act:'doc:tds-'+l.pid, icon:'doc'})).join('')+'</div>';
+  h += '<div class="sp44"></div>';
+
+  return {html:h, title:s.name,
+    dock:'<button class="btn" data-act="calcsystem:'+s.id+'">'+t('sys.calc')+'</button>'};
+};
+
+/* ------------------------------------------------------- SYSTEM SELECTOR */
+function scoreSystems(){
+  const sel = state.selector;
+  const total = 1 + sel.perf.length + 1;
+  return SYSTEMS.map(s => {
+    const mEnv = sel.env && s.tags.env.includes(sel.env);
+    const mPerf = sel.perf.filter(k => s.tags.perf.includes(k));
+    const mFin = sel.finish && s.tags.finish.includes(sel.finish);
+    const matched = (mEnv?1:0) + mPerf.length + (mFin?1:0);
+    return {s, pct:matched/total, mEnv, mPerf, mFin, matched};
+  }).sort((a,b) => b.pct - a.pct || b.matched - a.matched);
+}
+
+VIEWS.selector = function(){
+  const sel = state.selector;
+  if(sel.step === 3) return VIEWS.selresult();
+  const cfg = [
+    {q:t('sel.q1'), hint:t('sel.one'),   opts:ENVIRONMENTS, multi:false, key:'env'},
+    {q:t('sel.q2'), hint:t('sel.multi'), opts:PERFORMANCE,  multi:true,  key:'perf'},
+    {q:t('sel.q3'), hint:t('sel.one'),   opts:FINISHES,     multi:false, key:'finish'}
+  ][sel.step];
+
+  let h = '<div class="progress">'+[0,1,2].map(i => '<i class="'+(i <= sel.step ? 'on' : '')+'"></i>').join('')+'</div>';
+  h += '<div class="steplabel">'+t('sel.step')+' '+(sel.step+1)+' '+t('sel.of')+' 3 · '+cfg.hint+'</div>';
+  h += '<div class="q">'+cfg.q+'</div><div class="sp24"></div>';
+  h += '<div class="group">'+cfg.opts.map(o => {
+    const on = cfg.multi ? sel.perf.includes(o.key) : sel[cfg.key] === o.key;
+    return row({t:esc(o.name), on:on, check:on, chev:false, act:'seloption:'+cfg.key+'|'+o.key});
+  }).join('')+'</div><div class="sp44"></div>';
+
+  const ready = cfg.multi ? sel.perf.length > 0 : !!sel[cfg.key];
+  return {html:h, title:t('sys.find'), hideNav:false,
+    dock:'<button class="btn" '+(ready?'':'disabled')+' data-act="selnext">'+
+         t('sel.continue')+'</button>'};
+};
+
+VIEWS.selresult = function(){
+  const ranked = scoreSystems().filter(x => x.pct > 0);
+  if(!ranked.length){
+    return {html:'<div class="empty"><div class="et">'+t('sel.none')+'</div><div class="ed">'+t('sel.noneSub')+'</div></div>'+
+      '<div class="pad"><button class="btn ghost" data-act="selreset">'+t('sel.again')+'</button></div>',
+      title:t('sel.rec')};
+  }
+  const top = ranked[0], s = top.s;
+  const reasons = [];
+  if(top.mEnv) reasons.push((ENVIRONMENTS.find(e => e.key === state.selector.env)||{}).name);
+  top.mPerf.forEach(k => reasons.push((PERFORMANCE.find(p => p.key === k)||{}).name));
+  if(top.mFin) reasons.push((FINISHES.find(f => f.key === state.selector.finish)||{}).name);
+
+  let h = '<div class="pad">';
+  h += '<div style="font-size:12.5px;font-weight:600;letter-spacing:.055em;text-transform:uppercase;color:var(--red)">'+t('sel.rec')+'</div>';
+  h += '<h1 class="lt" style="margin-top:6px">'+esc(s.name)+'</h1>';
+  h += '<p class="lt-sub" style="font-size:17px;color:var(--ink);margin-top:5px;letter-spacing:-.016em">'+esc(s.variant)+'</p>';
+  h += '<div class="matchbar"><div class="track"><i style="width:'+Math.round(top.pct*100)+'%"></i></div>'+
+       '<div class="pct">'+Math.round(top.pct*100)+'% '+t('sel.match')+'</div></div>';
+  h += '<p class="body" style="margin-top:14px">'+esc(s.blurb)+'</p></div>';
+
+  h += '<div class="sp24"></div><div class="pad"><div class="sec-label">'+t('sel.why')+'</div>'+
+       reasons.map(rn => '<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule2);font-size:15.5px;letter-spacing:-.008em">'+
+       '<span style="color:var(--red);display:flex;align-items:center">'+icon('check',16,2.6)+'</span><span>'+esc(rn)+'</span></div>').join('')+'</div>';
+
+  h += '<div class="sp24"></div>'+sectionLabelValue(t('sys.buildup'), s.thickness)+crossSection(s);
+
+  const alts = ranked.slice(1,3);
+  if(alts.length){
+    h += '<div class="sp32"></div>'+sectionLabel(t('sel.alt'));
+    h += '<div class="group">'+alts.map(a => row({
+      t:esc(a.s.name), s:esc(a.s.variant), tail:Math.round(a.pct*100)+'%', act:'system:'+a.s.id})).join('')+'</div>';
+  }
+  h += '<div class="pad" style="padding-top:18px"><button class="btn plain" data-act="selreset">'+t('sel.again')+'</button></div>';
+  h += '<div class="sp44"></div>';
+
+  return {html:h, title:t('sel.rec'),
+    dock:'<button class="btn" data-act="calcsystem:'+s.id+'">'+t('sel.calc')+'</button>'+
+         '<button class="btn plain" data-act="system:'+s.id+'">'+t('sel.view')+'</button>'};
+};
+</script>
+
+<script>
+/* ---------------------------------------------------------- CALCULATOR -- */
+function targetLabel(){
+  const tg = state.calc.target; if(!tg || !tg.id) return null;
+  return tg.kind === 'system' ? {t:S[tg.id].name, s:S[tg.id].variant} : {t:P[tg.id].number, s:P[tg.id].name};
+}
+
+function previewHTML(){
+  const lines = currentLines();
+  if(!areaFt2()) return '<div class="empty" style="padding:34px 32px"><div class="ed">'+t('calc.enterArea')+'</div></div>';
+  if(!lines.length) return '<div class="empty" style="padding:34px 32px"><div class="ed">'+t('calc.pickSystem')+'</div></div>';
+  return '<div class="pad"><div class="sec-head"><div class="sec-label" style="margin:0">'+t('res.title')+'</div>'+
+    '<div style="font-size:12px;color:var(--ink3);letter-spacing:-.004em">'+t('calc.live')+'</div></div></div>'+
+    '<div class="group">'+lines.map(l => {
+      const q = qty(l.withWaste, l.unit);
+      return row({t:esc(P[l.pid].number), s:esc(roleName(l.role)),
+        tail:'<span style="font-variant-numeric:tabular-nums"><b style="color:var(--ink);font-weight:600">'+
+             l.packs+'</b> '+esc(packWord(l.pack.label, l.packs))+'</span>',
+        chev:false});
+    }).join('')+'</div>';
+}
+
+VIEWS.calc = function(){
+  const c = state.calc, tl = targetLabel();
+  let h = '<div class="pad"><h1 class="lt">'+t('tab.calculator')+'</h1></div><div class="sp24"></div>';
+
+  h += '<div class="pad"><div class="sec-label">'+t('calc.area')+'</div>'+
+       '<div style="display:flex;gap:10px;align-items:center">'+
+         '<div class="field" style="flex:1"><input id="areaIn" inputmode="decimal" placeholder="0" value="'+esc(c.area)+'" '+
+         'style="font-size:26px;font-weight:600;letter-spacing:-.022em;font-variant-numeric:tabular-nums"></div>'+
+         '<div class="seg" style="width:118px;flex:0 0 auto">'+
+           '<button class="'+(c.unit==='ft2'?'on':'')+'" data-act="unit:ft2">ft²</button>'+
+           '<button class="'+(c.unit==='m2'?'on':'')+'" data-act="unit:m2">m²</button>'+
+         '</div></div>';
+  h += '<div class="sp16"></div><div class="sec-label">'+t('calc.dims')+'</div>'+
+       '<div style="display:flex;gap:10px;align-items:center">'+
+         '<div class="field" style="flex:1"><input id="lIn" inputmode="decimal" placeholder="'+t('calc.length')+'" value="'+esc(c.l)+'"></div>'+
+         '<span style="color:var(--ink3);font-size:16px">×</span>'+
+         '<div class="field" style="flex:1"><input id="wIn" inputmode="decimal" placeholder="'+t('calc.width')+'" value="'+esc(c.w)+'"></div>'+
+       '</div></div>';
+
+  h += '<div class="sp32"></div><div class="pad"><div class="sec-label">'+t('calc.what')+'</div>'+
+       '<div class="seg">'+
+         '<button class="'+(c.target&&c.target.kind==='product'?'on':'')+'" data-act="kind:product">'+t('calc.product')+'</button>'+
+         '<button class="'+(!c.target||c.target.kind==='system'?'on':'')+'" data-act="kind:system">'+t('calc.system')+'</button>'+
+       '</div></div><div class="sp12"></div>';
+
+  const kind = (c.target && c.target.kind) || 'system';
+  h += '<div class="group">'+ (tl
+      ? row({t:esc(tl.t), s:esc(tl.s), tail:t('calc.change'), act:'pick:'+kind})
+      : row({t:kind==='system'?t('calc.pickSystem'):t('calc.pickProduct'), act:'pick:'+kind}))+'</div>';
+
+  h += '<div class="sp32"></div><div class="pad"><div class="sec-label">'+t('calc.waste')+'</div>'+
+       '<div class="seg">'+[0,5,10,15].map(v =>
+         '<button class="'+(c.waste===v?'on':'')+'" data-act="waste:'+v+'">'+v+'%</button>').join('')+'</div></div>';
+  h += '<div class="sp12"></div><div class="group">'+
+       row({t:t('calc.advanced'), s:t('calc.advSub'),
+            tail:Object.keys(c.overrides).length ? Object.keys(c.overrides).length : '',
+            act:'advanced'})+'</div>';
+
+  h += '<div class="sp32"></div><div id="calcpreview">'+previewHTML()+'</div><div class="sp44"></div>';
+
+  const ready = areaFt2() > 0 && !!(c.target && c.target.id);
+  return {html:h, title:t('tab.calculator'),
+    dock:'<button class="btn" '+(ready?'':'disabled')+' data-act="go:results">'+t('calc.run')+'</button>'};
+};
+
+function refreshCalc(){
+  const pv = document.getElementById('calcpreview');
+  if(pv){ pv.innerHTML = previewHTML(); bindActions(pv); }
+  const dk = document.querySelector('#dock .btn');
+  if(dk){ if(areaFt2() > 0 && state.calc.target && state.calc.target.id) dk.removeAttribute('disabled'); else dk.setAttribute('disabled',''); }
+}
+function bindCalcInputs(){
+  const a = document.getElementById('areaIn'), l = document.getElementById('lIn'), w = document.getElementById('wIn');
+  if(a){
+    a.addEventListener('focus', () => { a.value = state.calc.area; });
+    a.addEventListener('blur', () => {
+      const n = parseFloat(state.calc.area);
+      if(isFinite(n) && n > 0) a.value = fmt(n, n % 1 ? 2 : 0);
+    });
+    const n0 = parseFloat(state.calc.area);
+    if(isFinite(n0) && n0 > 0 && document.activeElement !== a) a.value = fmt(n0, n0 % 1 ? 2 : 0);
+  }
+  if(a) a.addEventListener('input', e => {
+    state.calc.area = e.target.value.replace(/[^\d.]/g,'');
+    state.calc.l = ''; state.calc.w = '';
+    if(l) l.value = ''; if(w) w.value = '';
+    refreshCalc();
+  });
+  const dim = () => {
+    state.calc.l = l.value.replace(/[^\d.]/g,''); state.calc.w = w.value.replace(/[^\d.]/g,'');
+    const L = parseFloat(state.calc.l), W = parseFloat(state.calc.w);
+    if(isFinite(L) && isFinite(W) && L > 0 && W > 0){
+      state.calc.area = String(Math.round(L * W * 100) / 100);
+      if(a) a.value = state.calc.area;
+      refreshCalc();
+    }
+  };
+  if(l) l.addEventListener('input', dim);
+  if(w) w.addEventListener('input', dim);
+}
+
+/* pickers */
+VIEWS.pick = function(r){
+  const isSys = r.key === 'system';
+  const q = (r.q || '').toLowerCase();
+  const items = isSys
+    ? SYSTEMS.filter(s => !q || (s.name+' '+s.variant+' '+s.family).toLowerCase().includes(q))
+    : PRODUCTS.filter(p => p.calc).filter(p => !q || (p.number+' '+p.name).toLowerCase().includes(q));
+  const cur = state.calc.target;
+
+  let h = '<div class="pad"><h1 class="lt">'+(isSys?t('calc.pickSystem'):t('calc.pickProduct'))+'</h1></div><div class="sp16"></div>';
+  h += '<div class="pad"><div class="searchfield"><span style="display:flex">'+icon('search',17,2.1)+'</span>'+
+       '<input id="pickq" placeholder="'+(isSys?t('calc.search'):t('calc.pickProduct'))+'" value="'+esc(r.q||'')+'" autocomplete="off"></div></div>';
+
+  if(isSys && state.recent.systems.length && !q){
+    h += '<div class="sp24"></div>'+sectionLabel(t('calc.recent'));
+    h += '<div class="group">'+state.recent.systems.map(id => S[id]).filter(Boolean).map(s => row({
+      t:esc(s.name), s:esc(s.variant), act:'settarget:system|'+s.id,
+      on:cur&&cur.id===s.id, check:cur&&cur.id===s.id, chev:!(cur&&cur.id===s.id)})).join('')+'</div>';
+  }
+  h += '<div class="sp24"></div>'+sectionLabel(isSys?t('sys.all'):t('sec.products'));
+  h += '<div class="group">'+(items.length ? items.map(x => row({
+    t:esc(isSys?x.name:x.number), s:esc(isSys?x.variant:x.name),
+    act:'settarget:'+(isSys?'system':'product')+'|'+x.id,
+    on:cur&&cur.id===x.id, check:cur&&cur.id===x.id, chev:!(cur&&cur.id===x.id)
+  })).join('') : '<div class="empty"><div class="ed">'+t('search.none')+'</div></div>')+'</div><div class="sp44"></div>';
+  return {html:h, title:isSys?t('calc.pickSystem'):t('calc.pickProduct')};
+};
+
+/* advanced settings sheet — edits the rule, not the result */
+function advancedSheet(){
+  const tg = state.calc.target; if(!tg) return;
+  const layers = tg.kind === 'system'
+    ? S[tg.id].layers.map((l,i) => ({l, i, p:P[l.pid]}))
+    : [{l:{pid:tg.id, role:P[tg.id].tag}, i:0, p:P[tg.id]}];
+
+  let h = '<div class="sheet-head"><div><div style="font-size:20px;font-weight:650;letter-spacing:-.022em">'+t('calc.advanced')+'</div>'+
+          '<div style="font-size:13.5px;color:var(--ink2);margin-top:2px">'+t('calc.advSub')+'</div></div>'+
+          '<button class="sheet-x" data-act="closesheet">'+icon('x',15,2.2)+'</button></div><div class="sp16"></div>';
+
+  layers.forEach(({l, i, p}) => {
+    const rule = resolveRule(l, i, state.calc.overrides);
+    let fields = '';
+    const f = (lab, key, val, suffix) =>
+      '<div style="flex:1;min-width:0"><div class="spk" style="margin-bottom:5px">'+lab+'</div>'+
+      '<div class="field" style="min-height:44px"><input inputmode="decimal" data-ov="'+i+'|'+key+'" value="'+val+'" '+
+      'style="font-size:17px;font-weight:550;font-variant-numeric:tabular-nums">'+
+      (suffix?'<span style="color:var(--ink2);font-size:13.5px;flex:0 0 auto">'+suffix+'</span>':'')+'</div></div>';
+    if(rule.method === 'wft')       fields = f(t('calc.wft'), 'wft', rule.wft, 'mils');
+    else if(rule.method === 'coverage') fields = f(t('calc.cov'), 'coverage', rule.coverage, 'ft²/gal');
+    else if(rule.method === 'broadcast' || rule.method === 'spread') fields = f(t('calc.rate'), 'rate', rule.rate, 'lb/ft²');
+    fields += f(t('calc.coats'), 'coats', rule.coats || 1, '');
+
+    h += '<div style="padding:14px 16px;border-top:1px solid var(--rule2)">'+
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px">'+
+        '<span style="font-size:16.5px;font-weight:650;letter-spacing:-.018em">'+esc(p.number)+'</span>'+
+        '<span style="font-size:13.5px;color:var(--ink2)">'+esc(roleName(l.role))+'</span>'+
+        '<span class="pill" style="margin-left:auto">'+rule.method+'</span>'+
+      '</div><div style="display:flex;gap:12px">'+fields+'</div></div>';
+  });
+  h += '<div class="pad" style="padding-top:18px"><button class="btn ghost" data-act="resetov">'+t('calc.reset')+'</button></div>';
+  openSheet(h);
+  document.getElementById('sheet').querySelectorAll('input[data-ov]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const [i, key] = e.target.dataset.ov.split('|');
+      const v = parseFloat(e.target.value.replace(/[^\d.]/g,''));
+      state.calc.overrides[i] = state.calc.overrides[i] || {};
+      if(isFinite(v) && v > 0) state.calc.overrides[i][key] = key === 'coats' ? Math.round(v) : v;
+      else delete state.calc.overrides[i][key];
+      refreshCalc();
+    });
+  });
+}
+
+/* ------------------------------------------------------------- RESULTS -- */
+VIEWS.results = function(){
+  const lines = currentLines(), c = state.calc, tl = targetLabel();
+  let h = '<div class="pad"><h1 class="lt">'+t('res.title')+'</h1>'+
+          '<p class="lt-sub">'+fmtArea(parseFloat(c.area)||0, c.unit)+' · '+esc(tl ? tl.t : '')+'</p></div>';
+  h += '<div class="sp24"></div>';
+
+  h += lines.map(l => {
+    const req = qty(l.withWaste, l.unit), theo = qty(l.theoretical, l.unit);
+    return '<div class="resblock">'+
+      '<div class="res-h"><span class="num">'+esc(P[l.pid].number)+'</span><span class="role">'+esc(roleName(l.role))+'</span></div>'+
+      '<div class="res-g">'+
+        '<div><div class="lab">'+t('res.req')+'</div><div class="big">'+fmt(req.n,1)+' <small>'+req.u+'</small></div></div>'+
+        '<div class="order"><div class="lab">'+t('res.order')+'</div><div class="big">'+l.packs+' <small>'+
+          esc(packWord(l.pack.label, l.packs))+'</small></div></div>'+
+      '</div>'+
+      '<div class="res-meta">'+t('res.theo')+' '+fmt(theo.n,1)+' '+theo.u+' · '+esc(l.how)+' · '+
+        esc(l.pack.size+' '+l.pack.unit+' '+packWord(l.pack.label, 1))+'</div>'+
+    '</div>';
+  }).join('');
+
+  h += '<div class="sp32"></div>'+sectionLabel(t('res.summary'));
+  const packTotals = {};
+  lines.forEach(l => { packTotals[l.pack.label] = (packTotals[l.pack.label]||0) + l.packs; });
+  h += '<div class="res-sum">'+
+    '<div class="r"><span class="k">'+t('res.totalArea')+'</span><span class="v">'+fmtArea(parseFloat(c.area)||0, c.unit)+'</span></div>'+
+    '<div class="r"><span class="k">'+t('proj.system')+'</span><span class="v">'+esc(tl?tl.t:'')+'</span></div>'+
+    '<div class="r"><span class="k">'+t('res.layers')+'</span><span class="v">'+lines.length+'</span></div>'+
+    '<div class="r"><span class="k">'+t('calc.waste')+'</span><span class="v">'+c.waste+'%</span></div>'+
+    Object.keys(packTotals).map(k => { const w = packWord(k, 2);
+      return '<div class="r"><span class="k">'+esc(w.charAt(0).toUpperCase()+w.slice(1))+'</span>'+
+      '<span class="v">'+packTotals[k]+'</span></div>'; }).join('')+
+  '</div>';
+  h += '<div class="sp44"></div>';
+
+  return {html:h, title:t('res.title'),
+    dock:'<button class="btn" data-act="savetoproject">'+t('res.save')+'</button>'+
+         '<button class="btn plain" data-act="share:materials">'+t('res.share')+'</button>'};
+};
+</script>
+
+<script>
+/* ------------------------------------------------------------ PROJECTS -- */
+VIEWS.projects = function(){
+  let h = '<div class="pad"><h1 class="lt">'+t('tab.projects')+'</h1></div><div class="sp16"></div>';
+  if(!state.projects.length){
+    h += '<div class="empty"><div class="et">'+t('proj.none')+'</div><div class="ed">'+t('proj.noneSub')+'</div></div>';
+    h += '<div class="pad"><button class="btn ghost" data-act="go:calc">'+t('home.a2t')+'</button></div>';
+    return {html:h, title:t('tab.projects')};
+  }
+  h += sectionLabel(t('proj.recent'));
+  h += '<div class="group">'+state.projects.map(p => row({
+    t:esc(p.name), s:esc(p.space)+' · '+fmtArea(p.area, p.unit)+'<br>'+esc(sysTitle(S[p.systemId])),
+    act:'project:'+p.id})).join('')+'</div>';
+  h += '<div class="sp24"></div><div class="group">'+
+       row({icon:'plus', t:t('proj.new'), act:'go:calc'})+'</div><div class="sp44"></div>';
+  return {html:h, title:t('tab.projects')};
+};
+
+VIEWS.project = function(r){
+  const p = state.projects.find(x => x.id === r.id);
+  if(!p) return {html:'', title:''};
+  const sys = S[p.systemId];
+  const docCount = sys.layers.filter((l,i,a) => a.findIndex(x => x.pid === l.pid) === i).length + 1;
+  let h = '<div class="pad"><h1 class="lt">'+esc(p.name)+'</h1>'+
+          '<p class="lt-sub">'+esc(p.space)+(p.client?' · '+esc(p.client):'')+'</p>'+
+          '<div style="font-size:27px;font-weight:650;letter-spacing:-.024em;margin-top:14px;font-variant-numeric:tabular-nums">'+
+          fmtArea(p.area, p.unit)+'</div></div>';
+  h += '<div class="sp24"></div><div class="group">'+
+    row({t:t('proj.system'), s:esc(sysTitle(sys)), act:'system:'+sys.id})+
+    row({t:t('proj.materials'), s:p.lines.length+' '+t('proj.items'), act:'materials:'+p.id})+
+    row({t:t('proj.docs'), s:docCount+' '+t('proj.files'), act:'projdocs:'+p.id})+
+    row({t:t('proj.calc'), s:t('proj.latest')+' · '+esc(p.created), act:'reopen:'+p.id})+
+  '</div>';
+  if(p.notes){
+    h += '<div class="sp32"></div><div class="pad"><div class="sec-label">'+t('proj.notes')+'</div>'+
+         '<p class="body" style="margin:0">'+esc(p.notes)+'</p></div>';
+  }
+  if(p.location){
+    h += '<div class="sp24"></div><div class="pad"><div class="sec-label">'+t('proj.loc')+'</div>'+
+         '<p class="body" style="margin:0">'+esc(p.location)+'</p></div>';
+  }
+  h += '<div class="sp44"></div>';
+  return {html:h, title:p.name,
+    dock:'<button class="btn" data-act="materials:'+p.id+'">'+t('proj.matList')+'</button>'};
+};
+
+VIEWS.materials = function(r){
+  const p = state.projects.find(x => x.id === r.id);
+  if(!p) return {html:'', title:''};
+  const sys = S[p.systemId];
+  let h = '<div class="pad"><div style="font-size:12.5px;font-weight:600;letter-spacing:.055em;text-transform:uppercase;color:var(--ink2)">'+
+          t('proj.matList')+'</div><h1 class="lt" style="margin-top:6px">'+esc(p.name)+'</h1></div>';
+  h += '<div class="sp16"></div><div class="res-sum" style="margin-bottom:8px">'+
+    '<div class="r"><span class="k">'+t('res.totalArea')+'</span><span class="v">'+fmtArea(p.area, p.unit)+'</span></div>'+
+    '<div class="r"><span class="k">'+t('proj.system')+'</span><span class="v">'+esc(sysTitle(sys))+'</span></div>'+
+    '<div class="r"><span class="k">'+t('calc.waste')+'</span><span class="v">'+p.waste+'%</span></div>'+
+  '</div>';
+  h += '<div class="sp24"></div><div class="group">'+p.lines.map(l => {
+    const req = qty(l.withWaste, l.unit);
+    return row({t:esc(P[l.pid].number), s:esc(P[l.pid].name),
+      tail:'<span style="font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600">'+l.packs+'</span>'+
+           ' <span style="color:var(--ink2)">'+esc(packWord(l.pack.label, l.packs))+'</span>',
+      chev:false, act:'product:'+l.pid});
+  }).join('')+'</div>';
+  h += '<div class="pad" style="padding-top:12px"><div style="font-size:12.5px;color:var(--ink3);line-height:1.45">'+
+       p.lines.map(l => P[l.pid].number+' · '+fmt(qty(l.withWaste,l.unit).n,1)+' '+qty(l.withWaste,l.unit).u).join(' · ')+
+       '</div></div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('proj.matList'),
+    dock:'<button class="btn ghost" data-act="share:materials">'+t('res.share')+'</button>'};
+};
+
+VIEWS.projdocs = function(r){
+  const p = state.projects.find(x => x.id === r.id); if(!p) return {html:'',title:''};
+  const sys = S[p.systemId];
+  const pids = sys.layers.map(l => l.pid).filter((v,i,a) => a.indexOf(v) === i);
+  let h = '<div class="pad"><h1 class="lt">'+t('proj.docs')+'</h1><p class="lt-sub">'+esc(p.name)+'</p></div><div class="sp16"></div>';
+  h += '<div class="group">'+row({icon:'doc', t:t('doc.guide'), s:esc(sysTitle(sys)), act:'doc:gd-'+sys.id})+
+       pids.map(pid => row({icon:'doc', t:t('doc.tds'), s:esc(P[pid].number)+' — '+esc(P[pid].name), act:'doc:tds-'+pid})).join('')+
+       '</div><div class="sp44"></div>';
+  return {html:h, title:t('proj.docs')};
+};
+
+/* ------------------------------------------------------ DOCUMENT CENTER */
+VIEWS.docs = function(){
+  const cats = [
+    {key:'tds', name:t('doc.tds')+'s', n:PRODUCTS.length},
+    {key:'sds', name:t('doc.sds')+'s', n:PRODUCTS.length},
+    {key:'guide', name:t('doc.guide')+'s', n:SYSTEMS.length}
+  ];
+  let h = '<div class="pad"><h1 class="lt">'+t('doc.center')+'</h1></div><div class="sp16"></div>';
+  h += '<div class="group">'+cats.map(c => row({icon:'doc', t:esc(c.name), tail:c.n, act:'doclist:'+c.key})).join('')+'</div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('doc.center')};
+};
+VIEWS.doclist = function(r){
+  const list = DOCUMENTS.filter(d => d.cat === r.key);
+  const name = {tds:t('doc.tds')+'s', sds:t('doc.sds')+'s', guide:t('doc.guide')+'s'}[r.key];
+  let h = '<div class="pad"><h1 class="lt">'+esc(name)+'</h1><p class="lt-sub">'+list.length+' '+t('proj.files')+'</p></div>';
+  h += '<div class="sp16"></div><div class="group">'+list.map(d => row({
+    t:esc(d.pid ? P[d.pid].number : S[d.sid].name), s:esc(d.pid ? P[d.pid].name : S[d.sid].variant),
+    act:'doc:'+d.id})).join('')+'</div><div class="sp44"></div>';
+  return {html:h, title:name};
+};
+
+/* ------------------------------------------------------------- SETTINGS */
+VIEWS.settings = function(){
+  let h = '<div class="pad"><h1 class="lt">'+t('set.title')+'</h1></div><div class="sp24"></div>';
+  h += '<div class="group">'+row({icon:'person',
+    t:state.auth === 'anonymous' ? t('set.signin') : 'field@magiechem.com',
+    s:state.auth === 'anonymous' ? t('set.anon') : t('set.acct'),
+    act:state.auth === 'anonymous' ? 'authsheet' : null, chev:state.auth === 'anonymous'})+'</div>';
+
+  h += '<div class="sp32"></div><div class="pad"><div class="sec-label">'+t('set.lang')+'</div>'+
+       '<div class="seg">'+
+         '<button class="'+(state.lang==='en'?'on':'')+'" data-act="lang:en">English</button>'+
+         '<button class="'+(state.lang==='fr'?'on':'')+'" data-act="lang:fr">Français</button>'+
+       '</div></div>';
+  h += '<div class="sp24"></div><div class="pad"><div class="sec-label">'+t('set.units')+'</div>'+
+       '<div class="seg">'+
+         '<button class="'+(state.calc.unit==='ft2'?'on':'')+'" data-act="unit:ft2">'+(state.lang==='fr'?'Impérial (ft²)':'Imperial (ft²)')+'</button>'+
+         '<button class="'+(state.calc.unit==='m2'?'on':'')+'" data-act="unit:m2">'+(state.lang==='fr'?'Métrique (m²)':'Metric (m²)')+'</button>'+
+       '</div></div>';
+
+  h += '<div class="sp32"></div><div class="pad"><div class="sec-label">'+t('set.data')+'</div>'+
+       '<p class="body" style="margin:0">'+t('set.dataSub')+'.</p></div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('set.title')};
+};
+
+/* ------------------------------------------------------------- SHEETS -- */
+function layerSheet(sid, i){
+  const s = S[sid], l = s.layers[i], p = P[l.pid];
+  const rule = resolveRule(l, i, {});
+  const depth = l.depth >= 100 ? (l.depth/1000).toFixed(2).replace(/0$/,'')+' in.' : l.depth+' mils';
+  const pairs = [
+    [t('spec.mix'), p.spec.mixRatio],
+    [t('sys.thickness'), depth],
+    [t('spec.cov'), p.spec.coverage],
+    [t('spec.work'), p.spec.workingTime],
+    [t('spec.recoat'), p.spec.recoat],
+    [t('spec.pack'), p.spec.packaging]
+  ].filter(x => x[1] && x[1] !== '—');
+
+  let h = '<div class="sheet-head"><div style="min-width:0">'+
+    '<div style="font-size:12.5px;font-weight:600;letter-spacing:.055em;text-transform:uppercase;color:var(--ink2)">'+esc(roleName(l.role))+'</div>'+
+    '<div style="font-size:26px;font-weight:700;letter-spacing:-.026em;margin-top:4px">'+esc(p.number)+'</div>'+
+    '<div style="font-size:15.5px;color:var(--ink2);margin-top:2px;letter-spacing:-.01em">'+esc(p.name)+'</div>'+
+  '</div><button class="sheet-x" data-act="closesheet">'+icon('x',15,2.2)+'</button></div>';
+  h += '<div class="sp16"></div><div class="pad"><div class="specgrid">'+
+       pairs.map(c => specCell(esc(c[0]), c[1])).join('')+'</div></div>';
+  h += '<div class="sp24"></div><div class="pad"><button class="btn" data-act="sheetproduct:'+p.id+'">'+t('sys.viewProd')+'</button></div>';
+  openSheet(h);
+}
+
+function authSheet(next){
+  let h = '<div class="sheet-head"><div><div style="font-size:22px;font-weight:700;letter-spacing:-.024em">'+t('auth.title')+'</div></div>'+
+          '<button class="sheet-x" data-act="closesheet">'+icon('x',15,2.2)+'</button></div>';
+  h += '<div class="pad" style="padding-top:8px"><p class="body" style="margin:0">'+t('auth.body')+'</p></div>';
+  h += '<div class="sp24"></div><div class="pad" style="display:flex;flex-direction:column;gap:10px">'+
+    '<button class="btn" style="background:#111" data-act="auth:'+next+'">'+t('auth.apple')+'</button>'+
+    '<button class="btn ghost" data-act="auth:'+next+'">'+t('auth.google')+'</button>'+
+    '<button class="btn ghost" data-act="auth:'+next+'">'+t('auth.email')+'</button>'+
+    '<button class="btn plain" data-act="closesheet">'+t('auth.not')+'</button>'+
+  '</div>';
+  openSheet(h);
+}
+
+function nameSheet(){
+  const tl = targetLabel();
+  const suggested = tl ? tl.t.replace(/™|®/g,'') + ' — ' + fmtArea(parseFloat(state.calc.area)||0, state.calc.unit) : '';
+  let h = '<div class="sheet-head"><div><div style="font-size:22px;font-weight:700;letter-spacing:-.024em">'+t('proj.save')+'</div></div>'+
+          '<button class="sheet-x" data-act="closesheet">'+icon('x',15,2.2)+'</button></div>';
+  h += '<div class="sp16"></div><div class="pad" style="display:flex;flex-direction:column;gap:12px">'+
+    '<div><div class="spk" style="margin-bottom:6px">'+t('proj.name')+'</div>'+
+      '<div class="field"><input id="pname" value="'+esc(suggested)+'" autocomplete="off"></div></div>'+
+    '<div><div class="spk" style="margin-bottom:6px">'+t('proj.client')+'</div>'+
+      '<div class="field"><input id="pclient" placeholder="—" autocomplete="off"></div></div>'+
+    '<div><div class="spk" style="margin-bottom:6px">'+t('proj.loc')+'</div>'+
+      '<div class="field"><input id="ploc" placeholder="—" autocomplete="off"></div></div>'+
+    '<button class="btn" data-act="commitsave">'+t('proj.save')+'</button>'+
+  '</div>';
+  openSheet(h);
+  setTimeout(() => { const el = document.getElementById('pname'); if(el) el.focus(); }, 340);
+}
+</script>
+
+<script>
+/* ------------------------------------------------------- UNIVERSAL SEARCH */
+const SUGGESTIONS = ['9461','chemical resistant','flake','ESD','mechanical room','parking','moisture'];
+
+function searchAll(q){
+  q = q.trim().toLowerCase();
+  if(!q) return null;
+  const hay = x => x.toLowerCase().includes(q);
+  const products = PRODUCTS.filter(p =>
+    hay(p.number) || hay(p.name) || hay(p.tag) || hay(p.blurb) || p.uses.some(hay) || hay(familyName(p.family)));
+  const systems = SYSTEMS.filter(s =>
+    hay(s.name) || hay(s.variant) || hay(s.family) || hay(s.blurb) ||
+    s.tags.perf.some(k => hay((PERFORMANCE.find(x => x.key === k)||{}).name || '')) ||
+    s.tags.env.some(k => hay((ENVIRONMENTS.find(x => x.key === k)||{}).name || '')) ||
+    s.tags.finish.some(k => hay((FINISHES.find(x => x.key === k)||{}).name || '')));
+  const docs = DOCUMENTS.filter(d => hay(d.title));
+  const exact = PRODUCTS.filter(p => p.number.toLowerCase() === q || p.number.toLowerCase().startsWith(q));
+  const using = exact.length ? systemsUsing(exact[0].id).filter(s => !systems.includes(s)) : [];
+  return {products, systems, docs, using, exactProduct:exact[0]};
+}
+
+function renderSearch(){
+  const q = document.getElementById('sinput').value;
+  const body = document.getElementById('sbody');
+  const res = searchAll(q);
+  if(!res){
+    let h = '';
+    if(state.recent.searches.length){
+      h += '<div class="sl-sec">'+t('search.recent')+'</div><div class="group">'+
+        state.recent.searches.map(s => row({icon:'clock', t:esc(s), act:'dosearch:'+encodeURIComponent(s), chev:false})).join('')+'</div>';
+    }
+    h += '<div class="sl-sec">'+t('sec.suggested')+'</div><div class="pad"><div class="chips">'+
+      SUGGESTIONS.map(s => '<button class="chip" data-act="dosearch:'+encodeURIComponent(s)+'">'+esc(s)+'</button>').join('')+'</div></div>';
+    body.innerHTML = h; bindActions(body); return;
+  }
+  let h = '';
+  if(res.products.length){
+    h += '<div class="sl-sec">'+(res.products.length === 1 ? t('sec.product') : t('sec.products'))+'</div><div class="group">'+
+      res.products.map(p => row({t:esc(p.number), s:esc(p.name), act:'search2product:'+p.id})).join('')+'</div>';
+  }
+  if(res.using.length){
+    h += '<div class="sl-sec">'+t('sec.using')+'</div><div class="group">'+
+      res.using.map(s => row({t:esc(s.name), s:esc(s.variant), act:'search2system:'+s.id})).join('')+'</div>';
+  }
+  if(res.systems.length){
+    h += '<div class="sl-sec">'+t('sec.systems')+'</div><div class="group">'+
+      res.systems.map(s => row({t:esc(s.name), s:esc(s.variant)+' · '+esc(s.thickness), act:'search2system:'+s.id})).join('')+'</div>';
+  }
+  if(res.docs.length){
+    h += '<div class="sl-sec">'+t('sec.documents')+'</div><div class="group">'+
+      res.docs.slice(0,8).map(d => row({icon:'doc', t:esc(d.title), act:'search2doc:'+d.id})).join('')+'</div>';
+  }
+  if(!h) h = '<div class="empty"><div class="et">'+t('search.none')+'</div><div class="ed">'+t('search.noneSub')+'</div></div>';
+  body.innerHTML = h + '<div class="sp44"></div>';
+  bindActions(body);
+}
+function openSearch(){
+  const L = document.getElementById('searchlayer');
+  const i = document.getElementById('sinput');
+  i.placeholder = t('home.ph'); document.getElementById('scancel').textContent = t('search.cancel');
+  L.classList.add('open'); renderSearch();
+  setTimeout(() => i.focus(), 40);
+}
+function closeSearch(){
+  document.getElementById('searchlayer').classList.remove('open');
+  document.getElementById('sinput').value = '';
+}
+function rememberSearch(){
+  const q = document.getElementById('sinput').value.trim();
+  if(q) state.recent.searches = [q].concat(state.recent.searches.filter(x => x !== q)).slice(0,5);
+}
+
+/* -------------------------------------------------------------- RENDER -- */
+function titleFor(r){
+  switch(r.n){
+    case 'home': return t('tab.home');
+    case 'products': return t('tab.products');
+    case 'family': return familyName(r.key);
+    case 'product': return P[r.id].number;
+    case 'doc': return D[r.id].kind === 'TDS' ? t('doc.tds') : D[r.id].kind === 'SDS' ? t('doc.sds') : t('doc.guide');
+    case 'systems': return t('tab.systems');
+    case 'syslist': { const [ty,k] = r.key.split('|');
+      return ((ty === 'app' ? APPLICATIONS : PERFORMANCE).find(x => x.key === k) || {}).name || t('tab.systems'); }
+    case 'system': return S[r.id].name;
+    case 'selector': return state.selector.step === 3 ? t('sel.rec') : t('sys.find');
+    case 'calc': return t('tab.calculator');
+    case 'pick': return r.key === 'system' ? t('calc.pickSystem') : t('calc.pickProduct');
+    case 'results': return t('res.title');
+    case 'projects': return t('tab.projects');
+    case 'project': { const p = state.projects.find(x => x.id === r.id); return p ? p.name : t('tab.projects'); }
+    case 'materials': return t('proj.matList');
+    case 'projdocs': return t('proj.docs');
+    case 'docs': return t('doc.center');
+    case 'doclist': return {tds:t('doc.tds'), sds:t('doc.sds'), guide:t('doc.guide')}[r.key];
+    case 'settings': return t('set.title');
+  }
+  return '';
+}
+
+const TABICONS = {home:'home', systems:'layers', calculator:'calc', products:'grid', projects:'folder'};
+
+function renderTabs(){
+  document.getElementById('tabbar').innerHTML = TABS.map(tb =>
+    '<button class="tab'+(state.tab === tb ? ' on' : '')+'" data-act="tab:'+tb+'">'+
+    icon(TABICONS[tb], 25, state.tab === tb ? 1.9 : 1.7)+'<span>'+t('tab.'+tb)+'</span></button>').join('');
+  bindActions(document.getElementById('tabbar'));
+}
+
+function render(mode){
+  const r = route(), v = VIEWS[r.n](r);
+  const sc = document.getElementById('scroll'), nav = document.getElementById('navbar');
+  const dock = document.getElementById('dock');
+
+  document.getElementById('nbtitle').textContent = v.title || '';
+  const inSelector = r.n === 'selector' && state.selector.step > 0;
+  const back = stack().length > 1 || inSelector;
+  const backLabel = inSelector
+    ? t('sel.step') + ' ' + state.selector.step
+    : (stack().length > 1 ? titleFor(stack()[stack().length-2]) : '');
+  document.getElementById('nbleft').innerHTML = back
+    ? '<button class="nb-btn" data-act="back">'+icon('chevL',20,2.2)+'<span>'+esc(backLabel)+'</span></button>'
+    : '';
+  document.getElementById('nbright').innerHTML = v.rightBtn
+    ? '<button class="nb-btn" data-act="'+v.rightBtn.act+'">'+icon(v.rightBtn.icon,21,1.8)+'</button>'
+    : '';
+  nav.style.display = v.hideNav && !back ? 'none' : '';
+  sc.classList.toggle('nonav', !!(v.hideNav && !back));
+
+  if(v.dock){ dock.style.display = ''; dock.innerHTML = v.dock; sc.classList.add('docked'); }
+  else { dock.style.display = 'none'; dock.innerHTML = ''; sc.classList.remove('docked'); }
+
+  sc.innerHTML = '<div class="'+(mode === 'push' ? 'pushin' : 'fadein')+'">'+v.html+'</div>';
+  sc.scrollTop = mode === 'pop' ? (state.scroll[scrollKey()] || 0) : 0;
+  nav.classList.toggle('solid', sc.scrollTop > 12);
+
+  renderTabs();
+  bindActions(sc); bindActions(dock); bindActions(document.getElementById('navbar'));
+  if(r.n === 'calc') bindCalcInputs();
+  bindInlineSearch();
+}
+
+function bindInlineSearch(){
+  const dq = document.getElementById('docq');
+  if(dq) dq.addEventListener('input', e => {
+    route().q = e.target.value; const pos = e.target.selectionStart; render();
+    const el = document.getElementById('docq'); if(el){ el.focus(); el.setSelectionRange(pos,pos); }
+  });
+  const pq = document.getElementById('pickq');
+  if(pq) pq.addEventListener('input', e => {
+    route().q = e.target.value; const pos = e.target.selectionStart; render();
+    const el = document.getElementById('pickq'); if(el){ el.focus(); el.setSelectionRange(pos,pos); }
+  });
+}
+
+/* ------------------------------------------------------------- ACTIONS -- */
+function bindActions(root){
+  if(!root) return;
+  root.querySelectorAll('[data-act]').forEach(el => {
+    if(el._bound) return; el._bound = 1;
+    el.addEventListener('click', ev => { ev.preventDefault(); doAction(el.dataset.act); });
+  });
+}
+
+function doAction(a){
+  const i = a.indexOf(':');
+  const k = i < 0 ? a : a.slice(0, i);
+  const v = i < 0 ? '' : a.slice(i + 1);
+  const A = {
+    noop(){},
+    back(){
+      const r = route();
+      if(r.n === 'selector' && state.selector.step > 0){ state.selector.step--; render('pop'); return; }
+      pop();
+    },
+    tab(){ setTab(v); },
+    search(){ openSearch(); },
+    closesheet(){ closeSheet(); },
+    dosearch(){ document.getElementById('sinput').value = decodeURIComponent(v); renderSearch(); },
+    go(){
+      if(v === 'settings') push({n:'settings'});
+      else if(v === 'selector'){ state.selector = {step:0, env:null, perf:[], finish:null}; push({n:'selector'}); }
+      else if(v === 'calc') setTab('calculator');
+      else if(v === 'products') setTab('products');
+      else if(v === 'docs') push({n:'docs'});
+      else if(v === 'results') push({n:'results'});
+    },
+    product(){ touchProduct(v); push({n:'product', id:v}); },
+    family(){ push({n:'family', key:v}); },
+    doc(){ push({n:'doc', id:v, q:''}); },
+    system(){ touchSystem(v); closeSheet(); push({n:'system', id:v}); },
+    syslist(){ push({n:'syslist', key:v}); },
+    doclist(){ push({n:'doclist', key:v}); },
+    docs(){ push({n:'docs'}); },
+    layer(){ const [sid, idx] = v.split('|'); layerSheet(sid, +idx); },
+    sheetproduct(){ closeSheet(); touchProduct(v); push({n:'product', id:v}); },
+    usingsheet(){
+      const list = systemsUsing(v);
+      openSheet('<div class="sheet-head"><div style="font-size:20px;font-weight:650;letter-spacing:-.022em">'+t('sec.using')+'</div>'+
+        '<button class="sheet-x" data-act="closesheet">'+icon('x',15,2.2)+'</button></div><div class="sp16"></div>'+
+        '<div class="group">'+list.map(s => row({t:esc(s.name), s:esc(s.variant), act:'system:'+s.id})).join('')+'</div>');
+    },
+    search2product(){ rememberSearch(); closeSearch(); touchProduct(v); push({n:'product', id:v}); },
+    search2system(){ rememberSearch(); closeSearch(); touchSystem(v); push({n:'system', id:v}); },
+    search2doc(){ rememberSearch(); closeSearch(); push({n:'doc', id:v, q:''}); },
+    seloption(){
+      const [key, val] = v.split('|');
+      if(key === 'perf'){
+        state.selector.perf = state.selector.perf.includes(val)
+          ? state.selector.perf.filter(x => x !== val) : state.selector.perf.concat([val]);
+      } else state.selector[key] = val;
+      render();
+    },
+    selnext(){ state.selector.step++; render('push'); },
+    selreset(){ state.selector = {step:0, env:null, perf:[], finish:null}; render(); },
+    calcsystem(){
+      touchSystem(v); closeSheet();
+      state.calc.target = {kind:'system', id:v}; state.calc.overrides = {};
+      resetTo('calculator', {n:'calc'});
+    },
+    calcproduct(){
+      touchProduct(v);
+      state.calc.target = {kind:'product', id:v}; state.calc.overrides = {};
+      resetTo('calculator', {n:'calc'});
+    },
+    unit(){
+      if(state.calc.unit !== v && state.calc.area){
+        const a = parseFloat(state.calc.area);
+        if(isFinite(a)) state.calc.area = String(Math.round((v === 'm2' ? a * M2_PER_FT2 : a / M2_PER_FT2) * 100) / 100);
+      }
+      state.calc.unit = v; state.calc.l = ''; state.calc.w = ''; render();
+    },
+    kind(){
+      if(!state.calc.target || state.calc.target.kind !== v){ state.calc.target = null; state.calc.overrides = {}; }
+      state.calc.target = state.calc.target || {kind:v, id:null};
+      state.calc.target.kind = v;
+      if(!state.calc.target.id) push({n:'pick', key:v, q:''}); else render();
+    },
+    pick(){ push({n:'pick', key:v, q:''}); },
+    settarget(){
+      const [kind, id] = v.split('|');
+      state.calc.target = {kind, id}; state.calc.overrides = {};
+      if(kind === 'system') touchSystem(id); else touchProduct(id);
+      pop();
+    },
+    waste(){ state.calc.waste = +v; render(); },
+    advanced(){ advancedSheet(); },
+    resetov(){ state.calc.overrides = {}; refreshCalc(); advancedSheet(); toast(t('calc.reset')); },
+    savetoproject(){ if(state.auth === 'anonymous') authSheet('save'); else nameSheet(); },
+    auth(){ state.auth = 'account'; closeSheet(); setTimeout(nameSheet, 320); },
+    commitsave(){
+      const nm = (document.getElementById('pname')||{}).value || 'Untitled project';
+      const cl = (document.getElementById('pclient')||{}).value || '';
+      const lo = (document.getElementById('ploc')||{}).value || '';
+      const tl = targetLabel();
+      const p = {
+        id:'p'+(state.seq++), name:nm.trim(), client:cl.trim(), location:lo.trim(),
+        space:tl ? tl.s : '', area:parseFloat(state.calc.area)||0, unit:state.calc.unit,
+        systemId:state.calc.target.kind === 'system' ? state.calc.target.id : null,
+        productId:state.calc.target.kind === 'product' ? state.calc.target.id : null,
+        waste:state.calc.waste, overrides:JSON.parse(JSON.stringify(state.calc.overrides)),
+        lines:currentLines(), notes:'', created:t('proj.today')
+      };
+      if(!p.systemId){ closeSheet(); toast('Product-only projects come next'); return; }
+      state.projects.unshift(p); closeSheet();
+      setTimeout(() => { resetTo('projects', {n:'projects'}); push({n:'project', id:p.id}); toast(t('proj.saved')); }, 260);
+    },
+    project(){ push({n:'project', id:v}); },
+    materials(){ push({n:'materials', id:v}); },
+    projdocs(){ push({n:'projdocs', id:v}); },
+    reopen(){
+      const p = state.projects.find(x => x.id === v); if(!p) return;
+      state.calc.area = String(p.area); state.calc.unit = p.unit; state.calc.waste = p.waste;
+      state.calc.target = {kind:'system', id:p.systemId};
+      state.calc.overrides = JSON.parse(JSON.stringify(p.overrides || {}));
+      resetTo('calculator', {n:'calc'}); push({n:'results'});
+    },
+    share(){ toast(v === 'doc' ? t('doc.share') : t('res.share')); },
+    lang(){ state.lang = v; render(); },
+    authsheet(){ authSheet('none'); }
+  };
+  (A[k] || A.noop)();
+}
+
+/* --------------------------------------------------------------- BOOT --- */
+document.getElementById('scroll').addEventListener('scroll', e => {
+  document.getElementById('navbar').classList.toggle('solid', e.target.scrollTop > 12);
+});
+document.getElementById('sinput').addEventListener('input', renderSearch);
+render();
+</script>
