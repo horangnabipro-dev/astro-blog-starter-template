@@ -1,0 +1,677 @@
+<title>MAGIECHEM Field Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FFFFFF; --ground-2:#F7F7F8; --ground-3:#F5F5F7;
+  --ink:#111111; --ink-2:#6E6E73; --ink-3:#8E8E93;
+  --rule:#E5E5EA; --rule-soft:#EFEFF2;
+  --red:#EF3333; --blue:#0698FF;
+  --shadow:0 1px 2px rgba(17,17,17,.04);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0C0C0D; --ground-2:#161617; --ground-3:#111112;
+    --ink:#F5F5F7; --ink-2:#98989F; --ink-3:#7C7C82;
+    --rule:#2A2A2C; --rule-soft:#202022;
+    --red:#FF5A5A; --blue:#45B2FF;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0C0C0D; --ground-2:#161617; --ground-3:#111112;
+  --ink:#F5F5F7; --ink-2:#98989F; --ink-3:#7C7C82;
+  --rule:#2A2A2C; --rule-soft:#202022;
+  --red:#FF5A5A; --blue:#45B2FF;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16.5px; line-height:1.62; margin:0;
+  -webkit-font-smoothing:antialiased; font-feature-settings:"cv05","ss01";
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* ---- shell ---- */
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px 120px}
+.row{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:940px){
+  .row{grid-template-columns:96px minmax(0,700px);column-gap:40px}
+}
+.gutter{display:none}
+@media(min-width:940px){
+  .gutter{display:block;padding-top:.55em}
+  .gutter span{
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.06em;
+    color:var(--ink-3);text-transform:uppercase;
+  }
+}
+
+/* ---- masthead ---- */
+header.mast{border-bottom:1px solid var(--ink);margin-bottom:0}
+.mast-inner{max-width:1000px;margin:0 auto;padding:56px 24px 22px}
+.brand{
+  font-size:clamp(30px,5.4vw,46px);font-weight:700;letter-spacing:-.028em;
+  line-height:1.04;margin:0 0 6px;text-wrap:balance;
+}
+.brand sup{font-size:.36em;font-weight:500;top:-1.05em;position:relative;letter-spacing:0}
+.brand-sub{
+  font-size:clamp(17px,2.6vw,21px);font-weight:500;color:var(--ink-2);
+  letter-spacing:-.012em;margin:0 0 30px;
+}
+.meta{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  border-top:1px solid var(--rule);
+}
+.meta div{
+  padding:12px 16px 12px 0;border-right:1px solid var(--rule);
+}
+.meta div:last-child{border-right:0}
+@media(max-width:620px){.meta div{border-right:0;border-bottom:1px solid var(--rule-soft);padding-right:0}
+.meta div:last-child{border-bottom:0}}
+.meta dt{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 3px;
+}
+.meta dd{margin:0;font-size:14.5px;font-weight:500;letter-spacing:-.008em}
+.status{color:var(--red)}
+.status::before{
+  content:"";display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--red);margin-right:7px;vertical-align:middle;
+}
+
+/* ---- sections ---- */
+section{padding-top:52px}
+.part{
+  border-top:1px solid var(--ink);margin-top:64px;padding-top:14px;
+}
+.part-label{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink);font-weight:500;
+}
+h2{
+  font-size:clamp(23px,3.3vw,29px);font-weight:650;letter-spacing:-.022em;
+  line-height:1.2;margin:0 0 10px;text-wrap:balance;
+}
+h3{
+  font-size:19px;font-weight:600;letter-spacing:-.016em;margin:38px 0 8px;
+  text-wrap:balance;
+}
+h4{
+  font-size:13px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-2);margin:30px 0 10px;
+}
+p{margin:0 0 16px;max-width:66ch}
+.lede{font-size:18.5px;color:var(--ink-2);letter-spacing:-.012em;max-width:62ch}
+strong{font-weight:600}
+a{color:var(--blue);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:currentColor}
+a:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:2px}
+hr.soft{border:0;border-top:1px solid var(--rule-soft);margin:30px 0}
+
+/* ---- spec rows ---- */
+.spec{border-top:1px solid var(--rule);margin:14px 0 8px}
+.spec .r{
+  display:grid;grid-template-columns:minmax(120px,.68fr) 1.32fr;
+  gap:16px;padding:11px 0;border-bottom:1px solid var(--rule-soft);
+  align-items:baseline;
+}
+@media(max-width:560px){.spec .r{grid-template-columns:1fr;gap:2px}}
+.spec .k{font-size:14.5px;font-weight:500;color:var(--ink-2);letter-spacing:-.006em}
+.spec .v{font-size:15.5px;letter-spacing:-.01em}
+.spec .v.num{font-family:"IBM Plex Mono",monospace;font-size:14px;font-variant-numeric:tabular-nums}
+
+/* ---- numbered / bulleted lists ---- */
+ul.clean{list-style:none;padding:0;margin:8px 0 18px}
+ul.clean li{
+  position:relative;padding:7px 0 7px 22px;border-bottom:1px solid var(--rule-soft);
+  font-size:15.5px;letter-spacing:-.008em;max-width:66ch;
+}
+ul.clean li:last-child{border-bottom:0}
+ul.clean li::before{
+  content:"";position:absolute;left:2px;top:1.02em;width:7px;height:1px;background:var(--ink-3);
+}
+ul.clean li b{font-weight:600}
+ul.tight li{border-bottom:0;padding:3px 0 3px 22px}
+ul.tight li::before{top:.95em}
+
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:10px 0 20px}
+ol.steps li{
+  counter-increment:s;position:relative;padding:10px 0 10px 40px;
+  border-bottom:1px solid var(--rule-soft);font-size:15.5px;max-width:66ch;
+}
+ol.steps li:last-child{border-bottom:0}
+ol.steps li::before{
+  content:counter(s,decimal-leading-zero);position:absolute;left:0;top:11px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);
+  letter-spacing:.04em;
+}
+
+/* ---- reference weighting ---- */
+.weights{margin:20px 0 8px}
+.wbar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--ground-3)}
+.wbar i{display:block}
+.wkey{display:flex;flex-wrap:wrap;gap:18px;margin-top:12px}
+.wkey span{
+  font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:7px;
+}
+.wkey span::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--dot)}
+
+/* ---- callout ---- */
+.note{
+  border-left:2px solid var(--rule);padding:2px 0 2px 18px;margin:20px 0;
+  color:var(--ink-2);font-size:15.5px;max-width:64ch;
+}
+.note.hold{border-left-color:var(--red)}
+.note.hold b{color:var(--ink)}
+
+/* ---- proposal blocks ---- */
+.prop{border-top:1px solid var(--rule);padding-top:18px;margin-top:26px}
+.prop-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:2px}
+.prop-h h3{margin:0;font-size:19px}
+.tag{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);border:1px solid var(--rule);
+  border-radius:4px;padding:2px 7px;
+}
+.tag.rec{color:var(--red);border-color:var(--red)}
+
+/* ---- flow chains ---- */
+.chain{
+  display:flex;flex-wrap:wrap;align-items:center;gap:5px 8px;margin:8px 0 4px;
+  font-size:14px;
+}
+.chain b{
+  font-weight:500;letter-spacing:-.006em;background:var(--ground-2);
+  border:1px solid var(--rule-soft);border-radius:7px;padding:4px 9px;
+}
+.chain i{color:var(--ink-3);font-style:normal;font-size:13px}
+.chain em{
+  font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+  color:var(--ink-3);letter-spacing:.04em;margin-left:2px;
+}
+
+/* ---- IA tree ---- */
+.tree{
+  font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.85;
+  background:var(--ground-2);border:1px solid var(--rule-soft);border-radius:12px;
+  padding:20px 22px;overflow-x:auto;white-space:pre;color:var(--ink-2);margin:16px 0 8px;
+}
+.tree b{color:var(--ink);font-weight:500}
+.tree u{text-decoration:none;color:var(--blue)}
+
+/* ---- swatches ---- */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:1px;
+  background:var(--rule-soft);border:1px solid var(--rule-soft);border-radius:12px;overflow:hidden;margin:16px 0}
+.sw{background:var(--ground);padding:14px}
+.sw .chip{height:34px;border-radius:7px;border:1px solid var(--rule);margin-bottom:10px}
+.sw .nm{font-size:13.5px;font-weight:550;letter-spacing:-.008em}
+.sw .hx{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);letter-spacing:.03em}
+.sw .use{font-size:12px;color:var(--ink-2);margin-top:5px;line-height:1.45}
+
+/* ---- type ramp ---- */
+.ramp{border-top:1px solid var(--rule);margin:16px 0}
+.ramp .r{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;
+  padding:12px 0;border-bottom:1px solid var(--rule-soft);
+}
+.ramp .sample{letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ramp .sp{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);
+  white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+
+/* ---- formula ---- */
+.formula{
+  font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.9;
+  background:var(--ground-2);border:1px solid var(--rule-soft);border-radius:12px;
+  padding:18px 20px;overflow-x:auto;margin:14px 0;color:var(--ink);
+}
+.formula span{color:var(--ink-3)}
+
+/* ---- gate ---- */
+.gate{
+  border:1px solid var(--red);border-radius:14px;padding:26px 26px 22px;margin-top:26px;
+  background:var(--ground);
+}
+.gate h3{margin-top:0}
+.gate ul.clean li{border-bottom-color:var(--rule-soft)}
+
+footer{
+  border-top:1px solid var(--rule);margin-top:72px;padding-top:18px;
+  font-size:13px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:6px 18px;
+}
+@media(prefers-reduced-motion:no-preference){
+  section{animation:rise .5s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+</style>
+
+<header class="mast">
+  <div class="mast-inner">
+    <h1 class="brand">MAGIECHEM<sup>®</sup> Field Assistant</h1>
+    <p class="brand-sub">Design reference confirmation, product strategy and prototype plan.</p>
+    <dl class="meta">
+      <div><dt>Document</dt><dd class="mono">MC-APP-001</dd></div>
+      <div><dt>Deliverable</dt><dd>Pre-design · A–E</dd></div>
+      <div><dt>Screen design</dt><dd class="status">Held — §49</dd></div>
+      <div><dt>Date</dt><dd class="mono">2026-08-26</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+<div class="row"><div class="gutter"><span>§00</span></div><div>
+  <p class="lede">This covers everything that must be agreed before a single screen is drawn: how the three references will be used, what the product is, how it is structured, and which eight screens become functional first.</p>
+  <div class="note hold"><b>No screen design is included.</b> Per §49, visual design begins only after you approve the reference confirmation below — and after you rule on the four additional references I am requesting, which are listed with their justifications in Part 1.</div>
+</div></div>
+</section>
+
+<div class="part"><div class="row"><div class="gutter"></div><div>
+  <span class="part-label">Part 1 — Design Reference Confirmation</span>
+</div></div></div>
+
+<section>
+<div class="row"><div class="gutter"><span>§06</span></div><div>
+  <h2>How the three references divide the work</h2>
+  <p>They are not three flavours to blend. Each one owns a different layer of the product, and where they disagree, the order below decides.</p>
+  <div class="weights">
+    <div class="wbar" role="img" aria-label="Apple governs interaction and craft; MAPEI governs content architecture; Fiverr contributes selected browsing patterns.">
+      <i style="flex:6;background:var(--ink)"></i><i style="flex:3;background:var(--ink-2)"></i><i style="flex:1;background:var(--blue)"></i>
+    </div>
+    <div class="wkey">
+      <span style="--dot:var(--ink)">Apple — interaction, craft, hierarchy</span>
+      <span style="--dot:var(--ink-2)">MAPEI — content architecture, vocabulary</span>
+      <span style="--dot:var(--blue)">Fiverr — browsing composition</span>
+    </div>
+  </div>
+  <div class="spec">
+    <div class="r"><div class="k">Apple governs</div><div class="v">How it behaves and how it feels. Every navigation, motion, spacing and typographic decision defaults to Apple.</div></div>
+    <div class="r"><div class="k">MAPEI governs</div><div class="v">What the content is called and how it is organised. Taxonomy, terminology, document rigour.</div></div>
+    <div class="r"><div class="k">Fiverr contributes</div><div class="v">Four specific composition patterns. Nothing structural, nothing tonal.</div></div>
+    <div class="r"><div class="k">Conflict rule</div><div class="v">Apple wins on form. MAPEI wins on substance. If a Fiverr pattern conflicts with either, it is dropped.</div></div>
+  </div>
+</div></div>
+</section>
+
+<section>
+<div class="row"><div class="gutter"><span>Ref 01</span></div><div>
+  <h2>Apple — the interaction and craft standard</h2>
+  <p>Not screens to imitate. Fourteen specific behaviours, each of which will be verifiable in the prototype.</p>
+
+  <h4>Navigation &amp; structure</h4>
+  <ul class="clean">
+    <li><b>Push / pop stacks per tab.</b> Each of the five tabs keeps its own navigation stack and its own scroll position. Leaving Calculator mid-flow and returning finds it exactly as it was — this is what makes §40's state preservation real rather than a patch.</li>
+    <li><b>Large title collapsing to inline on scroll,</b> with a hairline appearing under the nav bar only once content is beneath it.</li>
+    <li><b>Parent-labelled back.</b> <span class="mono">‹ Products</span>, never a bare chevron. On a site with no signal and gloves on, the label is the orientation.</li>
+    <li><b>Grouped inset lists as the default container</b> — the Settings pattern. Rows, hairlines inset to the text edge, section headers in secondary grey. This is what replaces cards throughout (§12).</li>
+  </ul>
+
+  <h4>Disclosure &amp; input</h4>
+  <ul class="clean">
+    <li><b>One decision per screen</b> in Calculator and System Selector; nothing else competes for attention on those screens.</li>
+    <li><b>Sheets with detents.</b> Medium detent for the system-layer peek and the save-project prompt, expanding to large on drag. Grabber, dimmed backdrop, swipe-to-dismiss.</li>
+    <li><b>Disclosure rows for advanced settings</b> — collapsed by default, MAGIECHEM® recommended values already applied, so the default path never sees them.</li>
+    <li><b>Segmented controls</b> for ft² / m² and Product / Complete System — binary choices that must show both options at once.</li>
+  </ul>
+
+  <h4>Search</h4>
+  <ul class="clean">
+    <li><b>Spotlight behaviour, not website behaviour.</b> Tapping search takes over the screen, results appear per keystroke, results are grouped by type with section headers, and the empty state shows recents rather than a blank field.</li>
+  </ul>
+
+  <h4>Craft</h4>
+  <ul class="clean">
+    <li><b>Typography as the hierarchy mechanism</b> — weight, size and colour do the work that colour blocks and boxes do on industrial apps.</li>
+    <li><b>44 pt minimum targets, 16 pt margins, 8 pt spacing grid.</b> No exceptions on primary controls.</li>
+    <li><b>Motion that explains state only.</b> Sheet rise, layer expansion, results counting into place. Nothing decorative; <span class="mono">prefers-reduced-motion</span> honoured.</li>
+    <li><b>Sticky bottom action bar</b> carrying exactly one primary action, over a blurred material with a hairline above it.</li>
+    <li><b>Skeletons, not spinners;</b> written empty states, not blank screens.</li>
+  </ul>
+  <p class="note">What I will <em>not</em> take from Apple: its screens, its icon set redrawn literally, or its consumer warmth. This is a work tool used in a mechanical room, not a lifestyle app.</p>
+</div></div>
+</section>
+
+<section>
+<div class="row"><div class="gutter"><span>Ref 02</span></div><div>
+  <h2>MAPEI — content architecture and professional vocabulary</h2>
+  <p>MAPEI has already solved something genuinely hard: organising a very large technical catalogue in terms a trade professional recognises on sight. That structure is worth inheriting. Its visual execution is not.</p>
+
+  <h4>Retained</h4>
+  <ul class="clean">
+    <li><b>Product families as the catalogue's top level</b> — Epoxy, Polyaspartic, Polyurethane, Cementitious Polyurethane, Primers, Membranes, Repair Materials, Sealants. This is how the trade already thinks; inventing a new taxonomy would cost recognition for no gain.</li>
+    <li><b>Systems as first-class objects, distinct from products.</b> A system is a named, engineered assembly with ordered layers — not a category of products. This is the single most important structural inheritance, and it is what makes §4's philosophy expressible in the IA.</li>
+    <li><b>Dual-vocabulary browsing.</b> Professionals arrive either by <em>place</em> ("mechanical room", "parking deck", "food &amp; beverage") or by <em>property</em> ("chemical resistance", "ESD", "slip resistance"). Both are first-class entry paths into Systems.</li>
+    <li><b>Tools as a permanent destination.</b> The calculator earns a bottom-nav slot rather than living inside a portal.</li>
+    <li><b>Document rigour.</b> TDS and SDS are canonical, versioned, named as the industry names them, and never more than one tap from the product.</li>
+    <li><b>Unapologetic terminology.</b> Mils, DFT, mix ratio by volume, pot life, recoat window, broadcast rate, solids content. No consumer translation layer.</li>
+    <li><b>Product number as the primary key.</b> <span class="mono">9461</span> is the name; the description is the subtitle. Pros search by number.</li>
+  </ul>
+
+  <h4>Improved</h4>
+  <ul class="clean">
+    <li><b>Colour-coded category tiles → typographic rows.</b> Category colour is decoration carrying no information; a row with a count carries more and weighs nothing.</li>
+    <li><b>Portal wall → open access.</b> Search, catalogue, documents and calculator all work signed-out (§15). Authentication appears only at save.</li>
+    <li><b>PDF as the destination → data first.</b> Mix ratio, solids, thickness, coverage and working time live on the product screen. The TDS becomes confirmation, not the source. This alone removes steps 5–9 of the workflow in §1.</li>
+    <li><b>Build-ups as static tables → an interactive cross-section.</b> The system stack becomes a tappable technical drawing, which is the app's signature screen.</li>
+    <li><b>Separate search silos → one universal index</b> over products, systems and documents.</li>
+  </ul>
+</div></div>
+</section>
+
+<section>
+<div class="row"><div class="gutter"><span>Ref 03</span></div><div>
+  <h2>Fiverr — four composition patterns, nothing more</h2>
+  <ul class="clean">
+    <li><b>Search-first home.</b> The search field is the hero of Home, above any promotional or editorial content — which is the correct priority for a lookup tool.</li>
+    <li><b>Horizontal rails for lightweight discovery,</b> used only for Recently Viewed and Recent Systems, with disciplined card proportions and a peeking next item that signals scrollability.</li>
+    <li><b>Confident section headers with a quiet "See all"</b> on a white canvas — clean sectioning without boxes.</li>
+    <li><b>Bottom-navigation proportions</b> — icon size, label size, and the spacing between them, which Fiverr resolves well at five items.</li>
+  </ul>
+  <h4>Explicitly refused</h4>
+  <ul class="clean tight">
+    <li>Seller cards, ratings, reviews, social proof</li>
+    <li>Marketplace language — "orders", "packages", "deals", "starting at"</li>
+    <li>Promotional banners and price emphasis</li>
+    <li>Any suggestion that products are being sold rather than specified</li>
+  </ul>
+</div></div>
+</section>
+
+<section>
+<div class="row"><div class="gutter"><span>§07</span></div><div>
+  <h2>Additional references — awaiting your approval</h2>
+  <p>Four requests. Each names a gap the approved three genuinely do not cover. None will be used unless you approve it individually; if you approve none, the product still works, with the consequences noted.</p>
+
+  <div class="prop">
+    <div class="prop-h"><h3>Flighty</h3><span class="tag rec">Recommended</span></div>
+    <div class="spec">
+      <div class="r"><div class="k">Principle</div><div class="v">A vertical timeline of ordered, tappable segments where each segment carries dense technical values calmly, and tapping one opens a detail sheet without leaving the timeline.</div></div>
+      <div class="r"><div class="k">Applies to</div><div class="v">System Detail — the System Build-Up cross-section (§24), and by extension the calculator's per-layer results.</div></div>
+      <div class="r"><div class="k">Why the three fall short</div><div class="v">Apple ships no stacked-assembly pattern anywhere in its system apps. MAPEI renders build-ups as static tables or PDF images — precisely what we are removing. Fiverr has no technical surface at all. This is the app's signature screen and it currently has no reference.</div></div>
+    </div>
+  </div>
+
+  <div class="prop">
+    <div class="prop-h"><h3>Perplexity</h3><span class="tag rec">Recommended</span></div>
+    <div class="spec">
+      <div class="r"><div class="k">Principle</div><div class="v">An answer with inline source attribution — every claim carries a tappable citation back to the document it came from, and the interface visibly refuses to answer beyond its sources.</div></div>
+      <div class="r"><div class="k">Applies to</div><div class="v">Natural-language technical search (§19).</div></div>
+      <div class="r"><div class="k">Why the three fall short</div><div class="v">None has an AI answer surface. §19 requires that answers cite products, systems and TDS sources and feel trustworthy — a technical recommendation without provenance is a liability in this industry. The citation pattern is the mechanism that makes the trust visible.</div></div>
+    </div>
+  </div>
+
+  <div class="prop">
+    <div class="prop-h"><h3>Google Maps — offline areas</h3><span class="tag rec">Recommended</span></div>
+    <div class="spec">
+      <div class="r"><div class="k">Principle</div><div class="v">Explicit, user-controlled offline availability: "make this available offline", a clear per-item download state, and an honest banner when showing cached data.</div></div>
+      <div class="r"><div class="k">Applies to</div><div class="v">Document Center, Product Detail documents, and Project Detail — "Make this project available offline".</div></div>
+      <div class="r"><div class="k">Why the three fall short</div><div class="v">§34 places users in mechanical rooms, basements and warehouses. Apple's Files handles downloads but not the deliberate "take this area with me" gesture; MAPEI assumes connectivity; Fiverr is irrelevant here. Without this, the app fails exactly where it is most needed.</div></div>
+    </div>
+  </div>
+
+  <div class="prop">
+    <div class="prop-h"><h3>Soulver</h3><span class="tag">Optional</span></div>
+    <div class="spec">
+      <div class="r"><div class="k">Principle</div><div class="v">Live recalculation with visible units — every dependent value updates as an input changes, and units are part of the value rather than a separate control.</div></div>
+      <div class="r"><div class="k">Applies to</div><div class="v">Calculator area entry and advanced settings (§26–27).</div></div>
+      <div class="r"><div class="k">Why the three fall short</div><div class="v">Apple's Calculator is not a parametric form; MAPEI's is a submit-and-reload web form. §40 requires that changing area, system or waste updates quantities — this reference is how that feels immediate rather than transactional.</div></div>
+    </div>
+  </div>
+  <div class="note">If you approve none: the cross-section is designed from first principles, the AI surface is deferred out of the MVP, offline is reduced to a plain per-document save, and the calculator recalculates on a Calculate button rather than live.</div>
+</div></div>
+</section>
+
+<div class="part"><div class="row"><div class="gutter"></div><div>
+  <span class="part-label">Part 2 — Strategy, architecture and plan</span>
+</div></div></div>
+
+<section>
+<div class="row"><div class="gutter"><span>A</span></div><div>
+  <h2>Product strategy</h2>
+
+  <h4>The problem, stated precisely</h4>
+  <p>The fifteen steps in §1 are not fifteen tasks. They are one task — <em>specify a floor</em> — fragmented across four systems that do not know about each other: the website, a PDF, a portal, and a calculator. The cost is not only time; it is that the professional must hold the answer in their head while moving between tools, on a site, often with gloves on.</p>
+  <p>The app's job is to collapse those four systems into one index where a product knows which systems use it, a system knows its layers and their coverages, and a calculation knows both.</p>
+
+  <h4>Value proposition</h4>
+  <p><strong>From "I have a project" to "I know what to order" in under a minute, without opening a PDF.</strong> Everything else the app does is in service of that sentence.</p>
+
+  <h4>Users, and what each one needs first</h4>
+  <div class="spec">
+    <div class="r"><div class="k">Flooring contractor</div><div class="v">On site, mid-job. Needs mix ratio, pot life, recoat window and coverage in under ten seconds. Optimise for: search speed and the product screen's top block.</div></div>
+    <div class="r"><div class="k">Estimator / PM</div><div class="v">At a desk or in a truck. Needs area → system → kit counts, saved and shareable. Optimise for: the calculator and the material list.</div></div>
+    <div class="r"><div class="k">Architect / engineer</div><div class="v">Specifying. Needs the complete assembly, its thickness, its resistance data and its documents. Optimise for: System Detail and Document Center.</div></div>
+    <div class="r"><div class="k">Distributor</div><div class="v">On a call. Needs product lookup, compatibility and what to quote. Optimise for: search results and the material list.</div></div>
+    <div class="r"><div class="k">MAGIECHEM® rep</div><div class="v">In front of a customer. Needs to answer, recommend and calculate without a laptop. Optimise for: the whole app — this user touches every screen.</div></div>
+  </div>
+
+  <h4>Design philosophy</h4>
+  <ul class="clean">
+    <li><b>Data before documents.</b> The TDS is a fallback, not a destination.</li>
+    <li><b>Systems before products.</b> Products are components of engineered assemblies; the IA says so structurally, not with marketing copy.</li>
+    <li><b>Answer, then elaborate.</b> The essential values are on screen immediately; everything else is one disclosure away (§35).</li>
+    <li><b>Nothing invented.</b> No technical value or recommendation is shown unless it traces to MAGIECHEM® source data (§19).</li>
+    <li><b>Earned identity.</b> Brand comes from the logo, restrained red, the system names and the cross-section — not from colouring the interface (§46).</li>
+  </ul>
+</div></div>
+</section>
+
+<section>
+<div class="row"><div class="gutter"><span>B</span></div><div>
+  <h2>Information architecture</h2>
+  <p>Five tabs, three of which are indexes and two of which are tools. The important structure is not the tabs — it is the cross-links between them, which is what makes the fifteen-step workflow collapse.</p>
+<div class="tree">TAB BAR  <b>Home</b>   <b>Systems</b>   <b>Calculator</b>   <b>Products</b>   <b>Projects</b>
+
+<b>Home</b>            Search field · three entry actions · Continue · Recently Viewed
+                 └─ Profile / Settings (language, units, account)
+
+<b>Systems</b>         By application  ─┐
+                 By performance  ─┴─▸ <b>System Detail</b>
+                 System Selector ──────▸ Recommended ─▸ <b>System Detail</b>
+                                          └─ layer tap ─▸ <u>Product sheet</u> ─▸ <b>Product Detail</b>
+
+<b>Calculator</b>      Area ─▸ Product or System ─▸ Selection ─▸ Settings ─▸ <b>Results</b>
+                                                              └─▸ Save ─▸ <b>Project Detail</b>
+
+<b>Products</b>        Families ─▸ Family list ─▸ <b>Product Detail</b>
+                                          ├─ Documents ─▸ <b>Document Viewer</b>
+                                          ├─ Compatible Systems ─▸ <b>System Detail</b>
+                                          └─ Calculate Quantity ─▸ <b>Calculator</b> (pre-filled)
+
+<b>Projects</b>        Project list ─▸ <b>Project Detail</b>
+                                 ├─ System ─▸ <b>System Detail</b>
+                                 ├─ Materials ─▸ <b>Material List</b>
+                                 ├─ Documents ─▸ <b>Document Viewer</b>
+                                 └─ Calculations ─▸ <b>Results</b> (editable, recalculates)
+
+MODAL LAYER      Universal Search · Bottom sheets · Document Viewer · Sign-in
+                 (present over any tab; never a tab of its own)</div>
+  <div class="spec">
+    <div class="r"><div class="k">Connective rule</div><div class="v">Every product links to the systems containing it; every system links to its products; both link into the calculator; the calculator links into a project; a project links back to all three. No leaf is a dead end.</div></div>
+    <div class="r"><div class="k">Depth ceiling</div><div class="v">Three levels from any tab root to any leaf. Anything deeper becomes a sheet.</div></div>
+    <div class="r"><div class="k">Search placement</div><div class="v">Modal over the current tab, returning to it on dismiss — so search never costs the user their place.</div></div>
+    <div class="r"><div class="k">Document Center</div><div class="v">Reached from Home search, Products and Projects rather than owning a tab. It is an index, not a destination — a sixth tab would break §5's five-item limit for a surface users arrive at by intent, not by browsing.</div></div>
+  </div>
+</div></div>
+</section>
+
+<section>
+<div class="row"><div class="gutter"><span>C</span></div><div>
+  <h2>Primary journeys</h2>
+  <p>Measured in taps from a cold start. The number in the margin is the target the design must hit; if a screen pushes a journey over it, the screen is wrong.</p>
+
+  <h4>Find a product</h4>
+  <div class="chain"><b>Home</b><i>›</i><b>Search</b><i>›</i><b>type 9461</b><i>›</i><b>Product Detail</b><em>3 taps</em></div>
+
+  <h4>Get a technical value</h4>
+  <div class="chain"><b>Home</b><i>›</i><b>Search</b><i>›</i><b>9461</b><i>›</i><b>read mix ratio on arrival</b><em>3 taps · 0 scroll</em></div>
+  <p>The top block of Product Detail answers the most-asked question without scrolling. This is the single highest-frequency journey in the app and the reason data precedes documents.</p>
+
+  <h4>Open a TDS</h4>
+  <div class="chain"><b>Home</b><i>›</i><b>Search</b><i>›</i><b>9461</b><i>›</i><b>Documents</b><i>›</i><b>TDS Viewer</b><em>4 taps</em></div>
+  <p>Replaces steps 1–7 of §1. The document opens in-app; nothing leaves for a browser or a downloads folder.</p>
+
+  <h4>Find the right system</h4>
+  <div class="chain"><b>Home</b><i>›</i><b>Find the right system</b><i>›</i><b>Environment</b><i>›</i><b>Performance</b><i>›</i><b>Finish</b><i>›</i><b>Recommended</b><em>6 taps · 3 decisions</em></div>
+
+  <h4>Calculate a project</h4>
+  <div class="chain"><b>Calculator</b><i>›</i><b>12,500 ft²</b><i>›</i><b>Complete System</b><i>›</i><b>MAGIEFLAKE™</b><i>›</i><b>Calculate</b><i>›</i><b>Results</b><em>5 taps</em></div>
+  <p>From a system already on screen, this shortens to two: <b>Calculate This System</b> carries the system forward and asks only for area.</p>
+
+  <h4>Save a project</h4>
+  <div class="chain"><b>Results</b><i>›</i><b>Save to Project</b><i>›</i><b>Sign-in sheet</b><i>›</i><b>Name</b><i>›</i><b>Project Detail</b><em>4 taps</em></div>
+  <p>The sign-in sheet is the only moment in the entire app that asks for anything, and it appears exactly once (§15).</p>
+</div></div>
+</section>
+
+<section>
+<div class="row"><div class="gutter"><span>D</span></div><div>
+  <h2>Design system</h2>
+  <p>Tokens and component rules only — no screens. Everything below is what the eight prototype screens will be built from.</p>
+
+  <h4>Colour</h4>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#FFFFFF"></div><div class="nm">Ground</div><div class="hx">#FFFFFF</div><div class="use">Every screen background.</div></div>
+    <div class="sw"><div class="chip" style="background:#F7F7F8"></div><div class="nm">Grouped</div><div class="hx">#F7F7F8</div><div class="use">Behind grouped lists, sheets, fields.</div></div>
+    <div class="sw"><div class="chip" style="background:#111111"></div><div class="nm">Ink</div><div class="hx">#111111</div><div class="use">Titles, technical values.</div></div>
+    <div class="sw"><div class="chip" style="background:#6E6E73"></div><div class="nm">Ink secondary</div><div class="hx">#6E6E73</div><div class="use">Labels, subtitles, section headers.</div></div>
+    <div class="sw"><div class="chip" style="background:#E5E5EA"></div><div class="nm">Rule</div><div class="hx">#E5E5EA</div><div class="use">Separators, field borders.</div></div>
+    <div class="sw"><div class="chip" style="background:#EF3333"></div><div class="nm">MAGIECHEM® Red</div><div class="hx">#EF3333</div><div class="use">One primary action per screen. Selected states.</div></div>
+    <div class="sw"><div class="chip" style="background:#0698FF"></div><div class="nm">Technical Blue</div><div class="hx">#0698FF</div><div class="use">Links, document actions, informational only.</div></div>
+  </div>
+  <div class="spec">
+    <div class="r"><div class="k">Red budget</div><div class="v">One red element visible at a time, per screen. A second red element means the first was not the primary action.</div></div>
+    <div class="r"><div class="k">Blue budget</div><div class="v">Never adjacent to red. Blue means "this opens a document or a link"; it is never an action colour.</div></div>
+    <div class="r"><div class="k">Semantic</div><div class="v">Success and warning are reserved and drawn from neither brand colour, so a calculation warning never reads as branding.</div></div>
+    <div class="r"><div class="k">Dark mode</div><div class="v">Deferred past MVP by design. The light system is the product; a half-considered dark mode would violate §8 more than its absence does. Tokens are structured to make it additive later.</div></div>
+  </div>
+
+  <h4>Typography — SF Pro, Inter as the cross-platform stand-in</h4>
+  <div class="ramp">
+    <div class="r"><div class="sample" style="font-size:30px;font-weight:700;letter-spacing:-.03em">Materials Required</div><div class="sp">Large title · 34/41 · Bold</div></div>
+    <div class="r"><div class="sample" style="font-size:22px;font-weight:600;letter-spacing:-.02em">MAGIEFLAKE™</div><div class="sp">Title · 22/28 · Semibold</div></div>
+    <div class="r"><div class="sample" style="font-size:17px;font-weight:600;letter-spacing:-.014em">Mix Ratio</div><div class="sp">Headline · 17/22 · Semibold</div></div>
+    <div class="r"><div class="sample" style="font-size:17px;font-weight:400;letter-spacing:-.012em">High-Performance 100% Solids Epoxy</div><div class="sp">Body · 17/22 · Regular</div></div>
+    <div class="r"><div class="sample" style="font-size:15px;font-weight:400;color:var(--ink-2);letter-spacing:-.008em">Epoxy · Flooring</div><div class="sp">Subhead · 15/20 · Regular</div></div>
+    <div class="r"><div class="sample" style="font-size:13px;font-weight:600;color:var(--ink-2);letter-spacing:.06em;text-transform:uppercase">Technical Data</div><div class="sp">Section label · 13/16 · Semibold</div></div>
+    <div class="r"><div class="sample" style="font-size:26px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums">2A : 1B</div><div class="sp">Data value · 26/30 · Semibold · tabular</div></div>
+  </div>
+  <div class="spec">
+    <div class="r"><div class="k">Technical values</div><div class="v">Always tabular figures, always larger than their label, always sans — not mono (§10). The label is grey and small; the value is black and large. That inversion is the whole scanning mechanism.</div></div>
+    <div class="r"><div class="k">Uppercase</div><div class="v">Section labels only, with 0.06em tracking. Nowhere else.</div></div>
+    <div class="r"><div class="k">Dynamic Type</div><div class="v">Supported through Large. Data values scale with their labels so pairs never separate.</div></div>
+  </div>
+
+  <h4>Space, radius, elevation</h4>
+  <div class="spec">
+    <div class="r"><div class="k">Grid</div><div class="v num">4 pt base · 8 pt rhythm</div></div>
+    <div class="r"><div class="k">Screen margin</div><div class="v num">16 pt</div></div>
+    <div class="r"><div class="k">Section gap</div><div class="v num">32 pt between groups · 24 pt header to content</div></div>
+    <div class="r"><div class="k">Row height</div><div class="v num">44 pt single-line · 60 pt two-line · 76 pt with metadata</div></div>
+    <div class="r"><div class="k">Radius</div><div class="v num">Buttons 12 · Inputs 12 · Surfaces 14 · Sheets 16 (top only)</div></div>
+    <div class="r"><div class="k">Elevation</div><div class="v">Hairlines and grouped backgrounds carry separation. One real shadow exists in the app — under the sticky action bar.</div></div>
+  </div>
+
+  <h4>Components</h4>
+  <div class="spec">
+    <div class="r"><div class="k">Primary button</div><div class="v">Full-width, 50 pt, red fill, white 17 pt semibold, radius 12. One per screen, in the sticky bar where a screen has a next step.</div></div>
+    <div class="r"><div class="k">Secondary button</div><div class="v">Plain text, red, 17 pt regular. No border, no fill, no third button.</div></div>
+    <div class="r"><div class="k">List row</div><div class="v">Title 17, subtitle 15 grey, optional trailing value, chevron. Hairline inset to the title's leading edge. The workhorse of the entire app.</div></div>
+    <div class="r"><div class="k">Spec pair</div><div class="v">Label 13 grey uppercase above value 26 semibold tabular. Two per row on a phone; four pairs form the Product Detail top block.</div></div>
+    <div class="r"><div class="k">Layer element</div><div class="v">Product number, layer role, thickness, and a proportional depth band. Tappable, 56 pt minimum, opens the medium-detent sheet.</div></div>
+    <div class="r"><div class="k">Input</div><div class="v">Grouped background, 50 pt, radius 12, numeric keypad with decimal, unit as a segmented control beside it — never inside the field.</div></div>
+    <div class="r"><div class="k">Selection row</div><div class="v">Full-width tap target with a trailing checkmark in red. No radio circles, no cards, no tiles.</div></div>
+    <div class="r"><div class="k">Sheet</div><div class="v">Radius 16 top, grabber, medium detent at ~55%, expandable, dimmed backdrop, swipe to dismiss.</div></div>
+    <div class="r"><div class="k">Document row</div><div class="v">Type badge (TDS / SDS) · title · format · offline state · chevron.</div></div>
+    <div class="r"><div class="k">Icons</div><div class="v">SF Symbols-equivalent line set, 1.5 pt stroke, 22 pt, used only where an icon disambiguates. Rows carry no icon by default.</div></div>
+  </div>
+
+  <h4>French-proofing (§33)</h4>
+  <ul class="clean">
+    <li>Every label allocated <b>1.4× its English width</b>; nothing sized to fit English exactly.</li>
+    <li>Buttons are full-width or hug with generous padding — never fixed-width.</li>
+    <li>Rows support two lines of title before truncating; truncation is mid-string for product names, never for technical values.</li>
+    <li>Tab labels are the four longest strings in the app; they are validated in French first, and the tab set is chosen so all five fit at 10 pt.</li>
+    <li>Units and number formats localise together — <span class="mono">12,500 ft²</span> / <span class="mono">1 161,3 m²</span>.</li>
+  </ul>
+</div></div>
+</section>
+
+<section>
+<div class="row"><div class="gutter"><span>E</span></div><div>
+  <h2>Functional prototype plan</h2>
+  <p>Eight screens built to full behaviour, covering flows A–D end to end (§38–41). The three remaining tab roots are built because §42 forbids dead buttons — they are functional, just not where the depth goes.</p>
+
+  <ol class="steps">
+    <li><b>Home</b> — search entry, three entry actions, Continue card, Recently Viewed rail. Recents populate from real navigation during the session.</li>
+    <li><b>Universal Search &amp; Results</b> — modal takeover, live filtering per keystroke across products, systems and documents, grouped results, recents when empty.</li>
+    <li><b>Product Detail</b> — spec block, sections, documents, and three working actions including Calculate Quantity, which pre-fills the calculator.</li>
+    <li><b>Document Viewer</b> — in-app TDS with back, title, in-document search, share and save. Returns to Product Detail with scroll position intact.</li>
+    <li><b>System Detail</b> — the interactive cross-section. Every layer tappable to a sheet carrying that product's data, with View Product pushing to screen 3 and Calculate This System pushing to screen 7 with the system pre-selected.</li>
+    <li><b>System Selector</b> — three steps, real filtering logic over the system data, a recommendation with a stated reason, and both result actions live.</li>
+    <li><b>Calculator</b> — area with unit switching, product-or-system choice, system selection with search, waste allowance, collapsed advanced settings with real defaults.</li>
+    <li><b>Results &amp; Project</b> — per-layer requirements and order quantities, Save to Project with the anonymous sign-in sheet, then Project Detail and Material List with everything preserved.</li>
+  </ol>
+
+  <h4>How state connects</h4>
+  <p>One store above the navigation stack, so back navigation cannot lose anything. Results are <em>derived</em>, never stored — which is what makes §40's requirement true by construction rather than by patching.</p>
+<div class="tree"><b>catalog</b>     products · systems · documents   <span>(seed data, read-only)</span>
+<b>session</b>     recentProducts · recentSystems · favorites · lastCalculation
+<b>calculator</b>  area · unit · target{product|system} · waste · overrides{}
+             └─ <b>results</b> = derive(catalog, calculator)   <span>← recomputed on every change</span>
+<b>projects</b>    [ { name, client, area, systemId, calcSnapshot, docs, notes } ]
+<b>auth</b>        anonymous | account   <span>(gates saving only)</span>
+
+<b>nav</b>         { home:[…], systems:[…], calculator:[…], products:[…], projects:[…] }
+             <span>per-tab stacks + scroll offsets — tab switching never resets a flow</span></div>
+
+  <h4>Calculation engine</h4>
+  <p>Real arithmetic, not mocked numbers — so changing area, waste or system produces defensible results.</p>
+<div class="formula"><span>// liquid layers</span>
+gallons   = area_ft² × DFT_mils ÷ (1604 × solids_fraction)
+withWaste = gallons × (1 + waste)
+kits      = ceil(withWaste ÷ kitSize_gal)
+
+<span>// broadcast media</span>
+pounds    = area_ft² × broadcastRate_lb_per_ft² × (1 + waste)
+boxes     = ceil(pounds ÷ boxWeight_lb)
+
+<span>// 1604 = ft² covered by 1 gallon at 1 mil, 100% solids</span></div>
+  <div class="note hold"><b>Data integrity.</b> Product values in the prototype are placeholders and will be visibly marked as such until MAGIECHEM® supplies the source TDS figures — coverage, solids, kit sizes, broadcast rates, pot life and recoat windows. Per §19 I will not publish invented technical values in a document a contractor might act on. The engine is real; the numbers it multiplies must come from you.</div>
+
+  <h4>Build</h4>
+  <div class="spec">
+    <div class="r"><div class="k">Form</div><div class="v">Self-contained interactive prototype in a phone frame at 393 × 852, shareable by link, no install.</div></div>
+    <div class="r"><div class="k">Fidelity</div><div class="v">Production-accurate spacing, type ramp and motion — this is the specification, so it must be measurable from the artefact itself.</div></div>
+    <div class="r"><div class="k">Out of scope</div><div class="v">Onboarding animation, AI search, dark mode, offline sync. Sequenced after the eight core screens are approved.</div></div>
+  </div>
+</div></div>
+</section>
+
+<section>
+<div class="row"><div class="gutter"><span>§49</span></div><div>
+  <div class="gate">
+    <h3>What I need from you before designing</h3>
+    <ul class="clean">
+      <li><b>Confirm the reference division</b> — Apple on form, MAPEI on substance, Fiverr on four composition patterns.</li>
+      <li><b>Rule on the four additional references,</b> individually. Flighty, Perplexity and Google Maps offline are the ones I would keep; Soulver is genuinely optional.</li>
+      <li><b>Confirm the eight prototype screens,</b> or tell me which one to swap.</li>
+      <li><b>Source data.</b> Whatever product and system data exists today — even a spreadsheet or a folder of TDS PDFs. The prototype's credibility depends more on this than on any design decision in this document.</li>
+    </ul>
+    <p style="margin:14px 0 0;color:var(--ink-2);font-size:15px">On approval, the next delivery is the eight functional screens with flows A–D working end to end.</p>
+  </div>
+</div></div>
+</section>
+
+<footer>
+  <span class="mono">MC-APP-001</span>
+  <span>Pre-design deliverable · Parts A–E</span>
+  <span>Screen design held pending approval</span>
+</footer>
+</div>
