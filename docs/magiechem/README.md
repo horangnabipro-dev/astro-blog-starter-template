@@ -4,7 +4,7 @@
 |---|---|
 | `reference-confirmation.html` | Design reference division (Apple / MAPEI / Fiverr + four approved additional references), product strategy, information architecture, user journeys, design system, build record. |
 | `prototype.html` | The functional prototype. 18 screens, one state store, a data-driven calculation engine. |
-| `prototype.test.js` | 63 Playwright checks over flows A–D, tab behaviour, state preservation, French layout and screen overflow. |
+| `prototype.test.js` | 74 Playwright checks over flows A–D, tab behaviour, state preservation, composition, French layout and screen overflow. |
 
 ## Running the tests
 
@@ -46,6 +46,24 @@ anywhere in the engine — MAGIECHEM® specifies WFT, not DFT.
 Adding a method means adding a case to `computeLine()` and a key to the product
 record. A system layer may override the product's rule (`layers[].over`), and
 Advanced Settings overrides both (`state.calc.overrides`).
+
+### Finish imagery and the colour charts
+
+Coating finishes are painted on `<canvas>` by `paintFinish()` from the
+`COLOURWAYS` table — flake chips, quartz grains, cementitious mottling,
+pigmented gloss. Nothing is fetched, so the imagery costs no network and
+scales to any density.
+
+`COLOURWAYS` is a placeholder for the MAGIECHEM® colour, quartz and flake
+charts. Replacing it is a data edit:
+
+```js
+COLOURWAYS.flake = [ {n:'<chart name>', base:'#RRGGBB', chips:['#…','#…','#…']} , … ]
+```
+
+Every system carries a `finish` key; `sysArt()` derives a stable colourway
+per system so two smooth systems never look identical. To use photography
+instead, swap `art()` for an `<img>` — artifact assets can host the files.
 
 ### Strings
 

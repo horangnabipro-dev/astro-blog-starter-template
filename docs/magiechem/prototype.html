@@ -419,163 +419,163 @@ const FAMILIES = [
    'ratio'     lb  = gal(of `basis` layer) × rate(lb/gal) (aggregate blended into a resin)
 */
 const PRODUCTS = [
-  { id:'5076', number:'5076', name:'Epoxy Primer / Sealer', family:'primer', tag:'Epoxy · Primer',
-    blurb:'Low-viscosity two-component epoxy primer for penetration and adhesion on prepared concrete. Standard primer across most MAGIECHEM® build-ups.',
-    uses:['Concrete primer under epoxy and polyaspartic build-ups','Sealing porous or profiled substrates','Dust-proofing in secondary spaces'],
+  { id:'5087', number:'5087', name:'Water-Based Epoxy Primer', family:'primer', tag:'Epoxy · Primer', finish:'smooth',
+    blurb:'Two-component water-based epoxy primer developed for freshly poured interior concrete — green slabs no more than 24 hours old.',
+    uses:['Priming green concrete','Sealing porous or profiled substrates','Adhesion coat under resinous build-ups'],
     spec:{ mixRatio:'2A : 1B', wft:'5 mils', coverage:'320 ft² / gal', workingTime:'25 min', recoat:'6 – 24 h', packaging:'3 gal kit', voc:'< 50 g/L' },
     calc:{ method:'coverage', coverage:320, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
 
-  { id:'9461', number:'9461', name:'High-Performance 100% Solids Epoxy', family:'epoxy', tag:'Epoxy · Flooring',
-    blurb:'Trowel- and squeegee-applied 100% solids epoxy used as a body coat, broadcast base coat and grout coat throughout the MAGIECHEM® decorative and industrial systems.',
-    uses:['Broadcast base coat in flake and quartz systems','Grout coat over broadcast media','Self-priming body coat in industrial areas'],
+  { id:'9461', number:'9461', name:'100% Solids Self-Levelling Epoxy', family:'epoxy', tag:'Epoxy · Flooring', finish:'smooth',
+    blurb:'Versatile 100% solids self-levelling epoxy with high chemical, mechanical and abrasion resistance. Available textured (TX, orange-peel) and anti-slip (AS). Meets LEED requirements.',
+    uses:['Broadcast base coat in flake and quartz systems','Grout coat over broadcast media','Self-levelling body coat in industrial areas'],
     spec:{ mixRatio:'2A : 1B', wft:'15 mils', coverage:'107 ft² / gal', workingTime:'20 min', recoat:'8 – 24 h', packaging:'3 gal kit', voc:'0 g/L' },
     calc:{ method:'wft', wft:15, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
 
-  { id:'9401', number:'9401', name:'Clear Epoxy Grout Coat', family:'epoxy', tag:'Epoxy · Clear',
-    blurb:'Clear 100% solids epoxy for locking broadcast media prior to topcoat. Low viscosity for full wet-out of flake and quartz.',
-    uses:['Grout coat over flake broadcast','Intermediate build over quartz'],
-    spec:{ mixRatio:'2A : 1B', wft:'10 mils', coverage:'160 ft² / gal', workingTime:'22 min', recoat:'8 – 24 h', packaging:'3 gal kit', voc:'0 g/L' },
-    calc:{ method:'wft', wft:10, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
+  { id:'9730', number:'9730', name:'High Chemical Resistance Epoxy', family:'epoxy', tag:'Epoxy · Chemical Resistant', finish:'smooth',
+    blurb:'100% solids epoxy for heavy-duty chemical exposure, resistant to sulfuric acid up to 38%.',
+    uses:['Secondary containment','Battery charging rooms','Process and chemical handling areas'],
+    spec:{ mixRatio:'2A : 1B', wft:'18 mils', coverage:'89 ft² / gal', workingTime:'18 min', recoat:'10 – 24 h', packaging:'3 gal kit', voc:'0 g/L' },
+    calc:{ method:'wft', wft:18, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
 
-  { id:'955', number:'955', name:'Polyaspartic Topcoat', family:'polyaspartic', tag:'Polyaspartic · Topcoat',
-    blurb:'Fast-return UV-stable polyaspartic topcoat. Available in clear and pigmented, matte through gloss.',
-    uses:['Final wear coat on decorative systems','UV-exposed interior and covered exterior areas','Fast-return retail and commercial work'],
-    spec:{ mixRatio:'1A : 1B', wft:'11 mils', coverage:'145 ft² / gal', workingTime:'20 min', recoat:'2 – 6 h', packaging:'4 gal kit', voc:'< 100 g/L' },
-    calc:{ method:'coverage', coverage:145, coats:1, pack:{size:4, unit:'gal', label:'kit'} } },
-
-  { id:'9500', number:'9500', name:'Novolac Chemical-Resistant Epoxy', family:'epoxy', tag:'Epoxy · Novolac',
-    blurb:'Novolac-modified epoxy for acid and solvent exposure in containment, process and battery areas.',
-    uses:['Secondary containment','Process and chemical handling areas','Battery charging rooms'],
+  { id:'9735', number:'9735', name:'Novolac Epoxy', family:'epoxy', tag:'Epoxy · Novolac', finish:'smooth',
+    blurb:'Novolac epoxy with extreme chemical and abrasion resistance and seamless waterproofing. Suited to high-traffic interior areas. LEED friendly.',
+    uses:['Aggressive acid and solvent exposure','Process trenches and containment','High-traffic interior industrial floors'],
     spec:{ mixRatio:'2A : 1B', wft:'20 mils', coverage:'80 ft² / gal', workingTime:'18 min', recoat:'10 – 24 h', packaging:'3 gal kit', voc:'0 g/L' },
     calc:{ method:'wft', wft:20, coats:2, pack:{size:3, unit:'gal', label:'kit'} } },
 
-  { id:'8800', number:'8800', name:'ESD Conductive Topcoat', family:'epoxy', tag:'Epoxy · ESD',
-    blurb:'Static-dissipative topcoat used over a conductive primer grid. Resistance tested per ANSI/ESD S20.20.',
-    uses:['Electronics assembly and cleanrooms','Battery and munitions handling','Pharmaceutical process areas'],
-    spec:{ mixRatio:'3A : 1B', wft:'8 mils', coverage:'200 ft² / gal', workingTime:'20 min', recoat:'8 – 16 h', packaging:'3 gal kit', voc:'< 50 g/L' },
-    calc:{ method:'coverage', coverage:200, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
-
-  { id:'6100', number:'6100', name:'Polyurethane Traffic Membrane', family:'membrane', tag:'Polyurethane · Membrane',
-    blurb:'Elastomeric polyurethane waterproofing membrane for vehicular and pedestrian traffic decks.',
-    uses:['Parking structures','Plaza and pedestrian decks','Ramps and turning lanes'],
-    spec:{ mixRatio:'Single component', wft:'25 mils', coverage:'64 ft² / gal', workingTime:'40 min', recoat:'8 – 24 h', packaging:'5 gal pail', voc:'< 100 g/L' },
+  { id:'9802', number:'9802', name:'Flexible Urethane Epoxy-Modified', family:'polyurethane', tag:'Urethane · Flexible', finish:'smooth',
+    blurb:'Flexible urethane epoxy-modified coating for substrates subject to movement, thermal cycling and crack bridging.',
+    uses:['Traffic deck base membrane','Crack-bridging over movement-prone slabs','Ramps and turning lanes'],
+    spec:{ mixRatio:'2A : 1B', wft:'25 mils', coverage:'64 ft² / gal', workingTime:'35 min', recoat:'8 – 24 h', packaging:'5 gal pail', voc:'< 100 g/L' },
     calc:{ method:'wft', wft:25, coats:1, pack:{size:5, unit:'gal', label:'pail'} } },
 
-  { id:'4020', number:'4020', name:'Moisture Vapour Barrier', family:'primer', tag:'Epoxy · MVB',
-    blurb:'100% solids epoxy moisture mitigation coating for slabs up to 100% RH.',
-    uses:['Moisture mitigation under resinous systems','Slabs on grade without a vapour retarder'],
-    spec:{ mixRatio:'2A : 1B', wft:'10 mils', coverage:'160 ft² / gal', workingTime:'30 min', recoat:'6 – 24 h', packaging:'3 gal kit', voc:'0 g/L' },
-    calc:{ method:'wft', wft:10, coats:1, pack:{size:3, unit:'gal', label:'kit'} } },
+  { id:'9028', number:'9028', name:'Fast Cure Flexible Modified Epoxy Urethane', family:'polyurethane', tag:'Urethane · Fast Cure', finish:'smooth',
+    blurb:'Fast-curing flexible modified epoxy urethane. Also used as a binder mixed with dry silica sand or quartz to build thickness and durability.',
+    uses:['Traffic deck wear coat','Aggregate-filled slurry and mortar','Fast-return repairs'],
+    spec:{ mixRatio:'2A : 1B', wft:'15 mils', coverage:'107 ft² / gal', workingTime:'20 min', recoat:'4 – 12 h', packaging:'5 gal pail', voc:'< 100 g/L' },
+    calc:{ method:'wft', wft:15, coats:1, pack:{size:5, unit:'gal', label:'pail'} } },
 
-  { id:'7200', number:'7200', name:'Cementitious Urethane Self-Levelling', family:'cpu', tag:'Cementitious PU · Body',
-    blurb:'Three-component cementitious urethane placed at 1/4 in. for thermal shock and aggressive chemical exposure.',
+  { id:'824', number:'824', name:'Extreme Fast Cure Polyaspartic', family:'polyaspartic', tag:'Polyaspartic · Clear', finish:'smooth',
+    blurb:'Extreme fast cure polyaspartic for floor coating or as a clear topcoat over decorative quartz and vinyl flake systems.',
+    uses:['Clear grout coat over flake and quartz','Same-day return to service','Cold-temperature application'],
+    spec:{ mixRatio:'1A : 1B', wft:'10 mils', coverage:'160 ft² / gal', workingTime:'8 min', recoat:'1 – 4 h', packaging:'4 gal kit', voc:'< 100 g/L' },
+    calc:{ method:'wft', wft:10, coats:1, pack:{size:4, unit:'gal', label:'kit'} } },
+
+  { id:'835', number:'835', name:'Fast-Curing Polyaspartic', family:'polyaspartic', tag:'Polyaspartic · Topcoat', finish:'smooth',
+    blurb:'Fast-curing polyaspartic with excellent adhesion to concrete, quartz aggregate, vinyl flake and fabrics. Smooth gloss finish, highly abrasion resistant.',
+    uses:['Final wear coat on decorative systems','UV-exposed interior areas','Fast-return retail and commercial work'],
+    spec:{ mixRatio:'1A : 1B', wft:'11 mils', coverage:'145 ft² / gal', workingTime:'15 min', recoat:'2 – 6 h', packaging:'4 gal kit', voc:'< 100 g/L' },
+    calc:{ method:'coverage', coverage:145, coats:1, pack:{size:4, unit:'gal', label:'kit'} } },
+
+  { id:'835SL', number:'835 SL', name:'Slow Cure Polyaspartic', family:'polyaspartic', tag:'Polyaspartic · Slow Cure', finish:'smooth',
+    blurb:'Extended working time polyaspartic for larger pours and warm conditions. Clear topcoat over decorative quartz and vinyl flake systems.',
+    uses:['Large-area topcoating','Warm-weather application','Clear topcoat over decorative media'],
+    spec:{ mixRatio:'1A : 1B', wft:'11 mils', coverage:'145 ft² / gal', workingTime:'30 min', recoat:'4 – 8 h', packaging:'4 gal kit', voc:'< 100 g/L' },
+    calc:{ method:'coverage', coverage:145, coats:1, pack:{size:4, unit:'gal', label:'kit'} } },
+
+  { id:'855', number:'855', name:'80% Solids Aliphatic Polyaspartic', family:'polyaspartic', tag:'Polyaspartic · Topcoat', finish:'smooth',
+    blurb:'Two-component aliphatic polyaspartic floor coating with 1:1 mixing, rapid low-temperature cure, superior UV resistance and high abrasion resistance.',
+    uses:['UV-stable wear coat','Low-temperature application','Industrial and commercial topcoating'],
+    spec:{ mixRatio:'1A : 1B', wft:'12 mils', coverage:'133 ft² / gal', workingTime:'20 min', recoat:'2 – 6 h', packaging:'4 gal kit', voc:'< 100 g/L' },
+    calc:{ method:'coverage', coverage:133, coats:1, pack:{size:4, unit:'gal', label:'kit'} } },
+
+  { id:'MCSL', number:'MAGIECRETE™ SL', name:'Self-Levelling Cementitious Polyurethane', family:'cpu', tag:'Cementitious PU · Body', finish:'cementitious',
+    blurb:'Self-levelling cementitious polyurethane flooring system combining the durability of polyurethane with cementitious components for a resilient, non-slip textured finish.',
     uses:['Food and beverage processing','Wet process areas and washdown','Freezers, coolers and steam cleaning'],
     spec:{ mixRatio:'A + B + Aggregate', wft:'250 mils (1/4 in.)', coverage:'2.9 lb / ft²', workingTime:'15 min', recoat:'8 – 12 h', packaging:'48 lb unit', voc:'0 g/L' },
     calc:{ method:'spread', rate:2.9, coats:1, pack:{size:48, unit:'lb', label:'unit'} } },
 
-  { id:'7250', number:'7250', name:'Cementitious Urethane Seal Coat', family:'cpu', tag:'Cementitious PU · Seal',
-    blurb:'Pigmented seal coat for cementitious urethane bodies. Adjusts texture and closes the surface.',
-    uses:['Seal coat over 7200','Colour and sheen control in process areas'],
+  { id:'MCTC', number:'MAGIECRETE™ TC', name:'Polyurethane Mortar Cementitious Topcoat', family:'cpu', tag:'Cementitious PU · Topcoat', finish:'cementitious',
+    blurb:'Polyurethane mortar cementitious top coat with a dull finish for seamless application over cementitious urethane bodies.',
+    uses:['Seal coat over MAGIECRETE™ SL','Colour and sheen control in process areas'],
     spec:{ mixRatio:'A + B', wft:'12 mils', coverage:'250 ft² / gal', workingTime:'18 min', recoat:'6 – 12 h', packaging:'2 gal kit', voc:'0 g/L' },
     calc:{ method:'coverage', coverage:250, coats:1, pack:{size:2, unit:'gal', label:'kit'} } },
 
-  { id:'MFLK', number:'MAGIEFLAKE™', name:'Decorative Vinyl Flake', family:'media', tag:'Broadcast Media',
+  { id:'MFLK', number:'MAGIEFLAKE™', name:'Decorative Vinyl Flake', family:'media', tag:'Broadcast Media', finish:'flake',
     blurb:'Vinyl chip broadcast media, 1/4 in. and 1/8 in., supplied in blended colourways.',
     uses:['Single and double broadcast decorative systems'],
     spec:{ mixRatio:'—', wft:'—', coverage:'0.045 lb / ft² (single)', workingTime:'—', recoat:'—', packaging:'55 lb box', voc:'—' },
     calc:{ method:'broadcast', rate:0.045, coats:1, pack:{size:55, unit:'lb', label:'box'} } },
 
-  { id:'MQTZ', number:'MAGIEQUARTZ™', name:'Coloured Quartz Aggregate', family:'media', tag:'Broadcast Media',
+  { id:'MQTZ', number:'MAGIEQUARTZ™', name:'Coloured Quartz Aggregate', family:'media', tag:'Broadcast Media', finish:'quartz',
     blurb:'Kiln-fired coloured quartz for double broadcast systems. Rounded and angular grades.',
     uses:['Double broadcast quartz systems','Slip-resistant industrial finishes'],
     spec:{ mixRatio:'—', wft:'—', coverage:'0.55 lb / ft² per broadcast', workingTime:'—', recoat:'—', packaging:'50 lb bag', voc:'—' },
     calc:{ method:'broadcast', rate:0.55, coats:1, pack:{size:50, unit:'lb', label:'bag'} } },
 
-  { id:'MGRP', number:'MAGIEGRIP™', name:'Graded Silica Aggregate', family:'media', tag:'Broadcast Media',
-    blurb:'Kiln-dried graded silica for slip resistance in traffic and deck coatings.',
-    uses:['Traffic deck broadcast','Ramp and turning-lane texture'],
+  { id:'MGRP', number:'MAGIEGRIP™', name:'Graded Silica Aggregate', family:'media', tag:'Broadcast Media', finish:'traffic',
+    blurb:'Kiln-dried graded silica for slip resistance in traffic and deck coatings, and as filler in aggregate-bound slurries.',
+    uses:['Traffic deck broadcast','Ramp and turning-lane texture','Slurry and mortar filler'],
     spec:{ mixRatio:'—', wft:'—', coverage:'0.05 lb / ft²', workingTime:'—', recoat:'—', packaging:'50 lb bag', voc:'—' },
-    calc:{ method:'broadcast', rate:0.05, coats:1, pack:{size:50, unit:'lb', label:'bag'} } },
-
-  { id:'3300', number:'3300', name:'Epoxy Repair Mortar', family:'repair', tag:'Repair · Mortar',
-    blurb:'Trowel-grade epoxy mortar for spall repair, joint nosing and slab reprofiling prior to coating.',
-    uses:['Spall and pop-out repair','Joint edge reconstruction','Feather-edging and reprofiling'],
-    spec:{ mixRatio:'2A : 1B + Aggregate', wft:'Variable', coverage:'12 ft² / unit at 1/4 in.', workingTime:'25 min', recoat:'8 – 24 h', packaging:'1.5 gal unit', voc:'0 g/L' },
-    calc:{ method:'coverage', coverage:8, coats:1, pack:{size:1.5, unit:'gal', label:'unit'} } },
-
-  { id:'2100', number:'2100', name:'Polyurethane Joint Sealant', family:'sealant', tag:'Sealant · Joint',
-    blurb:'Self-levelling polyurethane sealant for control and construction joints in coated floors.',
-    uses:['Control joint fill','Construction joint sealing','Perimeter detailing'],
-    spec:{ mixRatio:'Single component', wft:'—', coverage:'Linear — see joint schedule', workingTime:'45 min', recoat:'—', packaging:'20 oz sausage', voc:'< 60 g/L' },
-    calc:null }
+    calc:{ method:'broadcast', rate:0.05, coats:1, pack:{size:50, unit:'lb', label:'bag'} } }
 ];
 
 const SYSTEMS = [
-  { id:'flake-sb', name:'MAGIEFLAKE™', variant:'Single Broadcast', family:'Decorative',
+  { id:'flake-sb', finish:'flake', name:'MAGIEFLAKE™', variant:'Single Broadcast', family:'Decorative',
     blurb:'Decorative high-performance flake flooring with a polyaspartic wear surface. Fast return to service with a durable, seamless, easily cleaned finish.',
     thickness:'40 – 45 mils', tags:{env:['commercial','industrial','mechanical'],perf:['slip','impact','traffic'],finish:['flake']},
     layers:[
-      {pid:'955',  role:'Polyaspartic Topcoat', depth:11, over:{method:'coverage', coverage:145}},
-      {pid:'9401', role:'Clear Grout Coat',     depth:10, over:{method:'wft', wft:10}},
+      {pid:'835',  role:'Polyaspartic Topcoat', depth:11, over:{method:'coverage', coverage:145}},
+      {pid:'824',  role:'Clear Grout Coat',     depth:10, over:{method:'wft', wft:10}},
       {pid:'MFLK', role:'Flake Broadcast',      depth:8,  media:true, over:{method:'broadcast', rate:0.045}},
       {pid:'9461', role:'Base Coat',            depth:15, over:{method:'wft', wft:15}},
-      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+      {pid:'5087', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
     ]},
 
-  { id:'quartz-db', name:'MAGIEQUARTZ™ DB', variant:'Double Broadcast', family:'Decorative',
+  { id:'quartz-db', finish:'quartz', name:'MAGIEQUARTZ™ DB', variant:'Double Broadcast', family:'Decorative',
     blurb:'Double broadcast coloured quartz system at a nominal 1/4 in. Heavy-duty slip resistance and impact tolerance for wet and aggressive service areas.',
     thickness:'1/4 in. nominal', tags:{env:['industrial','food','pharma','commercial'],perf:['slip','impact','chemical','traffic'],finish:['quartz']},
     layers:[
-      {pid:'955',  role:'Polyaspartic Topcoat', depth:11, over:{method:'coverage', coverage:145}},
+      {pid:'855',  role:'Polyaspartic Topcoat', depth:12, over:{method:'coverage', coverage:133}},
       {pid:'MQTZ', role:'Second Broadcast',     depth:10, media:true, over:{method:'broadcast', rate:0.45}},
       {pid:'9461', role:'Grout Coat',           depth:12, over:{method:'wft', wft:12}},
       {pid:'MQTZ', role:'First Broadcast',      depth:14, media:true, over:{method:'broadcast', rate:0.70}},
       {pid:'9461', role:'Base Coat',            depth:15, over:{method:'wft', wft:15}},
-      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+      {pid:'5087', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
     ]},
 
-  { id:'floor-mr1', name:'MAGIEFLOOR™ MR I', variant:'Mechanical Room', family:'Industrial',
+  { id:'floor-mr1', finish:'smooth', name:'MAGIEFLOOR™ MR I', variant:'Mechanical Room', family:'Industrial',
     blurb:'Economical high-build epoxy floor with a chemical-resistant polyaspartic wear coat. Specified for mechanical, electrical and service rooms.',
     thickness:'30 – 34 mils', tags:{env:['mechanical','commercial','industrial'],perf:['chemical','traffic'],finish:['smooth','monochrome']},
     layers:[
-      {pid:'955',  role:'Polyaspartic Topcoat', depth:11, over:{method:'coverage', coverage:145}},
+      {pid:'835',  role:'Polyaspartic Topcoat', depth:11, over:{method:'coverage', coverage:145}},
       {pid:'9461', role:'Body Coat',            depth:15, over:{method:'wft', wft:15}},
-      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+      {pid:'5087', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
     ]},
 
-  { id:'cpu-sl', name:'MAGIETHANE™ SL', variant:'Self-Levelling 1/4 in.', family:'Food & Beverage',
+  { id:'cpu-sl', finish:'cementitious', name:'MAGIECRETE™ SL', variant:'Self-Levelling 1/4 in.', family:'Food & Beverage',
     blurb:'Cementitious urethane placed at 1/4 in. for thermal shock, steam cleaning and aggressive organic acids. Installs over green concrete and tolerates moisture.',
     thickness:'1/4 in.', tags:{env:['food','industrial','pharma'],perf:['chemical','thermal','slip','impact'],finish:['cementitious']},
     layers:[
-      {pid:'7250', role:'Seal Coat',            depth:12, over:{method:'coverage', coverage:250}},
-      {pid:'7200', role:'Cementitious Body',    depth:250, over:{method:'spread', rate:2.9}}
+      {pid:'MCTC', role:'Seal Coat',            depth:12, over:{method:'coverage', coverage:250}},
+      {pid:'MCSL', role:'Cementitious Body',    depth:250, over:{method:'spread', rate:2.9}}
     ]},
 
-  { id:'deck-tc', name:'MAGIEDECK™ TC', variant:'Traffic Coating', family:'Traffic & Waterproofing',
+  { id:'deck-tc', finish:'traffic', name:'MAGIEDECK™ TC', variant:'Traffic Coating', family:'Traffic & Waterproofing',
     blurb:'Elastomeric polyurethane traffic membrane with broadcast silica for vehicular decks, ramps and turning lanes.',
     thickness:'45 – 50 mils', tags:{env:['parking','commercial'],perf:['waterproofing','uv','traffic','slip'],finish:['smooth','monochrome']},
     layers:[
-      {pid:'6100', role:'Wear Coat',            depth:15, over:{method:'wft', wft:15}},
+      {pid:'9028', role:'Wear Coat',            depth:15, over:{method:'wft', wft:15}},
       {pid:'MGRP', role:'Silica Broadcast',     depth:6,  media:true, over:{method:'broadcast', rate:0.05}},
-      {pid:'6100', role:'Base Membrane',        depth:25, over:{method:'wft', wft:25}},
-      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+      {pid:'9802', role:'Base Membrane',        depth:25, over:{method:'wft', wft:25}},
+      {pid:'5087', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
     ]},
 
-  { id:'esd-1', name:'MAGIESTATIC™ ESD', variant:'Static Dissipative', family:'Industrial',
+  { id:'esd-1', finish:'smooth', name:'MAGIESTATIC™ ESD', variant:'Static Dissipative', family:'Industrial',
     blurb:'Static-dissipative floor over a conductive grid, tested to ANSI/ESD S20.20 for electronics, pharmaceutical and energetic materials handling.',
     thickness:'24 – 28 mils', tags:{env:['industrial','pharma','commercial'],perf:['esd','chemical','traffic'],finish:['smooth']},
     layers:[
-      {pid:'8800', role:'ESD Topcoat',          depth:8,  over:{method:'coverage', coverage:200}},
+      {pid:'855',  role:'ESD Topcoat',          depth:12, over:{method:'coverage', coverage:133}},
       {pid:'9461', role:'Conductive Base',      depth:12, over:{method:'wft', wft:12}},
-      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+      {pid:'5087', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
     ]},
 
-  { id:'nov-cr', name:'MAGIEURE™ CR', variant:'Novolac Chemical Resistant', family:'Chemical Resistant',
+  { id:'nov-cr', finish:'smooth', name:'MAGIEURE™ CR', variant:'Novolac Chemical Resistant', family:'Chemical Resistant',
     blurb:'Two-coat novolac epoxy for concentrated acid and solvent exposure. Specified for containment, process trenches and battery rooms.',
     thickness:'45 mils', tags:{env:['industrial','food','pharma'],perf:['chemical','impact'],finish:['smooth']},
     layers:[
-      {pid:'9500', role:'Novolac Coats (×2)',   depth:40, over:{method:'wft', wft:20, coats:2}},
-      {pid:'5076', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
+      {pid:'9735', role:'Novolac Coats (×2)',   depth:40, over:{method:'wft', wft:20, coats:2}},
+      {pid:'5087', role:'Primer',               depth:5,  over:{method:'coverage', coverage:320}}
     ]}
 ];
 
@@ -1621,7 +1621,7 @@ VIEWS.project = function(r){
   const sys = S[p.systemId];
   const docCount = sys.layers.filter((l,i,a) => a.findIndex(x => x.pid === l.pid) === i).length + 1;
   let h = '<div class="pad"><h1 class="lt">'+esc(p.name)+'</h1>'+
-          '<p class="lt-sub">'+esc(p.space)+(p.client?' · '+esc(p.client):'')+'</p>'+
+          '<p class="lt-sub">'+[p.space, p.client].filter(Boolean).map(esc).join(' · ')+'</p>'+
           '<div style="font-size:27px;font-weight:650;letter-spacing:-.024em;margin-top:14px;font-variant-numeric:tabular-nums">'+
           fmtArea(p.area, p.unit)+'</div></div>';
   h += '<div class="sp24"></div><div class="group">'+
@@ -2040,7 +2040,7 @@ function doAction(a){
       const tl = targetLabel();
       const p = {
         id:'p'+(state.seq++), name:nm.trim(), client:cl.trim(), location:lo.trim(),
-        space:tl ? tl.s : '', area:parseFloat(state.calc.area)||0, unit:state.calc.unit,
+        space:'', area:parseFloat(state.calc.area)||0, unit:state.calc.unit,
         systemId:state.calc.target.kind === 'system' ? state.calc.target.id : null,
         productId:state.calc.target.kind === 'product' ? state.calc.target.id : null,
         waste:state.calc.waste, overrides:JSON.parse(JSON.stringify(state.calc.overrides)),
@@ -2072,5 +2072,906 @@ document.getElementById('scroll').addEventListener('scroll', e => {
   document.getElementById('navbar').classList.toggle('solid', e.target.scrollTop > 12);
 });
 document.getElementById('sinput').addEventListener('input', renderSearch);
+render();
+</script>
+
+<style>
+/* =========================================================================
+   2026 pass — fewer containers, content-led composition, softer chrome.
+   Rules below intentionally follow the base sheet so equal-specificity
+   selectors override it.
+   ========================================================================= */
+
+/* --- lighter bottom navigation --- */
+.tabbar{height:68px;padding-top:6px;background:rgba(255,255,255,.72);backdrop-filter:saturate(180%) blur(28px)}
+.tab svg{width:23px;height:23px}
+.tab span{font-size:9.5px;letter-spacing:.005em}
+.tab{gap:2px}
+.scroll{padding-bottom:92px}
+.scroll.docked{padding-bottom:172px}
+.dock{bottom:68px;background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(28px);box-shadow:0 -.5px 0 var(--rule)}
+
+/* --- editorial primitives --- */
+.eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.h-display{font-size:32px;font-weight:700;letter-spacing:-.032em;line-height:1.1;text-wrap:balance}
+.h-sec{font-size:20px;font-weight:650;letter-spacing:-.024em;line-height:1.2}
+.bare{border-top:0 !important;border-bottom:0 !important}
+.bare .row{background:none}
+.rule-t{border-top:1px solid var(--rule2)}
+
+/* --- full-bleed feature module --- */
+.hero{position:relative;display:block;width:100%;height:210px;overflow:hidden;text-align:left}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero .veil{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(16,16,18,.10) 0%,rgba(16,16,18,.34) 52%,rgba(16,16,18,.68) 100%)}
+.hero .cnt{position:absolute;left:16px;right:16px;bottom:15px;color:#fff}
+.hero .eyebrow{color:rgba(255,255,255,.78)}
+.hero .ht{font-size:26px;font-weight:700;letter-spacing:-.028em;line-height:1.12;margin-top:5px;text-wrap:balance}
+.hero .hs{font-size:14px;color:rgba(255,255,255,.82);margin-top:4px;letter-spacing:-.006em}
+.hero:active{opacity:.92}
+
+/* --- finish rail --- */
+.finrail{display:flex;gap:11px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x proximity}
+.finrail::-webkit-scrollbar{height:0}
+.fincard{position:relative;width:128px;height:164px;border-radius:16px;overflow:hidden;flex:0 0 auto;scroll-snap-align:start}
+.fincard canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.fincard .veil{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(16,16,18,0) 38%,rgba(16,16,18,.62) 100%)}
+.fincard .nm{position:absolute;left:11px;right:10px;bottom:24px;color:#fff;font-size:15.5px;font-weight:650;letter-spacing:-.014em}
+.fincard .ct{position:absolute;left:11px;bottom:9px;color:rgba(255,255,255,.8);font-size:11.5px;letter-spacing:-.002em}
+.fincard:active{opacity:.88}
+
+/* --- object rows (projects, continue) --- */
+.obj{display:flex;gap:13px;align-items:center;width:100%;text-align:left;padding:11px 16px}
+.obj:active{background:var(--tap)}
+.obj .thumb{position:relative;border-radius:13px;overflow:hidden;flex:0 0 auto;background:var(--grouped)}
+.obj .thumb canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.obj .ot{font-size:17.5px;font-weight:600;letter-spacing:-.02em;line-height:1.22}
+.obj .om{font-size:13.5px;color:var(--ink2);margin-top:3px;letter-spacing:-.006em;line-height:1.35}
+.obj .oq{font-size:13px;color:var(--ink3);margin-top:2px;font-variant-numeric:tabular-nums}
+
+/* --- text-led recents --- */
+.mrail{display:flex;gap:24px;overflow-x:auto;padding:2px 16px 4px}
+.mrail::-webkit-scrollbar{height:0}
+.mrail button{flex:0 0 auto;text-align:left;max-width:168px}
+.mrail .n{display:block;font-size:19px;font-weight:650;letter-spacing:-.022em;line-height:1.15}
+.mrail .d{display:block;font-size:12.5px;color:var(--ink2);margin-top:3px;line-height:1.3}
+
+/* --- product family grid --- */
+.famgrid{display:grid;grid-template-columns:1fr 1fr;column-gap:16px;padding:0 16px}
+.famgrid button{text-align:left;padding:15px 0 16px;border-top:1px solid var(--rule2);min-height:76px}
+.famgrid button:nth-child(1),.famgrid button:nth-child(2){border-top:1px solid var(--rule)}
+.famgrid .bar{width:20px;height:2.5px;border-radius:2px;margin-bottom:10px}
+.famgrid .fn{font-size:16px;font-weight:600;letter-spacing:-.018em;line-height:1.22}
+.famgrid .fc{font-size:12.5px;color:var(--ink3);margin-top:4px;font-variant-numeric:tabular-nums}
+
+/* --- calculator: containerless controls --- */
+.bignum{display:flex;align-items:baseline;padding:0 16px}
+.bignum input{
+  border:0;outline:0;background:none;width:100%;min-width:0;padding:0;color:var(--ink);
+  font-size:54px;font-weight:650;letter-spacing:-.042em;font-variant-numeric:tabular-nums;line-height:1.06;
+}
+.bignum input::placeholder{color:var(--rule)}
+.utoggle{display:flex;gap:20px;padding:4px 16px 0}
+.utoggle button{position:relative;font-size:15px;color:var(--ink3);letter-spacing:-.01em;min-height:44px;display:flex;align-items:center}
+.utoggle button.on{color:var(--ink);font-weight:600}
+.utoggle button.on::after{content:"";position:absolute;left:0;right:0;bottom:9px;height:1.5px;background:var(--red);border-radius:1px}
+.vals{display:flex;gap:22px;padding:2px 16px}
+.vals button{font-size:19px;font-weight:550;color:var(--ink3);min-height:46px;font-variant-numeric:tabular-nums;letter-spacing:-.016em}
+.vals button.on{color:var(--red);font-weight:700}
+.textlink{color:var(--red);font-size:15.5px;letter-spacing:-.012em;min-height:44px;display:inline-flex;align-items:center}
+.choice{
+  display:flex;align-items:flex-start;gap:13px;width:100%;text-align:left;padding:16px 16px;
+  border-top:1px solid var(--rule2);
+}
+.choice:active{background:var(--tap)}
+.choice .ci{width:22px;height:22px;border-radius:50%;border:1.6px solid var(--rule);flex:0 0 auto;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;color:#fff;transition:background .16s,border-color .16s}
+.choice.on .ci{background:var(--red);border-color:var(--red)}
+.choice .ct{font-size:17.5px;font-weight:600;letter-spacing:-.02em;line-height:1.22}
+.choice .cs{font-size:13.5px;color:var(--ink2);margin-top:3px;letter-spacing:-.006em;line-height:1.35}
+
+/* --- summary line, no box --- */
+.sumline{display:flex;justify-content:space-between;gap:14px;padding:11px 16px;border-top:1px solid var(--rule2);
+  font-size:15.5px;letter-spacing:-.01em;align-items:baseline}
+.sumline .k{color:var(--ink2)}
+.sumline .v{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+.sumline .v .chg{color:var(--red);font-weight:400;font-size:14.5px;margin-left:9px}
+
+/* --- colourway chart --- */
+.chart{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px}
+.chart .sw{text-align:left}
+.chart .sw canvas{width:100%;aspect-ratio:1;border-radius:11px;display:block}
+.chart .sw .cn{font-size:11.5px;color:var(--ink2);margin-top:5px;line-height:1.25;letter-spacing:-.002em}
+
+.progressline{height:2px;background:var(--rule);position:relative;margin:0 16px}
+.progressline i{position:absolute;left:0;top:0;bottom:0;background:var(--ink);border-radius:1px;transition:width .34s cubic-bezier(.32,.72,0,1)}
+
+@media (prefers-reduced-motion:no-preference){
+  .stagger>*{animation:stag .42s cubic-bezier(.22,.7,.25,1) both}
+  .stagger>*:nth-child(1){animation-delay:.02s}
+  .stagger>*:nth-child(2){animation-delay:.06s}
+  .stagger>*:nth-child(3){animation-delay:.10s}
+  .stagger>*:nth-child(4){animation-delay:.14s}
+  .stagger>*:nth-child(5){animation-delay:.18s}
+  @keyframes stag{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+}
+</style>
+
+<script>
+/* =========================================================================
+   FINISH ART — coating finishes painted on canvas.
+   Real coatings are textures, so the imagery is generated from the finish
+   definition rather than shipped as photographs. Deterministic, so a given
+   finish looks the same every render. Swap paintFinish() for <img> when
+   MAGIECHEM® supplies photography and the colour / flake / quartz charts.
+   ========================================================================= */
+function rng(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+  let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+  return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+const COLOURWAYS = {
+  flake:[
+    {n:'Granite',    base:'#9E9C99', chips:['#565B62','#D7D4CF','#7E8288','#F0EEEA']},
+    {n:'Sandstone',  base:'#B5AA98', chips:['#89795F','#E4DBCA','#6D6252','#F2ECE0']},
+    {n:'Slate',      base:'#8E969E', chips:['#4B5763','#CAD1D7','#6B7783','#E9EDF0']},
+    {n:'Terracotta', base:'#A6928D', chips:['#8B4034','#DDD3D0','#5D4A47','#EFE7E4']}
+  ],
+  quartz:[
+    {n:'Desert',  base:'#C0B49F', chips:['#998970','#E4DAC7','#796B54']},
+    {n:'Pewter',  base:'#A9A8A5', chips:['#7A7977','#DAD9D6','#5F5F5F']},
+    {n:'Marine',  base:'#92A0A6', chips:['#5E7079','#C7D1D5','#405159']},
+    {n:'Wheat',   base:'#C9BEA6', chips:['#A79濃'.slice(0,7),'#EDE5D4','#8A7C60']}
+  ],
+  smooth:[
+    {n:'Light Grey', base:'#B9BCBE'}, {n:'Charcoal', base:'#4E5256'},
+    {n:'Sand',       base:'#C6BCA6'}, {n:'Tile Red', base:'#8E5D55'}
+  ],
+  cementitious:[
+    {n:'Buff',  base:'#B4AA9C'}, {n:'Grey',  base:'#A2A19E'},
+    {n:'Green', base:'#8D9A8E'}, {n:'Red',   base:'#9A6558'}
+  ],
+  traffic:[
+    {n:'Deck Grey', base:'#7E838A', chips:['#61666C','#9AA0A6']},
+    {n:'Charcoal',  base:'#5C6167', chips:['#484D53','#7E848A']}
+  ]
+};
+COLOURWAYS.quartz[3] = {n:'Wheat', base:'#C9BEA6', chips:['#A7936F','#EDE5D4','#8A7C60']};
+
+const FINISHES_ART = [
+  {key:'flake',        name:'Flake',         sub:'Decorative broadcast'},
+  {key:'quartz',       name:'Quartz',        sub:'Double broadcast'},
+  {key:'smooth',       name:'Smooth',        sub:'Self-levelling'},
+  {key:'cementitious', name:'Cementitious',  sub:'Urethane mortar'}
+];
+
+function paintFinish(cv, kind, cwIndex){
+  const set = COLOURWAYS[kind] || COLOURWAYS.smooth;
+  const cw = set[(cwIndex || 0) % set.length];
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = cv.clientWidth || 128, h = cv.clientHeight || 160;
+  if(!w || !h) return;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const c = cv.getContext('2d'); c.scale(dpr, dpr);
+  const r = rng((kind.charCodeAt(0) * 977) + (cwIndex || 0) * 31 + 7);
+
+  c.fillStyle = cw.base; c.fillRect(0, 0, w, h);
+
+  if(kind === 'flake'){
+    const n = Math.round(w * h / 150);
+    for(let i = 0; i < n; i++){
+      const x = r() * w, y = r() * h, s = 4 + r() * 7, a = r() * Math.PI;
+      c.save(); c.translate(x, y); c.rotate(a);
+      c.fillStyle = cw.chips[Math.floor(r() * cw.chips.length)];
+      c.globalAlpha = .55 + r() * .45;
+      c.beginPath();
+      c.moveTo(-s/2, -s/2.6); c.lineTo(s/2, -s/2); c.lineTo(s/2.2, s/2.4); c.lineTo(-s/2.3, s/2);
+      c.closePath(); c.fill(); c.restore();
+    }
+  } else if(kind === 'quartz' || kind === 'traffic'){
+    const n = Math.round(w * h / (kind === 'traffic' ? 26 : 18));
+    for(let i = 0; i < n; i++){
+      c.beginPath();
+      c.arc(r() * w, r() * h, (kind === 'traffic' ? .7 : 1) + r() * 2.1, 0, 6.2832);
+      c.fillStyle = cw.chips[Math.floor(r() * cw.chips.length)];
+      c.globalAlpha = .5 + r() * .5; c.fill();
+    }
+  } else if(kind === 'cementitious'){
+    for(let i = 0; i < w * h / 9; i++){
+      c.fillStyle = r() > .5 ? '#FFFFFF' : '#000000';
+      c.globalAlpha = .012 + r() * .045;
+      c.fillRect(r() * w, r() * h, 1.4, 1.4);
+    }
+    c.globalAlpha = .10;
+    for(let i = 0; i < 14; i++){
+      c.beginPath(); c.arc(r() * w, r() * h, 14 + r() * 34, 0, 6.2832);
+      c.fillStyle = r() > .5 ? '#FFFFFF' : '#4A463F'; c.fill();
+    }
+  } else { /* smooth — pigmented gloss */
+    const g = c.createLinearGradient(0, 0, w * .5, h);
+    g.addColorStop(0, 'rgba(255,255,255,.20)'); g.addColorStop(.55, 'rgba(255,255,255,0)');
+    g.addColorStop(1, 'rgba(0,0,0,.16)');
+    c.globalAlpha = 1; c.fillStyle = g; c.fillRect(0, 0, w, h);
+    c.save(); c.translate(w * .62, -h * .1); c.rotate(.38);
+    const sh = c.createLinearGradient(0, 0, 0, h * 1.4);
+    sh.addColorStop(0, 'rgba(255,255,255,.16)'); sh.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = sh; c.fillRect(0, 0, w * .5, h * 1.4); c.restore();
+  }
+  c.globalAlpha = 1;
+}
+
+/* paints every [data-art="kind|colourway"] canvas inside root */
+function mountArt(root){
+  if(!root) return;
+  root.querySelectorAll('canvas[data-art]').forEach(cv => {
+    if(cv._painted) return; cv._painted = 1;
+    const [kind, idx] = cv.dataset.art.split('|');
+    requestAnimationFrame(() => paintFinish(cv, kind, parseInt(idx || '0', 10)));
+  });
+}
+function art(kind, idx, cls, style){
+  return '<canvas data-art="'+esc(kind)+'|'+(idx||0)+'"'+(cls?' class="'+cls+'"':'')+
+         (style?' style="'+style+'"':'')+' aria-hidden="true"></canvas>';
+}
+function systemFinish(sys){ return sys.finish || 'smooth'; }
+</script>
+
+<script>
+/* =========================================================================
+   2026 COMPOSITION PASS — screens rebuilt. Business logic, data model,
+   state, navigation stacks and the calculation engine are untouched; these
+   override only the view functions.
+   ========================================================================= */
+
+/* applications, as the brief lists them — finishes moved to the visual rail */
+APPLICATIONS.length = 0;
+[['chemical','Chemical Resistant'],['mechanical','Mechanical Rooms'],['esd','ESD'],
+ ['parking','Parking & Traffic'],['waterproofing','Waterproofing'],
+ ['food','Food & Beverage'],['pharma','Pharmaceutical']]
+ .forEach(([key,name]) => APPLICATIONS.push({key,name}));
+
+const FAM_TONE = {epoxy:'#8C8579', polyaspartic:'#7E8B96', polyurethane:'#85907F',
+  cpu:'#9A8E80', primer:'#9A9A96', membrane:'#7D8A8A', media:'#A8998A',
+  repair:'#948C86', sealant:'#8E8A94'};
+
+function finishCount(k){ return SYSTEMS.filter(s => systemFinish(s) === k || s.tags.finish.includes(k)).length; }
+function systemsWithFinish(k){ return SYSTEMS.filter(s => systemFinish(s) === k || s.tags.finish.includes(k)); }
+
+/* ------------------------------------------------------------------ HOME */
+VIEWS.home = function(){
+  const proj = state.projects[0];
+  const recents = state.recent.products.map(id => P[id]).filter(Boolean)
+    .concat(state.recent.systems.map(id => S[id]).filter(Boolean)).slice(0, 6);
+
+  let h = '<div class="stagger">';
+  h += '<div class="pad" style="display:flex;align-items:center;justify-content:space-between;padding-top:4px">'+
+        '<div style="font-size:19px;font-weight:700;letter-spacing:-.026em">MAGIECHEM'+
+        '<span style="font-size:10px;vertical-align:super;font-weight:500">®</span></div>'+
+        '<button data-act="go:settings" style="color:var(--ink2);display:flex;padding:6px;margin:-6px">'+icon('person',24,1.6)+'</button>'+
+       '</div>';
+  h += '<div><div class="sp24"></div>'+
+       '<div class="pad"><div class="h-display">'+t('home.q')+'</div></div>'+
+       '<div class="sp16"></div>'+
+       '<div class="pad"><button class="searchfield" data-act="search" style="width:100%;height:52px;border-radius:14px">'+
+        icon('search',18,2.1)+'<span style="flex:1;text-align:left;font-size:16px;color:var(--ink3);letter-spacing:-.012em;'+
+        'overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t('home.ph')+'</span></button></div></div>';
+
+  h += '<div><div class="sp32"></div>'+
+       '<button class="hero" data-act="go:selector">'+art('flake', 0)+'<span class="veil"></span>'+
+         '<span class="cnt"><span class="eyebrow">MAGIECHEM® '+t('tab.systems')+'</span>'+
+         '<span class="ht" style="display:block">'+t('home.a1t')+'</span>'+
+         '<span class="hs" style="display:block">'+t('home.a1s')+'</span></span>'+
+       '</button></div>';
+
+  const mini = (t_, s_, act) =>
+    '<button class="row" data-act="'+act+'" style="min-height:62px;background:none">'+
+      '<span class="txt"><span class="t" style="font-size:16.5px;font-weight:600;letter-spacing:-.018em">'+t_+'</span>'+
+      '<span class="s" style="margin-top:2px;font-size:13.5px">'+s_+'</span></span>'+chev+'</button>';
+  h += '<div><div class="sp24"></div><div class="rule-t" style="margin:0 16px"></div>'+
+       mini(t('home.a2t'), t('home.a2s'), 'go:calc')+
+       '<div class="rule-t" style="margin:0 16px"></div>'+
+       mini(t('home.a3t'), t('home.a3s'), 'go:products')+
+       '<div class="rule-t" style="margin:0 16px"></div></div>';
+
+  if(proj){
+    const sys = S[proj.systemId];
+    h += '<div><div class="sp32"></div>'+sectionLabel(t('home.continue'))+
+      '<button class="obj" data-act="project:'+proj.id+'">'+
+        '<span class="thumb" style="width:62px;height:62px">'+sysArt(sys)+'</span>'+
+        '<span style="flex:1;min-width:0">'+
+          '<span class="ot" style="display:block">'+esc(proj.name)+'</span>'+
+          '<span class="om" style="display:block">'+projMeta(proj)+'</span>'+
+          '<span class="oq" style="display:block">'+fmtArea(proj.area, proj.unit)+'</span>'+
+        '</span>'+chev+'</button></div>';
+  }
+
+  if(recents.length){
+    h += '<div><div class="sp32"></div>'+sectionLabel(t('home.recent'))+
+      '<div class="mrail">'+recents.map(x => {
+        const isSys = !!x.layers;
+        return '<button data-act="'+(isSys?'system:':'product:')+x.id+'">'+
+          '<span class="n">'+esc(isSys ? x.name : x.number)+'</span>'+
+          '<span class="d">'+esc(isSys ? x.variant : x.name)+'</span></button>';
+      }).join('')+'</div></div>';
+  }
+
+  h += '<div><div class="sp32"></div><div class="rule-t" style="margin:0 16px"></div>'+
+       mini(t('home.docs'), (PRODUCTS.length*2+SYSTEMS.length)+' '+t('proj.files'), 'go:docs')+
+       '<div class="rule-t" style="margin:0 16px"></div></div>';
+  h += '</div><div class="sp44"></div>';
+  return {html:h, hideNav:true, title:'MAGIECHEM®'};
+};
+
+/* --------------------------------------------------------------- SYSTEMS */
+VIEWS.systems = function(){
+  let h = '<div class="pad"><h1 class="lt">'+t('tab.systems')+'</h1></div><div class="sp24"></div>';
+
+  h += sectionLabel(state.lang === 'fr' ? 'Explorer par fini' : 'Explore by finish');
+  h += '<div class="finrail">'+FINISHES_ART.map((f, i) => {
+    const n = finishCount(f.key);
+    return '<button class="fincard" data-act="finish:'+f.key+'">'+art(f.key, 0)+'<span class="veil"></span>'+
+      '<span class="nm">'+esc(state.lang === 'fr'
+        ? ({Flake:'Flocons',Quartz:'Quartz',Smooth:'Lisse',Cementitious:'Cimentaire'}[f.name] || f.name)
+        : f.name)+'</span>'+
+      '<span class="ct">'+n+' '+t('tab.systems').toLowerCase()+'</span></button>';
+  }).join('')+'</div>';
+
+  h += '<div class="sp32"></div>'+sectionLabel(state.lang === 'fr' ? 'Parcourir par application' : 'Browse by application');
+  h += '<div class="group bare">'+APPLICATIONS.map(a => {
+    const n = SYSTEMS.filter(s => s.tags.env.includes(a.key) || s.tags.perf.includes(a.key)).length;
+    return n ? row({t:esc(a.name), tail:n, act:'syslist:app|'+a.key}) : '';
+  }).join('')+'</div>';
+
+  h += '<div class="sp32"></div>'+sectionLabel(t('sys.all'));
+  h += SYSTEMS.map(s => '<button class="obj" data-act="system:'+s.id+'">'+
+      '<span class="thumb" style="width:46px;height:46px">'+sysArt(s)+'</span>'+
+      '<span style="flex:1;min-width:0">'+
+        '<span class="ot" style="display:block;font-size:16.5px">'+esc(s.name)+'</span>'+
+        '<span class="om" style="display:block;margin-top:2px">'+esc(s.variant)+' · '+esc(s.thickness)+'</span>'+
+      '</span>'+chev+'</button>').join('');
+
+  h += '<div class="sp24"></div><div class="pad"><button class="row" data-act="go:selector" '+
+       'style="background:none;min-height:60px;border-top:1px solid var(--rule2);border-bottom:1px solid var(--rule2)">'+
+       '<span class="txt"><span class="t" style="font-weight:600">'+t('sys.find')+'</span>'+
+       '<span class="s">'+t('sys.findSub')+'</span></span>'+chev+'</button></div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('tab.systems')};
+};
+
+/* ------------------------------------------------------- FINISH (new) --- */
+VIEWS.finish = function(r){
+  const f = FINISHES_ART.find(x => x.key === r.key) || FINISHES_ART[0];
+  const list = systemsWithFinish(f.key);
+  const ways = COLOURWAYS[f.key] || [];
+  let h = '<div class="hero" style="height:184px">'+art(f.key, 0)+'<span class="veil"></span>'+
+    '<span class="cnt"><span class="eyebrow">'+t('tab.systems')+'</span>'+
+    '<span class="ht" style="display:block">'+esc(f.name)+'</span>'+
+    '<span class="hs" style="display:block">'+esc(f.sub)+'</span></span></div>';
+
+  h += '<div class="sp24"></div>'+sectionLabel(list.length+' '+t('tab.systems').toLowerCase());
+  h += list.map(s => '<button class="obj" data-act="system:'+s.id+'">'+
+      '<span class="thumb" style="width:46px;height:46px">'+sysArt(s)+'</span>'+
+      '<span style="flex:1;min-width:0">'+
+        '<span class="ot" style="display:block;font-size:16.5px">'+esc(s.name)+'</span>'+
+        '<span class="om" style="display:block;margin-top:2px">'+esc(s.variant)+' · '+esc(s.thickness)+'</span>'+
+      '</span>'+chev+'</button>').join('');
+
+  if(ways.length){
+    h += '<div class="sp32"></div>'+sectionLabel(state.lang === 'fr' ? 'Coloris' : 'Colourways');
+    h += '<div class="chart">'+ways.map((w, i) =>
+      '<div class="sw">'+art(f.key, i)+'<div class="cn">'+esc(w.n)+'</div></div>').join('')+'</div>';
+    h += '<div class="pad" style="padding-top:14px"><div style="font-size:12.5px;color:var(--ink3);line-height:1.45">'+
+      (state.lang === 'fr'
+        ? 'Coloris représentatifs. La charte de couleurs, de quartz et de flocons MAGIECHEM® remplacera ces valeurs.'
+        : 'Representative colourways. The MAGIECHEM® colour, quartz and flake charts replace these once supplied.')+
+      '</div></div>';
+  }
+  h += '<div class="sp44"></div>';
+  return {html:h, title:f.name};
+};
+
+/* -------------------------------------------------------------- PRODUCTS */
+VIEWS.products = function(){
+  const recents = state.recent.products.map(id => P[id]).filter(Boolean).slice(0, 6);
+  let h = '<div class="pad"><h1 class="lt">'+t('tab.products')+'</h1></div><div class="sp16"></div>';
+  h += '<div class="pad"><button class="searchfield" data-act="search" style="width:100%;height:52px;border-radius:14px">'+
+       icon('search',18,2.1)+'<span style="flex:1;text-align:left;font-size:16px;color:var(--ink3);letter-spacing:-.012em">'+
+       (state.lang === 'fr' ? 'Numéro, nom ou donnée technique' : 'Number, name or technical data')+'</span></button></div>';
+
+  if(recents.length){
+    h += '<div class="sp32"></div>'+sectionLabel(state.lang === 'fr' ? 'Utilisés récemment' : 'Recently used');
+    h += '<div class="mrail">'+recents.map(p =>
+      '<button data-act="product:'+p.id+'"><span class="n">'+esc(p.number)+'</span>'+
+      '<span class="d">'+esc(p.name)+'</span></button>').join('')+'</div>';
+  }
+
+  h += '<div class="sp32"></div>'+sectionLabel(t('prod.families'));
+  h += '<div class="famgrid">'+FAMILIES.filter(f => familyCount(f.key)).map(f =>
+    '<button data-act="family:'+f.key+'">'+
+      '<span class="bar" style="display:block;background:'+(FAM_TONE[f.key]||'#9A9A96')+'"></span>'+
+      '<span class="fn" style="display:block">'+esc(f.name)+'</span>'+
+      '<span class="fc" style="display:block">'+familyCount(f.key)+' '+t('sec.products').toLowerCase()+'</span>'+
+    '</button>').join('')+'</div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('tab.products')};
+};
+
+/* -------------------------------------------------------------- PROJECTS */
+VIEWS.projects = function(){
+  let h = '<div class="pad"><h1 class="lt">'+t('tab.projects')+'</h1></div><div class="sp16"></div>';
+  if(!state.projects.length){
+    h += '<div class="empty"><div class="et">'+t('proj.none')+'</div><div class="ed">'+t('proj.noneSub')+'</div></div>';
+    h += '<div class="pad"><button class="btn ghost" data-act="go:calc">'+t('home.a2t')+'</button></div>';
+    return {html:h, title:t('tab.projects')};
+  }
+  h += state.projects.map(p => {
+    const sys = S[p.systemId];
+    return '<button class="obj" data-act="project:'+p.id+'" style="padding-top:13px;padding-bottom:13px">'+
+      '<span class="thumb" style="width:64px;height:64px">'+(sys ? sysArt(sys) : art('smooth', 0))+'</span>'+
+      '<span style="flex:1;min-width:0">'+
+        '<span class="ot" style="display:block">'+esc(p.name)+'</span>'+
+        '<span class="om" style="display:block">'+projMeta(p)+'</span>'+
+        '<span class="oq" style="display:block">'+fmtArea(p.area, p.unit)+'</span>'+
+      '</span>'+chev+'</button>';
+  }).join('');
+  h += '<div class="sp24"></div><div class="pad"><div class="rule-t"></div>'+
+       '<button class="row" data-act="go:calc" style="background:none"><span class="ic" style="color:var(--red)">'+
+       icon('plus',20,2)+'</span><span class="txt"><span class="t" style="color:var(--red)">'+t('proj.new')+'</span></span></button>'+
+       '<div class="rule-t"></div></div><div class="sp44"></div>';
+  return {html:h, title:t('tab.projects')};
+};
+</script>
+
+<style>
+.dimrow{display:flex;gap:22px;padding:0 16px;align-items:flex-end}
+.dimfield{flex:1;min-width:0;border-bottom:1px solid var(--rule);padding-bottom:7px}
+.dimfield .lb{font-size:12.5px;font-weight:600;letter-spacing:.055em;text-transform:uppercase;color:var(--ink2);margin-bottom:5px}
+.dimfield input{border:0;outline:0;background:none;width:100%;min-width:0;padding:0;
+  font-size:23px;font-weight:600;letter-spacing:-.022em;font-variant-numeric:tabular-nums;color:var(--ink)}
+.dimfield input::placeholder{color:var(--rule)}
+.dimx{font-size:19px;color:var(--ink3);padding-bottom:10px}
+.stepnote{font-size:13.5px;color:var(--ink2);padding:8px 16px 0;letter-spacing:-.006em;line-height:1.4}
+</style>
+
+<script>
+/* ---------------------------------------------------- CALCULATOR (steps) */
+function calcSteps(){ return state.calc.preset ? ['calcArea','calcSet'] : ['calcArea','calcTarget','pick','calcSet']; }
+function stepHead(name){
+  const steps = calcSteps(), i = Math.max(0, steps.indexOf(name)), n = steps.length;
+  return '<div class="progressline"><i style="width:'+Math.round((i+1)/n*100)+'%"></i></div>'+
+         '<div class="pad" style="padding-top:14px"><div class="eyebrow">'+
+         t('sel.step')+' '+(i+1)+' '+t('sel.of')+' '+n+'</div></div>';
+}
+
+VIEWS.calcArea = function(){
+  const c = state.calc;
+  let h = stepHead('calcArea');
+  h += '<div class="pad" style="padding-top:6px"><div class="h-display">'+t('calc.area')+'</div></div>';
+  h += '<div class="sp24"></div>';
+  h += '<div class="bignum"><input id="areaIn" inputmode="decimal" placeholder="0" value="'+esc(c.area)+'"></div>';
+  h += '<div class="utoggle">'+
+        '<button class="'+(c.unit==='ft2'?'on':'')+'" data-act="unit:ft2">ft²</button>'+
+        '<button class="'+(c.unit==='m2'?'on':'')+'" data-act="unit:m2">m²</button>'+
+       '</div>';
+  h += '<div class="sp24"></div>';
+  if(c.dimsOpen){
+    h += '<div class="dimrow">'+
+      '<div class="dimfield"><div class="lb">'+t('calc.length')+'</div><input id="lIn" inputmode="decimal" placeholder="0" value="'+esc(c.l)+'"></div>'+
+      '<div class="dimx">×</div>'+
+      '<div class="dimfield"><div class="lb">'+t('calc.width')+'</div><input id="wIn" inputmode="decimal" placeholder="0" value="'+esc(c.w)+'"></div>'+
+    '</div>';
+  } else {
+    h += '<div class="pad"><button class="textlink" data-act="dims">'+
+         (state.lang === 'fr' ? 'Entrer les dimensions' : 'Enter dimensions instead')+'</button></div>';
+  }
+  if(c.preset && c.target && c.target.id){
+    const tl = targetLabel();
+    h += '<div class="sp32"></div><div class="stepnote">'+
+      (state.lang === 'fr' ? 'Calcul pour ' : 'Calculating for ')+'<b style="color:var(--ink);font-weight:600">'+
+      esc(tl.t)+'</b> — '+(state.lang === 'fr' ? 'déjà sélectionné.' : 'already selected.')+'</div>';
+  }
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('tab.calculator'),
+    dock:'<button class="btn" '+(areaFt2() > 0 ? '' : 'disabled')+' data-act="areanext">'+t('sel.continue')+'</button>'};
+};
+
+VIEWS.calcTarget = function(){
+  let h = stepHead('calcTarget');
+  h += '<div class="pad" style="padding-top:6px"><div class="h-display">'+t('calc.what')+'</div></div>';
+  h += '<div class="sp24"></div>';
+  const kind = state.calc.target && state.calc.target.kind;
+  const opt = (k, tt, ss) =>
+    '<button class="choice'+(kind===k?' on':'')+'" data-act="target:'+k+'">'+
+      '<span class="ci">'+icon('check',13,3)+'</span>'+
+      '<span style="flex:1;min-width:0"><span class="ct" style="display:block">'+tt+'</span>'+
+      '<span class="cs" style="display:block">'+ss+'</span></span></button>';
+  h += opt('system', t('calc.system'),
+        state.lang === 'fr' ? 'Toutes les couches, calculées ensemble' : 'Every layer, calculated together')+
+       opt('product', t('calc.product'),
+        state.lang === 'fr' ? 'Un seul produit' : 'A single product')+
+       '<div class="rule-t"></div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('calc.what')};
+};
+
+VIEWS.calcSet = function(){
+  const c = state.calc, tl = targetLabel();
+  let h = stepHead('calcSet');
+  h += '<div class="pad" style="padding-top:6px"><div class="h-display">'+t('calc.settings')+'</div></div>';
+  h += '<div class="sp24"></div>';
+  h += '<div class="sumline"><span class="k">'+(c.target && c.target.kind === 'product' ? t('calc.product') : t('proj.system'))+
+       '</span><span class="v">'+esc(tl ? tl.t : '—')+
+       '<button class="chg" data-act="pickagain">'+t('calc.change')+'</button></span></div>';
+  h += '<div class="sumline"><span class="k">'+t('res.totalArea')+'</span><span class="v">'+
+       fmtArea(parseFloat(c.area)||0, c.unit)+
+       '<button class="chg" data-act="editarea">'+(state.lang === 'fr' ? 'Modifier' : 'Edit')+'</button></span></div>';
+  h += '<div class="sp32"></div>'+sectionLabel(t('calc.waste'));
+  h += '<div class="vals">'+[0,5,10,15].map(v =>
+       '<button class="'+(c.waste===v?'on':'')+'" data-act="waste:'+v+'">'+v+'%</button>').join('')+'</div>';
+  h += '<div class="pad"><button class="textlink" data-act="advanced">'+t('calc.advanced')+
+       (Object.keys(c.overrides).length ? ' · '+Object.keys(c.overrides).length : '')+'</button></div>';
+  h += '<div class="sp32"></div><div id="calcpreview">'+previewHTML()+'</div><div class="sp44"></div>';
+  return {html:h, title:t('calc.settings'),
+    dock:'<button class="btn" '+(areaFt2() > 0 && c.target && c.target.id ? '' : 'disabled')+
+         ' data-act="go:results">'+t('calc.run')+'</button>'};
+};
+
+/* picker, containerless */
+VIEWS.pick = function(r){
+  const isSys = r.key === 'system';
+  const q = (r.q || '').toLowerCase();
+  const items = isSys
+    ? SYSTEMS.filter(s => !q || (s.name+' '+s.variant+' '+s.family).toLowerCase().includes(q))
+    : PRODUCTS.filter(p => p.calc).filter(p => !q || (p.number+' '+p.name).toLowerCase().includes(q));
+  const cur = state.calc.target;
+  let h = stepHead('pick');
+  h += '<div class="pad" style="padding-top:6px"><div class="h-display">'+
+       (isSys?t('calc.pickSystem'):t('calc.pickProduct'))+'</div></div><div class="sp16"></div>';
+  h += '<div class="pad"><div class="searchfield" style="height:48px;border-radius:13px">'+
+       '<span style="display:flex">'+icon('search',17,2.1)+'</span>'+
+       '<input id="pickq" placeholder="'+(isSys?t('calc.search'):t('calc.pickProduct'))+'" value="'+esc(r.q||'')+'" autocomplete="off"></div></div>';
+
+  if(isSys && state.recent.systems.length && !q){
+    h += '<div class="sp24"></div>'+sectionLabel(t('calc.recent'))+
+      state.recent.systems.map(id => S[id]).filter(Boolean).map(s =>
+        '<button class="obj" data-act="settarget:system|'+s.id+'">'+
+          '<span class="thumb" style="width:44px;height:44px">'+sysArt(s)+'</span>'+
+          '<span style="flex:1;min-width:0"><span class="ot" style="display:block;font-size:16.5px">'+esc(s.name)+'</span>'+
+          '<span class="om" style="display:block;margin-top:1px">'+esc(s.variant)+'</span></span>'+
+          (cur && cur.id === s.id ? '<span class="check" style="color:var(--red);display:flex">'+icon('check',20,2.4)+'</span>' : chev)+
+        '</button>').join('');
+  }
+  h += '<div class="sp24"></div>'+sectionLabel(isSys?t('sys.all'):t('sec.products'));
+  h += items.length ? items.map(x => isSys
+      ? '<button class="obj" data-act="settarget:system|'+x.id+'">'+
+          '<span class="thumb" style="width:44px;height:44px">'+sysArt(x)+'</span>'+
+          '<span style="flex:1;min-width:0"><span class="ot" style="display:block;font-size:16.5px">'+esc(x.name)+'</span>'+
+          '<span class="om" style="display:block;margin-top:1px">'+esc(x.variant)+'</span></span>'+
+          (cur && cur.id === x.id ? '<span class="check" style="color:var(--red);display:flex">'+icon('check',20,2.4)+'</span>' : chev)+
+        '</button>'
+      : row({t:esc(x.number), s:esc(x.name), act:'settarget:product|'+x.id,
+             on:cur&&cur.id===x.id, check:cur&&cur.id===x.id, chev:!(cur&&cur.id===x.id)})).join('')
+    : '<div class="empty"><div class="ed">'+t('search.none')+'</div></div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:isSys?t('calc.pickSystem'):t('calc.pickProduct')};
+};
+
+/* preview without a container */
+function previewHTML(){
+  const lines = currentLines();
+  if(!areaFt2()) return '<div class="stepnote">'+t('calc.enterArea')+'</div>';
+  if(!lines.length) return '<div class="stepnote">'+t('calc.pickSystem')+'</div>';
+  return '<div class="pad"><div class="sec-head"><div class="sec-label" style="margin:0">'+t('res.title')+'</div>'+
+    '<div style="font-size:12px;color:var(--ink3);letter-spacing:-.004em">'+t('calc.live')+'</div></div></div>'+
+    lines.map(l =>
+      '<div class="sumline"><span class="k" style="color:var(--ink);font-weight:550">'+esc(P[l.pid].number)+
+      '<span style="color:var(--ink2);font-weight:400"> · '+esc(roleName(l.role))+'</span></span>'+
+      '<span class="v">'+l.packs+' <span style="font-weight:400;color:var(--ink2)">'+
+      esc(packWord(l.pack.label, l.packs))+'</span></span></div>').join('');
+}
+
+/* ------------------------------------------------------------- WIRING --- */
+state.calc.dimsOpen = false;
+state.calc.preset = false;
+state.stacks.calculator = [{n:'calcArea'}];
+
+const baseTitleFor = titleFor;
+titleFor = function(r){
+  if(r.n === 'calcArea')   return t('tab.calculator');
+  if(r.n === 'calcTarget') return state.lang === 'fr' ? 'Cible' : 'Target';
+  if(r.n === 'calcSet')    return t('calc.settings');
+  if(r.n === 'finish')     return (FINISHES_ART.find(x => x.key === r.key) || {}).name || '';
+  return baseTitleFor(r);
+};
+
+/* Groups the integer part for readability while the field is being typed in,
+   and puts the caret back after the same digit. Never rewrites the value on
+   focus — that fights text selection and IME. */
+function groupNumber(clean){
+  if(clean === '' || clean === '.') return clean;
+  const [ip, dp] = clean.split('.');
+  const grouped = Number(ip || 0).toLocaleString(state.lang === 'fr' ? 'fr-CA' : 'en-CA');
+  return grouped + (dp !== undefined ? '.' + dp : '');
+}
+function formatAreaField(el){
+  const before = el.value.slice(0, el.selectionStart).replace(/[^\d]/g,'').length;
+  const clean = el.value.replace(/[^\d.]/g,'').replace(/(\..*)\./g,'$1');
+  state.calc.area = clean;
+  const out = groupNumber(clean);
+  el.value = out;
+  let i = 0, seen = 0;
+  while(i < out.length && seen < before){ if(/\d/.test(out[i])) seen++; i++; }
+  try{ el.setSelectionRange(i, i); }catch(e){}
+}
+
+function bindAreaInputs(){
+  const a = document.getElementById('areaIn'), l = document.getElementById('lIn'), w = document.getElementById('wIn');
+  const dock = () => { const b = document.querySelector('#dock .btn');
+    if(b){ if(areaFt2() > 0) b.removeAttribute('disabled'); else b.setAttribute('disabled',''); } };
+  if(a){
+    a.addEventListener('input', () => {
+      formatAreaField(a);
+      state.calc.l = ''; state.calc.w = '';
+      if(l) l.value = ''; if(w) w.value = '';
+      dock();
+    });
+    if(state.calc.area) a.value = groupNumber(state.calc.area);
+  }
+  const dim = () => {
+    state.calc.l = l.value.replace(/[^\d.]/g,''); state.calc.w = w.value.replace(/[^\d.]/g,'');
+    const L = parseFloat(state.calc.l), W = parseFloat(state.calc.w);
+    if(isFinite(L) && isFinite(W) && L > 0 && W > 0){
+      state.calc.area = String(Math.round(L * W * 100) / 100);
+      if(a) a.value = groupNumber(state.calc.area);
+      dock();
+    }
+  };
+  if(l) l.addEventListener('input', dim);
+  if(w) w.addEventListener('input', dim);
+}
+
+const baseRender = render;
+render = function(mode){
+  baseRender(mode);
+  const sc = document.getElementById('scroll');
+  mountArt(sc);
+  if(route().n === 'calcArea') bindAreaInputs();
+};
+const baseOpenSheet = openSheet;
+openSheet = function(html){ baseOpenSheet(html); mountArt(document.getElementById('sheet')); };
+
+const baseDoAction = doAction;
+doAction = function(a){
+  const i = a.indexOf(':'), k = i < 0 ? a : a.slice(0, i), v = i < 0 ? '' : a.slice(i + 1);
+  const A = {
+    dims(){ state.calc.dimsOpen = true; render(); },
+    finish(){ push({n:'finish', key:v}); },
+    areanext(){
+      /* skip only when the target came with us from a product or system screen,
+         so the "step 1 of n" count and the actual path always agree */
+      if(state.calc.preset && state.calc.target && state.calc.target.id) push({n:'calcSet'});
+      else push({n:'calcTarget'});
+    },
+    target(){
+      if(!state.calc.target || state.calc.target.kind !== v){ state.calc.target = {kind:v, id:null}; state.calc.overrides = {}; }
+      render();
+      setTimeout(() => push({n:'pick', key:v, q:''}), 90);
+    },
+    settarget(){
+      const [kind, id] = v.split('|');
+      state.calc.target = {kind, id}; state.calc.overrides = {};
+      if(kind === 'system') touchSystem(id); else touchProduct(id);
+      const st = stack();
+      if(st[st.length-1].n === 'pick') st.pop();
+      st.push({n:'calcSet'}); render('push');
+    },
+    pickagain(){ push({n:'pick', key:(state.calc.target||{}).kind || 'system', q:''}); },
+    editarea(){ state.stacks.calculator = [{n:'calcArea'}]; render('pop'); },
+    waste(){ state.calc.waste = +v;
+      document.querySelectorAll('.vals button').forEach(b =>
+        b.classList.toggle('on', b.dataset.act === 'waste:'+v));
+      refreshCalc();
+    },
+    calcsystem(){
+      touchSystem(v); closeSheet();
+      state.calc.target = {kind:'system', id:v}; state.calc.overrides = {}; state.calc.preset = true;
+      resetTo('calculator', {n:'calcArea'});
+    },
+    calcproduct(){
+      touchProduct(v);
+      state.calc.target = {kind:'product', id:v}; state.calc.overrides = {}; state.calc.preset = true;
+      resetTo('calculator', {n:'calcArea'});
+    },
+    go(){
+      if(v === 'calc'){
+        /* an entry point starts the flow at step 1; the tab bar still resumes
+           wherever the calculator was left. Entered values are kept either way. */
+        state.calc.preset = false; resetTo('calculator', {n:'calcArea'});
+      }
+      else baseDoAction(a);
+    },
+    reopen(){
+      const p = state.projects.find(x => x.id === v); if(!p) return;
+      state.calc.area = String(p.area); state.calc.unit = p.unit; state.calc.waste = p.waste;
+      state.calc.target = {kind:'system', id:p.systemId}; state.calc.preset = true;
+      state.calc.overrides = JSON.parse(JSON.stringify(p.overrides || {}));
+      resetTo('calculator', {n:'calcArea'}); push({n:'calcSet'}); push({n:'results'});
+    }
+  };
+  if(A[k]) return A[k]();
+  return baseDoAction(a);
+};
+
+/* first paint happens after the last override script loads */
+</script>
+
+<style>
+/* scroll-snap was eating the rail's leading padding */
+.finrail,.rail,.mrail{scroll-padding-inline:16px}
+.fincard{text-align:left}
+</style>
+
+<script>
+/* count labels that read correctly at 1 */
+/* room name if the project has one, otherwise the system identifies it */
+function projMeta(p){
+  const sys = S[p.systemId];
+  if(!sys) return esc(p.space || '');
+  return p.space ? esc(p.space)+' · '+esc(sys.name) : esc(sysTitle(sys));
+}
+function nSystems(n){
+  return n + ' ' + (state.lang === 'fr' ? (n === 1 ? 'système' : 'systèmes') : (n === 1 ? 'system' : 'systems'));
+}
+/* a stable colourway per system, so two smooth systems don't look identical */
+function finishIdx(id, kind){
+  let h = 0; for(let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return h % ((COLOURWAYS[kind] || COLOURWAYS.smooth).length);
+}
+function sysArt(sys){
+  const k = systemFinish(sys);
+  return art(k, finishIdx(sys.id, k));
+}
+
+/* ---- re-render the two screens that show those counts / thumbs ---- */
+VIEWS.systems = function(){
+  let h = '<div class="pad"><h1 class="lt">'+t('tab.systems')+'</h1></div><div class="sp24"></div>';
+  h += sectionLabel(state.lang === 'fr' ? 'Explorer par fini' : 'Explore by finish');
+  h += '<div class="finrail">'+FINISHES_ART.map(f =>
+    '<button class="fincard" data-act="finish:'+f.key+'">'+art(f.key, 0)+'<span class="veil"></span>'+
+    '<span class="nm">'+esc(state.lang === 'fr'
+      ? ({Flake:'Flocons',Quartz:'Quartz',Smooth:'Lisse',Cementitious:'Cimentaire'}[f.name] || f.name)
+      : f.name)+'</span>'+
+    '<span class="ct">'+nSystems(finishCount(f.key))+'</span></button>').join('')+'</div>';
+
+  h += '<div class="sp32"></div>'+sectionLabel(state.lang === 'fr' ? 'Parcourir par application' : 'Browse by application');
+  h += '<div class="group bare">'+APPLICATIONS.map(a => {
+    const n = SYSTEMS.filter(s => s.tags.env.includes(a.key) || s.tags.perf.includes(a.key)).length;
+    return n ? row({t:esc(a.name), tail:n, act:'syslist:app|'+a.key}) : '';
+  }).join('')+'</div>';
+
+  h += '<div class="sp32"></div>'+sectionLabel(t('sys.all'));
+  h += SYSTEMS.map(s => '<button class="obj" data-act="system:'+s.id+'">'+
+      '<span class="thumb" style="width:46px;height:46px">'+sysArt(s)+'</span>'+
+      '<span style="flex:1;min-width:0">'+
+        '<span class="ot" style="display:block;font-size:16.5px">'+esc(s.name)+'</span>'+
+        '<span class="om" style="display:block;margin-top:2px">'+esc(s.variant)+' · '+esc(s.thickness)+'</span>'+
+      '</span>'+chev+'</button>').join('');
+
+  h += '<div class="sp24"></div><div class="pad"><button class="row" data-act="go:selector" '+
+       'style="background:none;min-height:60px;border-top:1px solid var(--rule2);border-bottom:1px solid var(--rule2)">'+
+       '<span class="txt"><span class="t" style="font-weight:600">'+t('sys.find')+'</span>'+
+       '<span class="s">'+t('sys.findSub')+'</span></span>'+chev+'</button></div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('tab.systems')};
+};
+
+VIEWS.finish = function(r){
+  const f = FINISHES_ART.find(x => x.key === r.key) || FINISHES_ART[0];
+  const list = systemsWithFinish(f.key);
+  const ways = COLOURWAYS[f.key] || [];
+  let h = '<div class="hero" style="height:184px">'+art(f.key, 0)+'<span class="veil"></span>'+
+    '<span class="cnt"><span class="eyebrow">'+t('tab.systems')+'</span>'+
+    '<span class="ht" style="display:block">'+esc(f.name)+'</span>'+
+    '<span class="hs" style="display:block">'+esc(f.sub)+'</span></span></div>';
+  h += '<div class="sp24"></div>'+sectionLabel(nSystems(list.length));
+  h += list.map(s => '<button class="obj" data-act="system:'+s.id+'">'+
+      '<span class="thumb" style="width:46px;height:46px">'+sysArt(s)+'</span>'+
+      '<span style="flex:1;min-width:0">'+
+        '<span class="ot" style="display:block;font-size:16.5px">'+esc(s.name)+'</span>'+
+        '<span class="om" style="display:block;margin-top:2px">'+esc(s.variant)+' · '+esc(s.thickness)+'</span>'+
+      '</span>'+chev+'</button>').join('');
+  if(ways.length){
+    h += '<div class="sp32"></div>'+sectionLabel(state.lang === 'fr' ? 'Coloris' : 'Colourways');
+    h += '<div class="chart">'+ways.map((w, i) =>
+      '<div class="sw">'+art(f.key, i)+'<div class="cn">'+esc(w.n)+'</div></div>').join('')+'</div>';
+    h += '<div class="pad" style="padding-top:14px"><div style="font-size:12.5px;color:var(--ink3);line-height:1.45">'+
+      (state.lang === 'fr'
+        ? 'Coloris représentatifs. Les chartes de couleurs, de quartz et de flocons MAGIECHEM® remplaceront ces valeurs.'
+        : 'Representative colourways. The MAGIECHEM® colour, quartz and flake charts replace these once supplied.')+
+      '</div></div>';
+  }
+  h += '<div class="sp44"></div>';
+  return {html:h, title:f.name};
+};
+</script>
+
+<script>
+render();
+</script>
+
+<style>
+.famgrid .bar{width:26px;height:3px}
+.mrail button{max-width:176px}
+.mrail .n{font-size:18px}
+</style>
+
+<script>
+/* chemistry cues need to be distinguishable to mean anything, while staying
+   far below the brand red in saturation */
+Object.assign(FAM_TONE, {
+  epoxy:'#8A7B57', polyaspartic:'#5E7C9A', polyurethane:'#5F8C6E',
+  cpu:'#96725A', primer:'#8E8E93', media:'#A08A66',
+  membrane:'#6F8A8A', repair:'#8A8078', sealant:'#7F7A8C'
+});
+
+function nProducts(n){
+  return n + ' ' + (state.lang === 'fr' ? (n === 1 ? 'produit' : 'produits')
+                                        : (n === 1 ? 'product' : 'products'));
+}
+
+VIEWS.products = function(){
+  const recents = state.recent.products.map(id => P[id]).filter(Boolean).slice(0, 6);
+  let h = '<div class="pad"><h1 class="lt">'+t('tab.products')+'</h1></div><div class="sp16"></div>';
+  h += '<div class="pad"><button class="searchfield" data-act="search" style="width:100%;height:52px;border-radius:14px">'+
+       icon('search',18,2.1)+'<span style="flex:1;text-align:left;font-size:16px;color:var(--ink3);letter-spacing:-.012em">'+
+       (state.lang === 'fr' ? 'Numéro, nom ou donnée technique' : 'Number, name or technical data')+'</span></button></div>';
+  if(recents.length){
+    h += '<div class="sp32"></div>'+sectionLabel(state.lang === 'fr' ? 'Utilisés récemment' : 'Recently used');
+    h += '<div class="mrail">'+recents.map(p =>
+      '<button data-act="product:'+p.id+'"><span class="n">'+esc(p.number)+'</span>'+
+      '<span class="d">'+esc(p.name)+'</span></button>').join('')+'</div>';
+  }
+  h += '<div class="sp32"></div>'+sectionLabel(t('prod.families'));
+  h += '<div class="famgrid">'+FAMILIES.filter(f => familyCount(f.key)).map(f =>
+    '<button data-act="family:'+f.key+'">'+
+      '<span class="bar" style="display:block;background:'+(FAM_TONE[f.key]||'#8E8E93')+'"></span>'+
+      '<span class="fn" style="display:block">'+esc(f.name)+'</span>'+
+      '<span class="fc" style="display:block">'+nProducts(familyCount(f.key))+'</span>'+
+    '</button>').join('')+'</div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:t('tab.products')};
+};
+
+const baseFamily = VIEWS.family;
+VIEWS.family = function(r){
+  const list = PRODUCTS.filter(p => p.family === r.key);
+  let h = '<div class="pad"><h1 class="lt">'+esc(familyName(r.key))+'</h1>'+
+          '<p class="lt-sub">'+nProducts(list.length)+'</p></div>';
+  h += '<div class="sp16"></div><div class="group bare">'+
+       list.map(p => row({t:esc(p.number), s:esc(p.name), act:'product:'+p.id})).join('')+'</div>';
+  h += '<div class="sp44"></div>';
+  return {html:h, title:familyName(r.key)};
+};
+
+const baseSyslist = VIEWS.syslist;
+VIEWS.syslist = function(r){
+  const [type, key] = r.key.split('|');
+  const label = type === 'app'
+    ? (APPLICATIONS.find(a => a.key === key) || {}).name
+    : (PERFORMANCE.find(p => p.key === key) || {}).name;
+  const list = SYSTEMS.filter(s => type === 'perf'
+    ? s.tags.perf.includes(key)
+    : (s.tags.env.includes(key) || s.tags.perf.includes(key) || s.tags.finish.includes(key)));
+  let h = '<div class="pad"><h1 class="lt">'+esc(label)+'</h1><p class="lt-sub">'+nSystems(list.length)+'</p></div>';
+  h += '<div class="sp16"></div>'+list.map(s =>
+    '<button class="obj" data-act="system:'+s.id+'">'+
+      '<span class="thumb" style="width:46px;height:46px">'+sysArt(s)+'</span>'+
+      '<span style="flex:1;min-width:0">'+
+        '<span class="ot" style="display:block;font-size:16.5px">'+esc(s.name)+'</span>'+
+        '<span class="om" style="display:block;margin-top:2px">'+esc(s.variant)+' · '+esc(s.thickness)+'</span>'+
+      '</span>'+chev+'</button>').join('')+'<div class="sp44"></div>';
+  return {html:h, title:label};
+};
 render();
 </script>

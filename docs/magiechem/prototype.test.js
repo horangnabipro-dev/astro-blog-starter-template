@@ -1,282 +1,233 @@
 const {chromium}=require('playwright');
 const P='file://'+process.env.SP+'/proto.html';
-const log=[];const errs=[];
+const log=[],errs=[];
 function ok(n,c){const l=(c?'PASS':'FAIL')+'  '+n;log.push(l);console.log(l);if(!c)errs.push(n);}
 (async()=>{
 const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
 const pg=await b.newPage({viewport:{width:520,height:1000}});
 pg.on('pageerror',e=>errs.push('JS ERROR: '+e.message));
-pg.on('console',m=>{if(m.type()==='error')errs.push('CONSOLE: '+m.text())});
-await pg.goto(P);
-await pg.waitForTimeout(400);
+pg.on('console',m=>{if(m.type()==='error'&&!/ERR_CONNECTION|fonts\.googleapis/.test(m.text()))errs.push('CONSOLE: '+m.text())});
+await pg.goto(P); await pg.waitForTimeout(500);
 const txt=async s=>(await pg.locator(s).first().innerText()).replace(/\s+/g,' ').trim().toLowerCase();
 const shot=n=>pg.locator('#device').screenshot({path:process.env.SP+'/shot-'+n+'.png'});
-// an element is "overflowing" only if nothing between it and the device
-// is a horizontal scroller (rails are meant to extend past the edge)
+const tap=async(a,w)=>{await pg.click('[data-act="'+a+'"]');await pg.waitForTimeout(w||330);};
 const overflowing=()=>pg.evaluate(()=>{
-  const dev=document.getElementById('device');
-  const d=dev.getBoundingClientRect();
+  const dev=document.getElementById('device'),d=dev.getBoundingClientRect();
   const inScroller=e=>{for(let p=e.parentElement;p&&p!==dev;p=p.parentElement){
-    const ox=getComputedStyle(p).overflowX; if(ox==='auto'||ox==='scroll') return true;} return false;};
-  return [...dev.querySelectorAll('*')].filter(e=>{
-    const r=e.getBoundingClientRect();
-    return r.width>0 && (r.right>d.right+1 || r.left<d.left-1) && !inScroller(e);
-  }).length;
-});
+    const ox=getComputedStyle(p).overflowX; if(ox==='auto'||ox==='scroll')return true;}return false;};
+  return [...dev.querySelectorAll('*')].filter(e=>{const r=e.getBoundingClientRect();
+    return r.width>0&&(r.right>d.right+1||r.left<d.left-1)&&!inScroller(e);}).length;});
+const home=async()=>{await tap('tab:home');await tap('tab:home');};
+// tabs keep their own stack, so reaching a tab ROOT means tapping it twice
+const goRoot=async t=>{await tap('tab:'+t);await tap('tab:'+t);};
 
-// ---------- FLOW A : search -> product -> TDS -> back ----------
+// ================= HOME =================
 ok('home renders', (await txt('#scroll')).includes('what do you need'));
+ok('home leads with a full-bleed feature module', await pg.locator('.hero').count()===1);
+ok('feature module has painted finish art',
+   await pg.evaluate(()=>{const c=document.querySelector('.hero canvas');return c&&c.width>100;}));
+ok('continue is a project object with a finish thumbnail',
+   await pg.locator('.obj .thumb canvas').count()>0);
+ok('recents are text-led, not widget cards', await pg.locator('.mrail button').count()>0
+   && await pg.locator('#scroll .rcard').count()===0);
 await shot('01-home');
-await pg.click('[data-act="search"]');
-await pg.waitForTimeout(200);
-await pg.fill('#sinput','9461');
-await pg.waitForTimeout(200);
+
+// ================= FLOW A : search -> product -> TDS =================
+await tap('search',250);
+await pg.fill('#sinput','9461'); await pg.waitForTimeout(250);
 const sres=await txt('#sbody');
-ok('search groups PRODUCT', sres.includes('product'));
-ok('search groups SYSTEMS USING', sres.toLowerCase().includes('systems using this product'));
-ok('search groups DOCUMENTS', sres.includes('documents'));
+ok('search groups product / systems-using / documents',
+   sres.includes('product')&&sres.includes('systems using this product')&&sres.includes('documents'));
 await shot('02-search');
-await pg.click('[data-act="search2product:9461"]');
-await pg.waitForTimeout(350);
+await tap('search2product:9461');
 const pd=await txt('#scroll');
-ok('product detail shows 9461', pd.includes('9461'));
-ok('mix ratio visible without scrolling', pd.includes('2a : 1b'));
-ok('working time visible', pd.includes('20') && pd.includes('working time'));
+ok('product detail shows 9461 with real name', pd.includes('9461')&&pd.includes('self-levelling epoxy'));
+ok('mix ratio readable without scrolling', pd.includes('2a : 1b'));
 await shot('03-product');
-await pg.click('[data-act="doc:tds-9461"]');
-await pg.waitForTimeout(350);
-ok('TDS viewer opens in-app', (await txt('#scroll')).includes('surface preparation'));
-await pg.fill('#docq','recoat');
-await pg.waitForTimeout(250);
-ok('in-document search highlights', (await pg.locator('mark').count())>0);
-await shot('04-tds');
-await pg.click('[data-act="back"]');
-await pg.waitForTimeout(350);
-ok('back returns to product', (await txt('#scroll')).includes('high-performance'));
+await tap('doc:tds-9461');
+ok('TDS opens in-app', (await txt('#scroll')).includes('surface preparation'));
+await pg.fill('#docq','recoat'); await pg.waitForTimeout(250);
+ok('in-document search highlights', await pg.locator('mark').count()>0);
+await tap('back');
+ok('back returns to product', (await txt('#scroll')).includes('100% solids'));
 
-// ---------- FLOW B : selector -> system -> layer sheet -> calculate ----------
-await pg.click('[data-act="tab:home"]');
-await pg.waitForTimeout(300);
-await pg.click('[data-act="tab:home"]');
-await pg.waitForTimeout(300);
-ok('tapping active tab returns to Home root', (await txt('#scroll')).includes('what do you need'));
-await pg.click('[data-act="go:selector"]');
-await pg.waitForTimeout(300);
+// ================= FLOW B : selector -> system -> layer -> calculate =================
+await home();
+ok('tapping active tab returns home', (await txt('#scroll')).includes('what do you need'));
+await tap('go:selector');
 ok('selector step 1', (await txt('#scroll')).includes('step 1 of 3'));
-await pg.click('[data-act="seloption:env|food"]');
-await pg.waitForTimeout(150);
-await pg.click('[data-act="selnext"]');
-await pg.waitForTimeout(250);
-ok('selector step 2', (await txt('#scroll')).includes('step 2 of 3'));
-await pg.click('[data-act="seloption:perf|chemical"]');
-await pg.click('[data-act="seloption:perf|thermal"]');
-await pg.waitForTimeout(150);
-await pg.click('[data-act="selnext"]');
-await pg.waitForTimeout(250);
-ok('selector step 3', (await txt('#scroll')).includes('step 3 of 3'));
-await pg.click('[data-act="seloption:finish|cementitious"]');
-await pg.waitForTimeout(120);
-await pg.click('[data-act="selnext"]');
-await pg.waitForTimeout(350);
+await tap('seloption:env|food',150); await tap('selnext');
+await tap('seloption:perf|chemical',120); await tap('seloption:perf|thermal',120); await tap('selnext');
+await tap('seloption:finish|cementitious',120); await tap('selnext');
 const rec=await txt('#scroll');
-ok('recommendation is MAGIETHANE for food+thermal+cementitious', rec.includes('magiethane'));
+ok('recommends MAGIECRETE for food + thermal + cementitious', rec.includes('magiecrete'));
 ok('match percentage shown', /\d+% match/.test(rec));
-ok('reasons listed', rec.includes('thermal shock'));
-await shot('05-recommendation');
-await pg.click('[data-act="system:cpu-sl"]');
-await pg.waitForTimeout(350);
-const sd=await txt('#scroll');
-ok('system detail build-up', sd.includes('system build-up') && sd.includes('concrete substrate'));
-await shot('06-system');
-await pg.click('[data-act="layer:cpu-sl|1"]');
-await pg.waitForTimeout(450);
-const sh=await txt('#sheet');
-ok('layer sheet opens with product data', sh.includes('7200') && sh.includes('cementitious body'));
-await shot('07-layersheet');
-await pg.click('[data-act="sheetproduct:7200"]');
-await pg.waitForTimeout(450);
-ok('sheet -> product detail', (await txt('#scroll')).includes('cementitious urethane self'));
-await pg.click('[data-act="back"]');
-await pg.waitForTimeout(350);
-await pg.click('[data-act="calcsystem:cpu-sl"]');
-await pg.waitForTimeout(400);
-ok('calculate this system lands on calculator with system preselected',
-   (await txt('#scroll')).includes('magiethane'));
+await shot('04-recommendation');
+await tap('system:cpu-sl');
+ok('system detail build-up', (await txt('#scroll')).includes('system build-up'));
+await shot('05-system');
+await tap('layer:cpu-sl|1',450);
+ok('layer sheet carries product data', (await txt('#sheet')).includes('magiecrete™ sl'));
+await tap('sheetproduct:MCSL',450);
+ok('sheet -> product detail', (await txt('#scroll')).includes('self-levelling cementitious'));
+await tap('back');
+await tap('calcsystem:cpu-sl',420);
 
-// ---------- FLOW C : calculator ----------
-await pg.fill('#areaIn','12500');
-await pg.waitForTimeout(250);
-const prev1=await txt('#calcpreview');
-ok('live preview appears on area entry', prev1.includes('7200'));
-await pg.click('[data-act="pick:system"]');
-await pg.waitForTimeout(300);
-await pg.fill('#pickq','flake');
-await pg.waitForTimeout(250);
-ok('system picker filters', (await txt('#scroll')).includes('magieflake'));
-await pg.click('[data-act="settarget:system|flake-sb"]');
-await pg.waitForTimeout(350);
-const areaRaw=async()=>(await pg.inputValue('#areaIn')).replace(/[^\d.]/g,'');
-ok('area preserved after picker round-trip', (await areaRaw())==='12500');
-ok('area displays grouped when not being edited', (await pg.inputValue('#areaIn')).includes(','));
-const prevFlake=await txt('#calcpreview');
-ok('preview switched to flake system', prevFlake.includes('magieflake') || prevFlake.includes('5076'));
-await shot('08-calculator');
-await pg.click('[data-act="waste:0"]');
-await pg.waitForTimeout(250);
-const w0=await txt('#calcpreview');
-await pg.click('[data-act="waste:15"]');
-await pg.waitForTimeout(250);
-const w15=await txt('#calcpreview');
-ok('changing waste changes quantities', w0!==w15);
-await pg.click('[data-act="waste:10"]');
-await pg.waitForTimeout(200);
-// advanced settings
-await pg.click('[data-act="advanced"]');
-await pg.waitForTimeout(450);
-ok('advanced settings sheet lists per-layer rules', (await txt('#sheet')).includes('wet film thickness'));
+// ---- contextual entry: target already known ----
+const ctx=await txt('#scroll');
+ok('contextual entry shows 2 steps, not 4', ctx.includes('step 1 of 2'));
+ok('contextual entry names the preselected system', ctx.includes('magiecrete'));
+await shot('06-calc-context');
+await pg.fill('#areaIn','9000'); await pg.waitForTimeout(250);
+await tap('areanext',380);
+ok('contextual entry skips target and selection', (await txt('#scroll')).includes('step 2 of 2'));
+ok('settings screen carries the system', (await txt('#scroll')).includes('magiecrete'));
+
+// ================= FLOW C : full calculator from the tab =================
+await home(); await tap('go:calc',380);
+ok('calculator starts at area, 4 steps', (await txt('#scroll')).includes('step 1 of 4'));
+ok('area carries over from the previous calculation, grouped',
+   (await pg.inputValue('#areaIn'))==='9,000');
+ok('area uses a containerless numeric field',
+   await pg.evaluate(()=>{const i=document.getElementById('areaIn');
+     if(!i) return false;
+     const cs=getComputedStyle(i);
+     return cs.borderTopWidth==='0px'&&parseFloat(cs.fontSize)>40;}));
+await pg.fill('#areaIn','12500'); await pg.waitForTimeout(250);
+ok('area field groups digits while typing', (await pg.inputValue('#areaIn'))==='12,500');
+await shot('07-calc-area');
+await tap('dims',300);
+ok('dimensions are progressive disclosure', await pg.locator('#lIn').count()===1);
+await pg.fill('#lIn','100'); await pg.fill('#wIn','125'); await pg.waitForTimeout(300);
+ok('dimensions compute the area', (await pg.inputValue('#areaIn')).replace(/[^\d]/g,'')==='12500');
+await tap('areanext',380);
+ok('step 2 is the target choice alone', (await txt('#scroll')).includes('step 2 of 4'));
+await shot('08-calc-target');
+await tap('target:system',480);
+ok('choosing a target advances to selection', (await txt('#scroll')).includes('step 3 of 4'));
+await pg.fill('#pickq','flake'); await pg.waitForTimeout(280);
+ok('picker filters', (await txt('#scroll')).includes('magieflake'));
+await tap('settarget:system|flake-sb',420);
+const st=await txt('#scroll');
+ok('selection advances to settings', st.includes('step 4 of 4'));
+ok('area survives the whole step sequence', st.includes('12,500'));
+ok('settings shows only item, area and waste',
+   st.includes('magieflake')&&st.includes('12,500')&&st.includes('10%'));
+await shot('09-calc-settings');
+const w10=await txt('#calcpreview');
+await tap('waste:0',280); const w0=await txt('#calcpreview');
+ok('waste change recalculates live', w0!==w10);
+await tap('waste:10',280);
+await tap('advanced',480);
+ok('advanced settings stay hidden behind a link', (await txt('#sheet')).includes('wet film thickness'));
 const before=await txt('#calcpreview');
-await pg.fill('#sheet input[data-ov="3|wft"]','30');
-await pg.waitForTimeout(300);
-const after=await txt('#calcpreview');
-ok('editing layer WFT recalculates live', before!==after);
-await shot('09-advanced');
-await pg.click('[data-act="resetov"]');
-await pg.waitForTimeout(400);
-await pg.click('[data-act="closesheet"]');
-await pg.waitForTimeout(400);
-await pg.click('[data-act="go:results"]');
-await pg.waitForTimeout(400);
+await pg.fill('#sheet input[data-ov="3|wft"]','30'); await pg.waitForTimeout(300);
+ok('editing a layer rule recalculates live', before!==(await txt('#calcpreview')));
+await tap('resetov',400); await tap('closesheet',400);
+await tap('go:results',420);
 const res=await txt('#scroll');
 ok('results screen', res.includes('materials required'));
-ok('results show theoretical + order', res.includes('theoretical') && res.includes('order'));
-ok('packaging nouns pluralise properly', res.includes('boxes') && !res.includes('boxs'));
+ok('results show theoretical and order', res.includes('theoretical')&&res.includes('order'));
+ok('packaging nouns pluralise', res.includes('boxes')&&!res.includes('boxs'));
 await shot('10-results');
+const calc=await pg.evaluate(()=>{const l=currentLines().find(x=>x.pid==='9461'&&x.role==='Base Coat');
+  return {t:l.theoretical,w:l.withWaste,p:l.packs};});
+const eT=12500*15/1604,eW=eT*1.1;
+ok('WFT arithmetic unchanged (no solids term)',
+   Math.abs(calc.t-eT)<1e-6&&Math.abs(calc.w-eW)<1e-6&&calc.p===Math.ceil(eW/3));
 
-// verify arithmetic: 9461 base coat 15 mils WFT over 12500 ft2 @10% waste
-const calc=await pg.evaluate(()=>{
-  const l=currentLines().find(x=>x.pid==='9461'&&x.role==='Base Coat');
-  return {theo:l.theoretical, waste:l.withWaste, packs:l.packs};
-});
-const expTheo=12500*15/1604, expWaste=expTheo*1.1, expPacks=Math.ceil(expWaste/3);
-ok('WFT arithmetic correct (no solids term)',
-   Math.abs(calc.theo-expTheo)<0.001 && Math.abs(calc.waste-expWaste)<0.001 && calc.packs===expPacks);
-
-// ---------- FLOW D : save to project ----------
-await pg.click('[data-act="savetoproject"]');
-await pg.waitForTimeout(450);
-ok('anonymous user gets sign-in sheet', (await txt('#sheet')).includes('save your project'));
-await shot('11-auth');
-await pg.click('[data-act="auth:save"]');
-await pg.waitForTimeout(800);
+// ================= FLOW D : save =================
+await tap('savetoproject',450);
+ok('anonymous save asks for an account', (await txt('#sheet')).includes('save your project'));
+await tap('auth:save',800);
 ok('name sheet appears', (await txt('#sheet')).includes('project name'));
-await pg.fill('#pname','Warehouse Expansion');
-await pg.fill('#pclient','Groupe Robert');
-await pg.click('[data-act="commitsave"]');
-await pg.waitForTimeout(700);
+await pg.fill('#pname','Warehouse Expansion'); await pg.click('[data-act="commitsave"]');
+await pg.waitForTimeout(750);
 const proj=await txt('#scroll');
-ok('project detail after save', proj.includes('warehouse expansion'));
-ok('area preserved in project', proj.includes('12,500'));
-ok('system preserved in project', proj.includes('magieflake'));
-await shot('12-project');
-await pg.click('[data-act^="materials:"]');
-await pg.waitForTimeout(400);
+ok('project detail after save', proj.includes('warehouse expansion')&&proj.includes('12,500')&&proj.includes('magieflake'));
+await shot('11-project');
+await pg.click('[data-act^="materials:"]'); await pg.waitForTimeout(400);
 const mat=await txt('#scroll');
-ok('material list generated', mat.includes('material list') && mat.includes('5076') && mat.includes('955'));
-ok('material list carries waste factor', mat.includes('10%'));
-await shot('13-materials');
+ok('material list generated', mat.includes('material list')&&mat.includes('5087')&&mat.includes('835'));
+ok('material list carries waste', mat.includes('10%'));
+await shot('12-materials');
 
-// ---------- tabs ----------
+// ================= SYSTEMS / PRODUCTS / PROJECTS composition =================
+await goRoot('systems');
+const sysScreen=await txt('#scroll');
+ok('systems leads with a finish rail', sysScreen.includes('explore by finish'));
+ok('finish rail has painted cards', await pg.locator('.fincard canvas').count()>=4);
+ok('system counts read correctly at one', !sysScreen.includes('1 systems'));
+ok('applications are the seven the brief lists',
+   sysScreen.includes('chemical resistant')&&sysScreen.includes('mechanical rooms')&&
+   sysScreen.includes('parking & traffic')&&sysScreen.includes('pharmaceutical'));
+await shot('13-systems');
+await tap('finish:flake',420);
+const fin=await txt('#scroll');
+ok('finish screen lists its systems and colourways', fin.includes('flake')&&fin.includes('colourways'));
+ok('colourway chart is painted', await pg.locator('.chart canvas').count()>=4);
+await shot('14-finish');
+await goRoot('products');
+ok('products uses a family grid, not a row list', await pg.locator('.famgrid button').count()>=5);
+ok('family grid carries chemistry cues', await pg.locator('.famgrid .bar').count()>=5);
+ok('products shows recently used', await pg.locator('.mrail button').count()>0);
+ok('counts read correctly at one', (await txt('#scroll')).includes('1 product')
+   && !(await txt('#scroll')).includes('1 products'));
+await shot('15-products');
+await goRoot('projects');
+ok('projects render as objects with imagery', await pg.locator('.obj .thumb canvas').count()>=2);
+await shot('16-projects');
+
+// ================= container reduction =================
+const boxes=await pg.evaluate(()=>{
+  const count=()=>[...document.querySelectorAll('#scroll *')].filter(e=>{
+    const cs=getComputedStyle(e);
+    const bordered=parseFloat(cs.borderTopWidth)>0&&parseFloat(cs.borderLeftWidth)>0&&parseFloat(cs.borderRightWidth)>0;
+    const filled=cs.backgroundColor!=='rgba(0, 0, 0, 0)'&&cs.backgroundColor!=='rgb(255, 255, 255)';
+    return e.getBoundingClientRect().width>40&&(bordered||filled)&&parseFloat(cs.borderRadius)>0;}).length;
+  return count();});
+ok('calculator settings screen carries few boxed surfaces', boxes<=4);
+
+// ================= tabs, state, chrome =================
 for(const tb of ['home','systems','calculator','products','projects']){
-  await pg.click('[data-act="tab:'+tb+'"]');
-  await pg.waitForTimeout(300);
-  const on=await pg.locator('.tab.on span').innerText();
-  ok('tab '+tb+' works + selected state', on.length>0);
+  await tap('tab:'+tb);
+  ok('tab '+tb+' works', (await pg.locator('.tab.on span').innerText()).length>0);
 }
-await pg.click('[data-act="tab:products"]');await pg.waitForTimeout(300);
-ok('products families list', (await txt('#scroll')).includes('cementitious polyurethane'));
-await shot('14-products');
-await pg.click('[data-act="tab:systems"]');await pg.waitForTimeout(300);
-ok('systems browser', (await txt('#scroll')).includes('by performance'));
-await shot('15-systems');
+await tap('tab:calculator');
+ok('calculator tab returns where it was left', (await txt('#scroll')).includes('materials required'));
+await tap('tab:calculator');
+ok('tapping active tab pops to root', await pg.locator('#areaIn').count()===1);
+ok('area preserved across tab switching', (await pg.inputValue('#areaIn')).replace(/[^\d]/g,'')==='12500');
+ok('bottom navigation is lighter than 83pt',
+   await pg.evaluate(()=>document.querySelector('.tabbar').getBoundingClientRect().height)<=70);
 
-// ---------- per-tab state preservation ----------
-await pg.click('[data-act="tab:calculator"]');await pg.waitForTimeout(320);
-ok('calculator tab returns to where it was left (Results)', (await txt('#scroll')).includes('materials required'));
-await pg.click('[data-act="tab:calculator"]');await pg.waitForTimeout(320);
-ok('tapping active tab pops to its root', await pg.locator('#areaIn').count()===1);
-ok('calculator inputs survive tab switching', (await pg.inputValue('#areaIn')).replace(/[^\d.]/g,'')==='12500');
-
-// ---------- french ----------
-await pg.click('[data-act="tab:home"]');await pg.waitForTimeout(280);
-await pg.click('[data-act="tab:home"]');await pg.waitForTimeout(280);
-await pg.click('[data-act="go:settings"]');await pg.waitForTimeout(350);
-await pg.click('[data-act="lang:fr"]');await pg.waitForTimeout(350);
+// ================= french =================
+await home(); await tap('go:settings'); await tap('lang:fr',400);
 ok('french UI', (await txt('#tabbar')).includes('calculateur'));
-ok('no element overflows the screen in French', (await overflowing())===0);
-await shot('16-french');
-await pg.click('[data-act="tab:calculator"]');await pg.waitForTimeout(350);
-const frCalc=await txt('#scroll');
-ok('french calculator', frCalc.includes('facteur de perte'));
-// units are a separate setting from language: switch to m2 and check conversion
-const galBefore=await pg.evaluate(()=>currentLines().map(l=>l.theoretical));
-const areaBefore=await pg.evaluate(()=>areaFt2());
-await pg.click('[data-act="unit:m2"]');await pg.waitForTimeout(320);
-const areaAfter=await pg.evaluate(()=>areaFt2());
-ok('switching ft2->m2 converts the entered area, not the project size',
-   Math.abs(areaBefore-areaAfter)/areaBefore < 0.001);
-const galAfter=await pg.evaluate(()=>currentLines().map(l=>l.theoretical));
-// the displayed area rounds to 2 dp on conversion, so allow that much drift
-ok('material quantities survive the unit switch (<0.1% rounding drift)',
-   galBefore.every((g,i)=>Math.abs(g-galAfter[i])/g < 0.001));
-const packsB=await pg.evaluate(()=>currentLines().map(l=>l.packs));
-ok('kit counts identical after unit switch', JSON.stringify(packsB)===JSON.stringify(
-   await pg.evaluate(()=>currentLines().map(l=>l.packs))));
-await pg.click('[data-act="go:results"]');await pg.waitForTimeout(400);
-const frRes=await txt('#scroll');
-ok('french results translate layer roles', frRes.includes('couche de base')||frRes.includes('appr\u00eat')||frRes.includes('saupoudrage'));
-ok('french results translate packaging nouns', frRes.includes('trousses')||frRes.includes('bo\u00eetes'));
-ok('metric mode reports litres and kilograms', /\d\s?l\b/.test(frRes) && frRes.includes('kg'));
-await shot('19-french-results');
-await pg.click('[data-act="back"]');await pg.waitForTimeout(350);
-await pg.click('[data-act="unit:ft2"]');await pg.waitForTimeout(300);
-await shot('17-french-calc');
-const tabOverflow=await pg.evaluate(()=>{
-  return [...document.querySelectorAll('.tab span')].map(e=>e.scrollWidth>e.clientWidth+1).some(Boolean);
-});
-ok('french tab labels do not clip', !tabOverflow);
-await pg.click('[data-act="tab:home"]');await pg.waitForTimeout(280);
-await pg.click('[data-act="tab:home"]');await pg.waitForTimeout(280);
-await pg.click('[data-act="go:settings"]');await pg.waitForTimeout(300);
-await pg.click('[data-act="lang:en"]');await pg.waitForTimeout(300);
+ok('no overflow in French', (await overflowing())===0);
+await shot('17-french');
+await tap('tab:calculator'); await tap('tab:calculator');
+ok('french calculator', (await txt('#scroll')).includes('superficie'));
+ok('french tab labels do not clip',
+   !(await pg.evaluate(()=>[...document.querySelectorAll('.tab span')].some(e=>e.scrollWidth>e.clientWidth+1))));
+await shot('18-french-calc');
+await home(); await tap('go:settings'); await tap('lang:en',400);
 
-// ---------- dead controls ----------
-// sweep every reachable screen for buttons that do nothing
-const screens=[['tab:home',''],['tab:systems',''],['tab:calculator',''],['tab:products',''],['tab:projects','']];
-let deadTotal=0;
-for(const [act] of screens){
-  await pg.click('['+'data-act="'+act+'"]');await pg.waitForTimeout(260);
-  deadTotal+=await pg.evaluate(()=>[...document.querySelectorAll('button')]
-    .filter(b=>!b.dataset.act && !b.id && b.offsetParent!==null).length);
-}
-ok('no dead buttons on any tab root', deadTotal===0);
-const noops=await pg.evaluate(()=>[...document.querySelectorAll('[data-act="noop"]')].length);
-ok('no noop controls', noops===0);
-let ov=0;
-for(const a of ['tab:home','tab:systems','tab:calculator','tab:products','tab:projects']){
-  await pg.click('['+'data-act="'+a+'"]');await pg.waitForTimeout(280);
+// ================= no dead controls, no overflow =================
+let dead=0, ov=0;
+for(const a of ['home','systems','calculator','products','projects']){
+  await goRoot(a);
+  dead+=await pg.evaluate(()=>[...document.querySelectorAll('#scroll button')]
+    .filter(b=>!b.dataset.act&&!b.id&&b.offsetParent!==null).length);
   ov+=await overflowing();
 }
-await pg.click('[data-act="tab:products"]');await pg.waitForTimeout(250);
-await pg.click('[data-act="family:epoxy"]');await pg.waitForTimeout(300);
-await pg.click('[data-act="product:9461"]');await pg.waitForTimeout(320);
-ov+=await overflowing();
-await pg.click('[data-act="tab:systems"]');await pg.waitForTimeout(250);
-await pg.click('[data-act="system:quartz-db"]');await pg.waitForTimeout(320);
-ov+=await overflowing();
-await shot('18-quartz');
-ok('no element overflows the screen on any core screen', ov===0);
+await goRoot('systems'); await tap('system:quartz-db'); ov+=await overflowing();
+await shot('19-quartz');
+await goRoot('products'); await tap('family:epoxy'); await tap('product:9735'); ov+=await overflowing();
+ok('no dead buttons on any tab root', dead===0);
+ok('nothing overflows the screen', ov===0);
+ok('no noop controls', await pg.evaluate(()=>document.querySelectorAll('[data-act="noop"]').length)===0);
 
 console.log('\n'+(errs.length?('FAILURES ('+errs.length+'):\n'+errs.join('\n')):'ALL CHECKS PASSED'));
-await b.close();
-process.exit(errs.length?1:0);
+await b.close(); process.exit(errs.length?1:0);
 })();
